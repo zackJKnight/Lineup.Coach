@@ -1,0 +1,14 @@
+.vs/YouthSoccerLineup/DesignTimeBuild/.dtbcache
+.vs/YouthSoccerLineup/v15/.suo
+.vs/YouthSoccerLineup/v15/Server/sqlite3/db.lock
+.vscode/tasks.json
+.vs/YouthSoccerLineup/v15/Server/sqlite3/storage.ide
+.vs/YouthSoccerLineup/v15/Server/sqlite3/storage.ide-shm
+.vs/YouthSoccerLineup/v15/Server/sqlite3/storage.ide-wal
+.vs/config/applicationhost.config
+.vscode/launch.json
+YouthSoccerLineup.Tests/bin/Debug/netcoreapp2.1/YouthSoccerLineup.pdb
+YouthSoccerLineup.Tests/bin/Debug/netcoreapp2.1/Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+YouthSoccerLineup.Tests/bin/Debug/netcoreapp2.1/Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+YouthSoccerLineup.Tests/bin/Debug/netcoreapp2.1/Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+YouthSoccerLineup.Tests/bin/Debug/netcoreapp2.1/YouthSoccerLineup.dll

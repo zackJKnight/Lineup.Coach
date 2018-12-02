@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace YouthSoccerLineup.Model
+{
+    public interface IGame
+    {
+        bool IsHomeGame { get; set; }
+        int MaxNumberOfPlayers { get; set; }
+        Team Opponent { get; set; }
+        List<Period> Periods { get; set; }
+        DateTime PlayDate { get; set; }
+        string RefereeName { get; set; }
+    }
+}
