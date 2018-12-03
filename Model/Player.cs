@@ -10,9 +10,9 @@ namespace YouthSoccerLineup.Model
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public PositionPreferenceRank PositionPreferenceRank { get; set; }
-        public Position GetFavoritePosition()
+        public string GetFavoritePositionName()
         {
-            throw new NotImplementedException("You're still massaging the model");// new Position(this.PositionPreferenceRank);
+            return this.PositionPreferenceRank.Ranking[0];
         }
     }
 }

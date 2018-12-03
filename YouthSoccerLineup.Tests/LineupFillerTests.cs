@@ -10,14 +10,14 @@ namespace YouthSoccerLineupTests
     {
         private MockRepository mockRepository;
         private Mock<Game> mockGame;
-
+        private Mock<Team> mockTeam;
 
         [TestInitialize]
         public void TestInitialize()
         {
             this.mockRepository = new MockRepository(MockBehavior.Strict);
             this.mockGame = new Mock<Game>();
-
+            this.mockTeam = new Mock<Team>();
         }
 
         [TestCleanup]
@@ -38,7 +38,7 @@ namespace YouthSoccerLineupTests
             var unitUnderTest = CreateLineupFiller();
 
             // Act
-            unitUnderTest.FillByPlayerPreference(this.mockGame.Object);
+            unitUnderTest.FillByPlayerPreference(this.mockGame.Object, mockTeam.Object.Roster);
 
             // Assert
             Assert.Fail();

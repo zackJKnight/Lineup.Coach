@@ -12,10 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="LineupDataPositionRankingByArrayOrder.json" />
     <None Remove="u8Lineup.data.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="LineupDataPositionRankingByArrayOrder.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="u8Lineup.data.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

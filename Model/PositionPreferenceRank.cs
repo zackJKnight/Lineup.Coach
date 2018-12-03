@@ -1,18 +1,30 @@
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace YouthSoccerLineup.Model
 {
     [JsonObject]
     public class PositionPreferenceRank
     {
-        public string goalie { get; set; }
-        public string defense { get; set; }
-        public string mid { get; set; }
-        public string forward { get; set; }
+        public string[] Ranking { get; set; }
+        
         [JsonConstructor]
         public PositionPreferenceRank()
         {
 
+        }
+
+        private Dictionary<int, string> getPositionRanking()
+        {
+            int rankNumber = 0;
+            var rankingDictionary = new Dictionary<int, string>();
+            foreach(string position in Ranking)
+            {
+                rankNumber = Array.FindIndex(Ranking, item => item == position);
+                rankingDictionary.Add(rankNumber++, position);
+            }
+            return rankingDictionary;
         }
     }
 }
