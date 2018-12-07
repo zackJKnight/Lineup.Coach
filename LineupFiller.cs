@@ -2,21 +2,27 @@ using System;
 using System.Collections.Generic;
 using YouthSoccerLineup.Model;
 
-namespace YouthSoccerLineup {
-    public class LineupFiller {
+namespace YouthSoccerLineup
+{
+    public class LineupFiller
+    {
 
         public LineupFiller()
         {
 
         }
-        public void FillByPlayerPreference(Game theGame, List<Player> players) {
-            // Get the player's favorite positions randomly
+        public void FillByPlayerPreference(Game theGame, List<Player> players)
+        {
+            // Select player randomly.
             var player = getRandomPlayer(players);
             // Lesson learned: do not iterate the periods; step up to the whole Game
-            // Find the first open match from beginning to end of Game
+            // Find the first open match
             var firstOpenMatch = theGame.GetFirstOpenPosition(player.GetFavoritePositionName());
             // Place the player
-            firstOpenMatch.StartingPlayer = player;
+            if (firstOpenMatch != null)
+            {
+                firstOpenMatch.StartingPlayer = player;
+            }
             // When you run out of open favorites, check the second and so on.
         }
 

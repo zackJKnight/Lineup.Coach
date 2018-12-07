@@ -22,12 +22,7 @@ namespace YouthSoccerLineup.Model
 
         public Position GetFirstOpenPosition(string name)
         {
-            //TODO Start here. Need to grab the period and position
-            // considered a Dictionary<int periodNumber, string positionName>
-            // but the caller doesn't know what that is...
-            throw new NotImplementedException();
-
-            Position firstOpenMatch = new Position("");
+            Position firstOpenMatch = new Position("", Guid.NewGuid());
 
             this.Periods.ToList().ForEach(period => 
             firstOpenMatch = period.Positions.Where(position => position.Name.ToLower() == name &&
@@ -49,13 +44,13 @@ namespace YouthSoccerLineup.Model
                 preferredPositionNames
                 .Where(position => position != "goalie").ToList()
                 .ForEach(position => this.Periods.ToList()
-                .ForEach(period => period.Positions.Add(new Position(position))));
+                .ForEach(period => period.Positions.Add(new Position(position, period.Id))));
             }
 
             for (int i = 0; i < benchCount; i++)
             {
                 this.Periods.ToList()
-                .ForEach(period => period.Positions.Add(new Position("bench")));
+                .ForEach(period => period.Positions.Add(new Position("bench", period.Id)));
             }
 
         }
