@@ -14,5 +14,15 @@ namespace YouthSoccerLineup.Model
         {
             return this.PositionPreferenceRank.Ranking[0];
         }
+
+        public string GetPositionNameByPreferenceRank(int rank)
+        {
+            string result = string.Empty;
+            if(rank > 0 && this.PositionPreferenceRank != null && rank <= this.PositionPreferenceRank.Ranking.Length)
+            {
+            result = this.PositionPreferenceRank.Ranking[rank - 1];
+            }
+            return result;
+        }
     }
 }
