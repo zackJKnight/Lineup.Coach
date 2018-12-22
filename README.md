@@ -10,4 +10,8 @@ At some point the order may be that players that did not get their preference go
 
 If inside the round we find that no more preferred positions are available... what do we do?
 
-Put the player in the next postion down the ranking?
+Put the player in the next postion down the ranking? 
+
+And what if we get to a point at which the person's least favorite position is not available...
+
+We will have to go back up the ranking.

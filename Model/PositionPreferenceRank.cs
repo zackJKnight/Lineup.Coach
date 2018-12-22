@@ -14,6 +14,10 @@ namespace YouthSoccerLineup.Model
         {
 
         }
+        public PositionPreferenceRank(string[] ranking)
+        {
+            this.Ranking = ranking;
+        }
 
         private Dictionary<int, string> getPositionRanking()
         {

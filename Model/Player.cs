@@ -9,7 +9,13 @@ namespace YouthSoccerLineup.Model
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public List<Guid> StartingPositions { get; set; }
         public PositionPreferenceRank PositionPreferenceRank { get; set; }
+
+        public Player()
+        {
+            this.StartingPositions = new List<Guid>();
+        }
         public string GetFavoritePositionName()
         {
             return this.PositionPreferenceRank.Ranking[0];

@@ -22,16 +22,18 @@ namespace YouthSoccerLineup.Model
 
         public Position GetFirstOpenPosition(string name)
         {
+            // TODO Structure this to prevent returning this empty position.  
             Position firstOpenMatch = new Position("", Guid.NewGuid());
             try
             {
-                this.Periods.ToList().ForEach(period =>
-                firstOpenMatch = period.Positions.Where(position => position.Name.ToLower() == name &&
-                position.StartingPlayer == null).FirstOrDefault());
+                firstOpenMatch = this.Periods.OrderBy(period => period.Number)
+                    .SelectMany(period => period.Positions
+                .Where(position => position.Name.ToLower() == name && position.StartingPlayer == null)).FirstOrDefault();
+                
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Until someone implements logging, you'll have to get this the hard way: {ex.Message}");
+                Console.WriteLine($"Logging ain't free. Here's your exception message: {ex.Message}");
             }
             return firstOpenMatch;
         }

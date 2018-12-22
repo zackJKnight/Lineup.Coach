@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using YouthSoccerLineup.Model;
 
 namespace YouthSoccerLineup
@@ -17,8 +15,7 @@ namespace YouthSoccerLineup
                 {
                     Console.WriteLine($"{position.Name.ToUpper()}: {(position.StartingPlayer != null ? position.StartingPlayer.FirstName : "No Player Set")}");
                 });
-                }
-                );
+                });
         }
     }
 }
