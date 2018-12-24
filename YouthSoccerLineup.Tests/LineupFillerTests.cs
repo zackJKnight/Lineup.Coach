@@ -59,7 +59,7 @@ namespace YouthSoccerLineupTests
             var unitUnderTest = CreateLineupFiller();
 
             // Act
-            unitUnderTest.FillByPlayerPreference(this.mockGame.Object, mockTeam.Object.Roster);
+            unitUnderTest.FillLineupByPlayerPreference(this.mockGame.Object, mockTeam.Object.Roster);
 
             // Assert
             var actualPositionName = this.mockGame.Object.Periods

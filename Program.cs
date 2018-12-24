@@ -35,7 +35,7 @@ namespace YouthSoccerLineup
                 .SelectMany(player => player.PositionPreferenceRank.Ranking).Distinct().ToArray();
             TheGame.SetGamePositions(distinctPositionNames, benchCount);
 
-            lineupfiller.FillByPlayerPreference(TheGame, TheTeam.Roster);
+            lineupfiller.FillLineupByPlayerPreference(TheGame, TheTeam.Roster);
             LineupWriter.WriteLineup(TheGame);
 
             Console.ReadKey();

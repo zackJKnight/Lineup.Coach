@@ -15,3 +15,9 @@ Put the player in the next postion down the ranking?
 And what if we get to a point at which the person's least favorite position is not available...
 
 We will have to go back up the ranking.
+
+## Feature Ideas
+
+- Add ability to pick from list of positions and formations for multiple instances of the same position on the pitch or create your own.
+
+- Goalie is added by default for local U8, but need to consider broader use

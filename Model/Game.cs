@@ -40,15 +40,11 @@ namespace YouthSoccerLineup.Model
 
         public void SetGamePositions(string[] preferredPositionNames, int benchCount)
         {
-            // TODO Add ability to pick from list of positions and formations 
-            // for multiple instances of the same position on the pitch 
-            // or create your own.
 
             int positionInstanceCount = 2;
 
             for (int i = 0; i < positionInstanceCount; i++)
             {
-                // TODO goalie is added by default for local U8, but need to consider broader use
                 preferredPositionNames
                 .Where(position => position != "goalie").ToList()
                 .ForEach(position => this.Periods.ToList()

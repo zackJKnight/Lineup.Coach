@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace YouthSoccerLineup.Model {
     public class Period {
@@ -16,6 +17,13 @@ namespace YouthSoccerLineup.Model {
             this.Positions = new List<Position>();
             this.Positions.Add(new Position("goalie", this.Id));
 
+        }
+
+        public bool NonBenchPositionsAreFilled()
+        {
+            return this.Positions
+                .Where(position => (position.Name).ToLower() != "bench" && position.StartingPlayer != null)
+                .Any();
         }
     }
 }
