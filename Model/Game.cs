@@ -29,13 +29,18 @@ namespace YouthSoccerLineup.Model
                 firstOpenMatch = this.Periods.OrderBy(period => period.Number)
                     .SelectMany(period => period.Positions
                 .Where(position => position.Name.ToLower() == name && position.StartingPlayer == null)).FirstOrDefault();
-                
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Logging ain't free. Here's your exception message: {ex.Message}");
             }
             return firstOpenMatch;
+        }
+
+        public Period GetPeriodById(Guid id)
+        {
+            return this.Periods.Where(period => period.Id == id).FirstOrDefault();
         }
 
         public void SetGamePositions(string[] preferredPositionNames, int benchCount)
@@ -57,6 +62,11 @@ namespace YouthSoccerLineup.Model
                 .ForEach(period => period.Positions.Add(new Position("bench", period.Id)));
             }
 
+        }
+
+        public bool AllGamePositionsFilled()
+        {
+            return this.Periods.SelectMany(period => period.Positions).All(position => position.StartingPlayer != null);
         }
     }
 }
