@@ -7,6 +7,7 @@ namespace YouthSoccerLineup.Model
     public class Game : IGame
     {
         private DateTime _playDate;
+        private double _startingPositionPerPlayerCount;
 
         public DateTime PlayDate { get => _playDate; set => _playDate = value; }
         public List<Period> Periods { get; set; }
@@ -14,27 +15,53 @@ namespace YouthSoccerLineup.Model
         public Team Opponent { get; set; }
         public bool IsHomeGame { get; set; }
         public string RefereeName { get; set; }
+
+        /// <summary>
+        /// The number of times each player can start in the Game
+        /// </summary>
+        public double StartingPositionPerPlayerCount
+        {
+            get => _startingPositionPerPlayerCount;
+            set => _startingPositionPerPlayerCount = value;
+        }
+
+        /// <summary>
+        /// The date on which the Game occurs.
+        /// </summary>
+        /// <param name="playDate"></param>
         public Game(DateTime playDate)
         {
             this.PlayDate = playDate;
             this.Periods = new List<Period>();
         }
 
+        public Position GetFirstOpenBench()
+        {
+            return this.Periods
+                .OrderBy(period => period.Number)
+                .SelectMany(period => period.Positions)
+                .Where(position => position.Name.ToLower() == "bench")
+                .FirstOrDefault();
+        }
         public Position GetFirstOpenPosition(string name)
         {
-            // TODO Structure this to prevent returning this empty position.  
+            // TODO Structure this to prevent returning an empty position.  
             Position firstOpenMatch = new Position("", Guid.NewGuid());
             try
             {
-                firstOpenMatch = this.Periods.OrderBy(period => period.Number)
+                firstOpenMatch = this.Periods
+                    .OrderBy(period => period.Number)
+                    .Where(period => !period.NonBenchPositionsAreFilled())
                     .SelectMany(period => period.Positions
-                .Where(position => position.Name.ToLower() == name && position.StartingPlayer == null)).FirstOrDefault();
-
+                    .Where(position => position.Name.ToLower() != "bench")
+                    .Where(position => position.Name.ToLower() == name && position.StartingPlayer == null))
+                    .FirstOrDefault();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Logging ain't free. Here's your exception message: {ex.Message}");
+                throw ex;
             }
+
             return firstOpenMatch;
         }
 

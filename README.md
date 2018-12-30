@@ -16,6 +16,12 @@ And what if we get to a point at which the person's least favorite position is n
 
 We will have to go back up the ranking.
 
+Do we need to know how many times each player can start in its favorite position?
+
+Well... we should look at the number of times each player can start in a game.
+
+And the number of favorited positions vs available in the game.
+
 ## Feature Ideas
 
 - Add ability to pick from list of positions and formations for multiple instances of the same position on the pitch or create your own.
