@@ -63,12 +63,10 @@ namespace YouthSoccerLineupTests.Model
             // Arrange
             var unitUnderTest = this.CreateGame();
             string[] preferredPositionNames = new string[] { "defense", "forward"};
-            int benchCount = 3;
 
             // Act
             unitUnderTest.SetGamePositions(
-                preferredPositionNames,
-                benchCount);
+                preferredPositionNames);
 
             // Assert
             Assert.Fail();

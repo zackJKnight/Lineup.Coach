@@ -6,7 +6,7 @@ namespace YouthSoccerLineup.Model
     public interface IGame
     {
         bool IsHomeGame { get; set; }
-        int MaxNumberOfPlayers { get; set; }
+        int MaxPlayersOnFieldCount { get; set; }
         Team Opponent { get; set; }
         List<Period> Periods { get; set; }
         DateTime PlayDate { get; set; }

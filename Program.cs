@@ -22,10 +22,9 @@ namespace YouthSoccerLineup
             var PlayerInfo = playerService.GetPlayerData(PLAYER_DATA_FILE);
             var TheTeam = new Team(TEAM_NAME);
             PlayerInfo.Players.ToList().ForEach(player => TheTeam.Roster.Add(player));
-            var benchCount = TheTeam.Roster.Count - MAX_NUMBER_OF_PLAYERS;
-            benchCount = benchCount < 0 ? 0 : benchCount;
             var TheGame = new Game(GamePlayDate);
-            TheGame.MaxNumberOfPlayers = MAX_NUMBER_OF_PLAYERS;
+            TheGame.AvailablePlayerCount = TheTeam.Roster.Count;
+            TheGame.MaxPlayersOnFieldCount = MAX_NUMBER_OF_PLAYERS;
 
             for (int i = 0; i < NumberOfPeriods; i++)
             {
@@ -33,7 +32,7 @@ namespace YouthSoccerLineup
             }
             var distinctPositionNames = PlayerInfo.Players
                 .SelectMany(player => player.PositionPreferenceRank.Ranking).Distinct().ToArray();
-            TheGame.SetGamePositions(distinctPositionNames, benchCount);
+            TheGame.SetGamePositions(distinctPositionNames);
 
             lineupfiller.FillLineupByPlayerPreference(TheGame, TheTeam.Roster);
             LineupWriter.WriteLineup(TheGame);

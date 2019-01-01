@@ -46,9 +46,9 @@ namespace YouthSoccerLineup
                             else
                             {
                                 var periodWithFirstOpenMatch = theGame.GetPeriodById(firstOpenMatch.PeriodId);
-                                var playerStartingThisPeriod = !periodWithFirstOpenMatch.Positions
+                                var playerStartingThisPeriod = periodWithFirstOpenMatch.Positions
                                     .Any(position => player.StartingPositions.Contains(position.Id));
-                                if (!playerStartingThisPeriod)//player isn't already starting this period)
+                                if (!playerStartingThisPeriod)
                                 {
                                     firstOpenMatch.StartingPlayer = player;
                                     // probably redundant
