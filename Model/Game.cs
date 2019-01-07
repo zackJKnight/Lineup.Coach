@@ -12,6 +12,7 @@ namespace YouthSoccerLineup.Model
 
         public DateTime PlayDate { get => _playDate; set => _playDate = value; }
         public List<Period> Periods { get; set; }
+        public int BenchCount { get => _benchCount; set => _benchCount = value; }
         public int MaxPlayersOnFieldCount { get; set; }
         public int AvailablePlayerCount { get; set; }
         public Team Opponent { get; set; }
@@ -31,12 +32,14 @@ namespace YouthSoccerLineup.Model
         /// The date on which the Game occurs.
         /// </summary>
         /// <param name="playDate"></param>
-        public Game(DateTime playDate)
+        public Game(DateTime playDate, int availablePlayerCount, int maxNumberOfPlayersOnField)
         {
             this.PlayDate = playDate;
             this.Periods = new List<Period>();
-            _benchCount = AvailablePlayerCount - MaxPlayersOnFieldCount;
-            _benchCount = _benchCount < 0 ? 0 : _benchCount;
+            this.AvailablePlayerCount = availablePlayerCount;
+            this.MaxPlayersOnFieldCount = maxNumberOfPlayersOnField;
+            BenchCount = AvailablePlayerCount - MaxPlayersOnFieldCount;
+            BenchCount = BenchCount < 0 ? 0 : BenchCount;
         }
 
         public Position GetFirstOpenBench()
@@ -87,7 +90,7 @@ namespace YouthSoccerLineup.Model
                 .ForEach(period => period.Positions.Add(new Position(position, period.Id))));
             }
 
-            for (int i = 0; i < _benchCount; i++)
+            for (int i = 0; i < BenchCount; i++)
             {
                 this.Periods.ToList()
                 .ForEach(period => period.Positions.Add(new Position("bench", period.Id)));
@@ -98,7 +101,8 @@ namespace YouthSoccerLineup.Model
         public void SetStartingPositionsPerPlayerCount()
         {
             // determine how many starting positions each player can have.
-            this.StartingPositionsPerPlayerCount = this.MaxPlayersOnFieldCount * this.Periods.Count / AvailablePlayerCount;
+
+            this.StartingPositionsPerPlayerCount = (double)this.MaxPlayersOnFieldCount * this.Periods.Count / AvailablePlayerCount;
 
         }
 

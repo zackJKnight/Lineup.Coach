@@ -19,7 +19,7 @@ namespace YouthSoccerLineup
             var playersInRound = players;
             int preferenceRank = players.Max(player => player.PositionPreferenceRank.Ranking.Count());
             int initialPlayerCount = playersInRound.Count;
-            while (!theGame.AllGamePositionsFilled() && round < players.Count * theGame.Periods.Count)
+            while (!theGame.AllGamePositionsFilled() && round < theGame.StartingPositionsPerPlayerCount)
             {
                 for (int i = 0; i < initialPlayerCount; i++)
                 {
