@@ -7,10 +7,8 @@ namespace YouthSoccerLineup
 {
     public class LineupFiller
     {
-
         public LineupFiller()
         {
-
         }
 
         public void FillLineupByPlayerPreference(Game theGame, List<Player> players)
@@ -34,14 +32,14 @@ namespace YouthSoccerLineup
 
                             if (firstOpenMatch == null)
                             {
-                                    Console.WriteLine($"No match for {positionName} but we can try the next ranked position for {player.FirstName}");
-                                if(p == preferenceRank - 1)
+                                Console.WriteLine($"No match for {positionName} but we can try the next ranked position for {player.FirstName}");
+                                if (p == preferenceRank - 1)
                                 {
                                     var openBench = theGame.GetFirstOpenBench();
                                     openBench.StartingPlayer = player;
                                 }
                                 p++;
-                                    continue;
+                                continue;
                             }
                             else
                             {
@@ -55,10 +53,8 @@ namespace YouthSoccerLineup
                                     player.StartingPositions.Add(firstOpenMatch.Id);
                                     playersInRound.Remove(player);
                                 }
-
                             }
                         }
-
                     }
                 }
                 round++;
@@ -73,7 +69,6 @@ namespace YouthSoccerLineup
             int randomIndex = random.Next(players.Count);
 
             return players[randomIndex];
-
         }
     }
 }

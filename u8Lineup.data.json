@@ -1,5 +1,5 @@
 {
-  "players":[ 
+  "players":[
     {
       "firstName": "Speeve",
       "lastName": "Spevenson",
@@ -8,7 +8,7 @@
         "defense": "4",
         "mid": "1",
         "forward": "3"
-    } 
+    }
     },
     {
       "firstName": "Gurtle",

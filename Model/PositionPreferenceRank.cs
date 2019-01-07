@@ -8,12 +8,12 @@ namespace YouthSoccerLineup.Model
     public class PositionPreferenceRank
     {
         public string[] Ranking { get; set; }
-        
+
         [JsonConstructor]
         public PositionPreferenceRank()
         {
-
         }
+
         public PositionPreferenceRank(string[] ranking)
         {
             this.Ranking = ranking;
@@ -23,7 +23,7 @@ namespace YouthSoccerLineup.Model
         {
             int rankNumber = 0;
             var rankingDictionary = new Dictionary<int, string>();
-            foreach(string position in Ranking)
+            foreach (string position in Ranking)
             {
                 rankNumber = Array.FindIndex(Ranking, item => item == position);
                 rankingDictionary.Add(rankNumber++, position);

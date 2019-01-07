@@ -20,9 +20,7 @@ namespace YouthSoccerLineup.Model
             {
                 new Position("goalie", this.Id)
             };
-
         }
-
 
         public bool NonBenchPositionsAreFilled()
         {

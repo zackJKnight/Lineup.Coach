@@ -50,9 +50,10 @@ namespace YouthSoccerLineup.Model
                 .Where(position => position.Name.ToLower() == "bench")
                 .FirstOrDefault();
         }
+
         public Position GetFirstOpenPosition(string name)
         {
-            // TODO Structure this to prevent returning an empty position.  
+            // TODO Structure this to prevent returning an empty position.
             Position firstOpenMatch = new Position("", Guid.NewGuid());
             try
             {
@@ -79,7 +80,6 @@ namespace YouthSoccerLineup.Model
 
         public void SetGamePositions(string[] preferredPositionNames)
         {
-
             int positionInstanceCount = 2;
 
             for (int i = 0; i < positionInstanceCount; i++)
@@ -95,7 +95,6 @@ namespace YouthSoccerLineup.Model
                 this.Periods.ToList()
                 .ForEach(period => period.Positions.Add(new Position("bench", period.Id)));
             }
-
         }
 
         public void SetStartingPositionsPerPlayerCount()
@@ -103,7 +102,6 @@ namespace YouthSoccerLineup.Model
             // determine how many starting positions each player can have.
 
             this.StartingPositionsPerPlayerCount = (double)this.MaxPlayersOnFieldCount * this.Periods.Count / AvailablePlayerCount;
-
         }
 
         public bool AllGamePositionsFilled()

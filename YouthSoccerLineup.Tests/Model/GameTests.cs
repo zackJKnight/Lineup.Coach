@@ -10,14 +10,10 @@ namespace YouthSoccerLineupTests.Model
     {
         private MockRepository mockRepository;
 
-
-
         [TestInitialize]
         public void TestInitialize()
         {
             this.mockRepository = new MockRepository(MockBehavior.Strict);
-
-
         }
 
         [TestCleanup]
@@ -30,7 +26,9 @@ namespace YouthSoccerLineupTests.Model
         {
             var playDate = DateTime.Now;
             return new Game(
-                playDate);
+                playDate,
+                7,
+                10);
         }
 
         [TestMethod]
@@ -62,7 +60,7 @@ namespace YouthSoccerLineupTests.Model
         {
             // Arrange
             var unitUnderTest = this.CreateGame();
-            string[] preferredPositionNames = new string[] { "defense", "forward"};
+            string[] preferredPositionNames = new string[] { "defense", "forward" };
 
             // Act
             unitUnderTest.SetGamePositions(

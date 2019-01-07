@@ -1,13 +1,13 @@
-using System.IO;
-using System.Linq;
 using Newtonsoft.Json;
+using System.IO;
 using YouthSoccerLineup.Model;
 
 namespace YouthSoccerLineup.Service
 {
     public class PlayerService
     {
-        static RootObject PlayerInfo { get; set; }
+        private static RootObject PlayerInfo { get; set; }
+
         public RootObject GetPlayerData(string dataFile)
         {
             using (StreamReader reader = File.OpenText(dataFile))

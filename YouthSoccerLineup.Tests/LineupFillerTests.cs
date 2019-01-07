@@ -23,7 +23,7 @@ namespace YouthSoccerLineupTests
             this.mockGame = new Mock<Game>(DateTime.Now);
             this.mockTeam = new Mock<Team>("TestTeamName");
             this.mockPlayerList = new Mock<List<Player>>();
-            for (int i = 0; i < 10; i ++)
+            for (int i = 0; i < 10; i++)
             {
                 this.mockPlayerList.Object.Add(GenerateTestPlayer());
             }

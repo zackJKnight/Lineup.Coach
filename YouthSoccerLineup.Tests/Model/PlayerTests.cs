@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 using YouthSoccerLineup.Model;
 
 namespace YouthSoccerLineupTests.Model
@@ -10,14 +9,10 @@ namespace YouthSoccerLineupTests.Model
     {
         private MockRepository mockRepository;
 
-
-
         [TestInitialize]
         public void TestInitialize()
         {
             this.mockRepository = new MockRepository(MockBehavior.Strict);
-
-
         }
 
         [TestCleanup]
@@ -52,8 +47,7 @@ namespace YouthSoccerLineupTests.Model
             int rank = 2;
 
             unitUnderTest.PositionPreferenceRank = new Mock<PositionPreferenceRank>().Object;
-            unitUnderTest.PositionPreferenceRank.Ranking = new string[]{ "first", "second", "third" };
-
+            unitUnderTest.PositionPreferenceRank.Ranking = new string[] { "first", "second", "third" };
 
             // Act
             var result = unitUnderTest.GetPositionNameByPreferenceRank(

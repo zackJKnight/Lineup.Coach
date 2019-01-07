@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace YouthSoccerLineup
+﻿namespace YouthSoccerLineup
 {
-    class TeamBuilder
+    internal class TeamBuilder
     {
     }
 }

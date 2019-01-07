@@ -7,8 +7,9 @@ namespace YouthSoccerLineup.Model
         private Player _startingPlayer;
         public Guid Id { get; private set; }
         public string Name { get; set; }
-        public Guid PeriodId {get;set;}
+        public Guid PeriodId { get; set; }
         public Player StartingPlayer { get => _startingPlayer; set => _startingPlayer = value; }
+
         public Position(string name, Guid periodId)
         {
             this.Id = Guid.NewGuid();
