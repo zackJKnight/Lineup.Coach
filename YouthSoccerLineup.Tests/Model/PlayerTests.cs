@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
 using YouthSoccerLineup.Model;
 
 namespace YouthSoccerLineupTests.Model
@@ -21,29 +22,26 @@ namespace YouthSoccerLineupTests.Model
             this.mockRepository.VerifyAll();
         }
 
-        private Player CreatePlayer()
-        {
-            return new Player();
-        }
 
         [TestMethod]
         public void GetFavoritePositionName_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-            var unitUnderTest = this.CreatePlayer();
+            var unitUnderTest = TestHelper.CreatePlayer();
 
             // Act
             var result = unitUnderTest.GetFavoritePositionName();
 
             // Assert
-            Assert.Fail();
+            Assert.IsFalse(string.IsNullOrEmpty(result));
+            Assert.AreEqual("favorite", result);
         }
 
         [TestMethod]
         public void GetPositionNameByPreferenceRank_ShouldReturnPositionNameInGivenRank()
         {
             // Arrange
-            var unitUnderTest = this.CreatePlayer();
+            var unitUnderTest = TestHelper.CreatePlayer();
             int rank = 2;
 
             unitUnderTest.PositionPreferenceRank = new Mock<PositionPreferenceRank>().Object;

@@ -19,7 +19,7 @@ namespace YouthSoccerLineup.Model
             this.Ranking = ranking;
         }
 
-        private Dictionary<int, string> getPositionRanking()
+        private Dictionary<int, string> GetPositionRanking()
         {
             int rankNumber = 0;
             var rankingDictionary = new Dictionary<int, string>();

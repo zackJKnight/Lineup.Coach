@@ -16,6 +16,12 @@ namespace YouthSoccerLineup.Model
         {
             this.StartingPositions = new List<Guid>();
         }
+        public Player(string firstName, string lastName, string[] ranking)
+        {
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.PositionPreferenceRank = new PositionPreferenceRank(ranking);
+        }
 
         public string GetFavoritePositionName()
         {

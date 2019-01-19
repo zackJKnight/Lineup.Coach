@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Collections.Generic;
 using YouthSoccerLineup.Model;
 
 namespace YouthSoccerLineupTests.Model
@@ -9,6 +10,9 @@ namespace YouthSoccerLineupTests.Model
     public class GameTests
     {
         private MockRepository mockRepository;
+        private const int playersOnTeam = 10;
+        private const int playersOnField = 7;
+        private const int periodDuration = 20;
 
         [TestInitialize]
         public void TestInitialize()
@@ -24,11 +28,48 @@ namespace YouthSoccerLineupTests.Model
 
         private Game CreateGame()
         {
+
             var playDate = DateTime.Now;
-            return new Game(
+            var TestGame = new Game(
                 playDate,
-                7,
-                10);
+                playersOnTeam,
+                playersOnField);
+
+            var Periods = new List<Period>()
+            {
+                new Period(1, periodDuration),
+                new Period(2, periodDuration),
+                new Period(3, periodDuration),
+                new Period(4, periodDuration)
+            };
+            TestGame.Periods = Periods;
+            TestGame.Periods.ForEach(period => 
+            period.Positions = new List<Position>()
+            {
+                new Position("forward", Guid.NewGuid()),
+                new Position("forward", Guid.NewGuid()),
+                new Position("mid", Guid.NewGuid()),
+                new Position("mid", Guid.NewGuid()),
+                new Position("defense", Guid.NewGuid()),
+                new Position("defense", Guid.NewGuid()),
+                new Position("bench", Guid.NewGuid()),
+                new Position("bench", Guid.NewGuid()),
+                new Position("bench", Guid.NewGuid())
+            });
+
+            return TestGame;
+        }
+
+        private Team CreateTeam()
+        {
+            var TestTeam = new Team("NameOfTestTeam");
+            var Players = new List<Player>();
+            for(int i = 0; i < playersOnTeam; i++)
+            {
+                Players.Add(TestHelper.CreatePlayer());
+            }
+            TestTeam.Roster = Players;
+            return TestTeam;
         }
 
         [TestMethod]
