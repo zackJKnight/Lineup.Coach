@@ -34,7 +34,6 @@ namespace YouthSoccerLineupTests.Model
 
             // Assert
             Assert.IsFalse(string.IsNullOrEmpty(result));
-            Assert.AreEqual("favorite", result);
         }
 
         [TestMethod]

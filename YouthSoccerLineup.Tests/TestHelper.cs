@@ -8,30 +8,43 @@ namespace YouthSoccerLineupTests
 {
     public static class TestHelper
     {
-        public const int positionNamesCount = 4;
+        private const int POSITION_NAMES_COUNT = 4;
+        private const int ARBITRARY_RANDOM_STRING_LENGTH_LIMIT = 14;
 
+        private static Random Random => new Random();
         public static Player CreatePlayer()
         {
             string name = string.Empty;
-            Random random = new Random();
-            var length = random.Next(14);
+            int length = Random.Next(ARBITRARY_RANDOM_STRING_LENGTH_LIMIT);
             for (int i = 0; i < length; i++)
             {
-                // Thank you, C# corner.
-                name = $"{name}{Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)))}";
+
+                int latinAlphabetCharCount = 26;
+                int latinAlphabetUpperCaseStartingChar = 65;
+                // Add a random character to the string. Thank you, C# corner.                
+                name = $"{name}{Convert.ToChar(Convert.ToInt32(Math.Floor(latinAlphabetCharCount * Random.NextDouble() + latinAlphabetUpperCaseStartingChar)))}";
             }
 
-            //TODO shuffle this
-            var ranking = Enum.GetNames(typeof(PositionNames)).ToList().OrderBy(positionName => positionName).ToArray();
+            var ranking = Enum.GetNames(typeof(PositionNames)).ToList();
+            ranking.Remove("Bench");
+            Shuffle(ranking);
       
             var half = name.Length / 2;
-            return new Player(name.Substring(0, half), name.Substring(name.Length - half, half), ranking);
+            return new Player(name.Substring(0, half), name.Substring(name.Length - half, half), ranking.ToArray());
         }
 
+        private static void Shuffle<T>(this IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = Random.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
     }
 
-    private static void Shuffle()
-    {
-        int n =
-    }
 }
