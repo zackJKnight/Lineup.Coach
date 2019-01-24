@@ -14,17 +14,7 @@ namespace YouthSoccerLineupTests
         private static Random Random => new Random();
         public static Player CreatePlayer()
         {
-            string name = string.Empty;
-            int length = Random.Next(ARBITRARY_RANDOM_STRING_LENGTH_LIMIT);
-            for (int i = 0; i < length; i++)
-            {
-
-                int latinAlphabetCharCount = 26;
-                int latinAlphabetUpperCaseStartingChar = 65;
-                // Add a random character to the string. Thank you, C# corner.                
-                name = $"{name}{Convert.ToChar(Convert.ToInt32(Math.Floor(latinAlphabetCharCount * Random.NextDouble() + latinAlphabetUpperCaseStartingChar)))}";
-            }
-
+            string name = GetRandomString();
             var ranking = Enum.GetNames(typeof(PositionNames)).ToList();
             ranking.Remove("Bench");
             Shuffle(ranking);
@@ -33,6 +23,21 @@ namespace YouthSoccerLineupTests
             return new Player(name.Substring(0, half), name.Substring(name.Length - half, half), ranking.ToArray());
         }
 
+        public static string GetRandomString()
+        {
+            string randomString = string.Empty;
+            int length = Random.Next(ARBITRARY_RANDOM_STRING_LENGTH_LIMIT);
+            for (int i = 0; i < length; i++)
+            {
+
+                int latinAlphabetCharCount = 26;
+                int latinAlphabetUpperCaseStartingChar = 65;
+                // Add a random character to the string. Thank you, C# corner.                
+                randomString = $"{randomString}{Convert.ToChar(Convert.ToInt32(Math.Floor(latinAlphabetCharCount * Random.NextDouble() + latinAlphabetUpperCaseStartingChar)))}";
+            }
+            return randomString;
+
+        }
         private static void Shuffle<T>(this IList<T> list)
         {
             int n = list.Count;
