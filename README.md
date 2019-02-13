@@ -1,5 +1,7 @@
 # Console App to Aid the New Youth Soccer Coach
 
+[CI Badge](https://img.shields.io/azure-devops/build/zacharyknight/ce6418bd-131f-4ad6-b014-b24d45714fde/5.svg?label=Azure%20Devops&style=flat)
+
 Code in progress to aid my thinking about filling a lineup for a game of 8 year olds.
 
 ## Missing Concepts
@@ -33,5 +35,3 @@ If inside the round we find that no more preferred positions are available... wh
 - Add ability to pick from list of positions and formations for multiple instances of the same position on the pitch or create your own.
 
 - Goalie is added by default for local U8, but need to consider broader use
-
-https://img.shields.io/azure-devops/build/zacharyknight/ce6418bd-131f-4ad6-b014-b24d45714fde/5.svg?label=Azure%20Devops&style=flat
