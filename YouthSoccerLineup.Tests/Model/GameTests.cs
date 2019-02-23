@@ -99,17 +99,17 @@ namespace YouthSoccerLineupTests.Model
         }
 
         [TestMethod]
-        public void AskTheGame_CanYouPlaceAllPlayersBasedOnPreference()
+        public void AskTheGame_CanYouPlaceAllPlayersOnceBasedOnPreference()
         {
             var unitUnderTest = this.CreateGame(0, standardLineupPositions);
             // declare my team's needs; number of players and their position prefs
             var testTeam = this.CreateTeam();
             var teamsFavoritePositions = testTeam.Roster.Select(player => player.PositionPreferenceRank)
-                .Select(pref => pref.Ranking[0]);
+                .Select(pref => pref.Ranking[0].ToLower());
             // Ask the game whether it has a position for each of the team's players in their fav. pos.
             var availableGamePositionNames = unitUnderTest.Periods.SelectMany(period => period.Positions)
                 .Select(position => position.Name);
-            var unmetFavoritePositions = availableGamePositionNames.Union(teamsFavoritePositions);
+            var unmetFavoritePositions = availableGamePositionNames.Except(teamsFavoritePositions);
             Assert.IsFalse(unmetFavoritePositions.Any(), "There were unmet positions.");
 
             // but the question that remains is: do these fit within the periods. I guess it is good to first find out if it even fits within the game.
