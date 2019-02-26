@@ -57,7 +57,7 @@ namespace YouthSoccerLineupTests
         {
             // Arrange
             var unitUnderTest = CreateLineupFiller();
-
+           
             // Act
             unitUnderTest.FillLineupByPlayerPreference(this.mockGame.Object, mockTeam.Object.Roster);
 

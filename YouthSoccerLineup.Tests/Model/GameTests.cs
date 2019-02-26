@@ -12,8 +12,6 @@ namespace YouthSoccerLineupTests.Model
     {
         private MockRepository mockRepository;
         private const int playersOnTeam = 10;
-        private const int playersOnField = 7;
-        private const int periodDuration = 20;
         private readonly string[] standardLineupPositions = { "goalie",
             "defense",
             "defense",
@@ -35,56 +33,6 @@ namespace YouthSoccerLineupTests.Model
             this.mockRepository.VerifyAll();
         }
 
-        private Game CreateGame(int positionCount, string[] positionList)
-        {
-
-            var playDate = DateTime.Now;
-            var TestGame = new Game(
-                playDate,
-                playersOnTeam,
-                playersOnField);
-
-            var Periods = new List<Period>()
-            {
-                new Period(1, periodDuration),
-                new Period(2, periodDuration),
-                new Period(3, periodDuration),
-                new Period(4, periodDuration)
-            };
-            TestGame.Periods = Periods;
-            TestGame.Periods.ForEach(period =>
-            period.Positions = CreatePositions(positionCount, positionList));
-
-            return TestGame;
-        }
-
-        private List<Position> CreatePositions(int positionCount, string[] positionList)
-        {
-            if (positionList.Length > 0)
-            {
-
-                var givenList = new List<Position>();
-                foreach (var positionName in positionList)
-                {
-                    givenList.Add(new Position(positionName, Guid.NewGuid()));
-
-                }
-
-                return givenList;
-            }
-            else
-            {
-                positionCount = positionCount == 0 ? playersOnField : positionCount;
-
-                var generatedList = new List<Position>();
-                for (int i = 0; i < positionCount; i++)
-                {
-                    generatedList.Add(new Position(TestHelper.GetRandomString(), Guid.NewGuid()));
-                }
-
-                return generatedList;
-            }
-        }
 
         private Team CreateTeam()
         {
@@ -101,7 +49,7 @@ namespace YouthSoccerLineupTests.Model
         [TestMethod]
         public void AskTheGame_CanYouPlaceAllPlayersOnceBasedOnPreference()
         {
-            var unitUnderTest = this.CreateGame(0, standardLineupPositions);
+            var unitUnderTest = TestHelper.CreateGame(0, standardLineupPositions, playersOnTeam);
             // declare my team's needs; number of players and their position prefs
             var testTeam = this.CreateTeam();
             var teamsFavoritePositions = testTeam.Roster.Select(player => player.PositionPreferenceRank)
@@ -121,8 +69,8 @@ namespace YouthSoccerLineupTests.Model
             string expectedName = "defense";
 
             // Arrange
-            var unitUnderTest = this.CreateGame(0, new[]{
-                expectedName });
+            var unitUnderTest = TestHelper.CreateGame(0, new[]{
+                expectedName }, playersOnTeam);
 
             // Act
             var result = unitUnderTest.GetFirstOpenPosition(expectedName);
@@ -135,10 +83,10 @@ namespace YouthSoccerLineupTests.Model
         public void SetGamePositions_StateUnderTest_ExpectedBehavior()
         {
             // Arrange
-            var unitUnderTest = this.CreateGame(0,
+            var unitUnderTest = TestHelper.CreateGame(0,
                 new[] {
                     "bench"
-                    });
+                    }, playersOnTeam);
             string[] preferredPositionNames = new string[] { "defense", "forward" };
 
             Assert.IsFalse(unitUnderTest.Periods.SelectMany(period => period.Positions)
