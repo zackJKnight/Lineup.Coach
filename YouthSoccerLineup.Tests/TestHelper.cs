@@ -12,9 +12,19 @@ namespace YouthSoccerLineupTests
         private const int ARBITRARY_RANDOM_STRING_LENGTH_LIMIT = 14;
         private const int playersOnField = 7;
         private const int periodDuration = 20;
+        private static readonly string[] standardLineupPositions = { "goalie",
+            "defense",
+            "defense",
+            "mid",
+            "mid",
+            "forward",
+            "forward",
+        };
 
 
         private static Random Random => new Random();
+
+        public static string[] StandardLineupPositions { get => StandardLineupPositions; set => StandardLineupPositions = value; }
 
         public static Game CreateGame(int positionCount, string[] positionList, int playersOnTeam)
         {

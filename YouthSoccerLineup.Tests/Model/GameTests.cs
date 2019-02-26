@@ -12,14 +12,7 @@ namespace YouthSoccerLineupTests.Model
     {
         private MockRepository mockRepository;
         private const int playersOnTeam = 10;
-        private readonly string[] standardLineupPositions = { "goalie",
-            "defense",
-            "defense",
-            "mid",
-            "mid",
-            "forward",
-            "forward",
-        };
+
 
         [TestInitialize]
         public void TestInitialize()
@@ -49,7 +42,7 @@ namespace YouthSoccerLineupTests.Model
         [TestMethod]
         public void AskTheGame_CanYouPlaceAllPlayersOnceBasedOnPreference()
         {
-            var unitUnderTest = TestHelper.CreateGame(0, standardLineupPositions, playersOnTeam);
+            var unitUnderTest = TestHelper.CreateGame(0, TestHelper.StandardLineupPositions, playersOnTeam);
             // declare my team's needs; number of players and their position prefs
             var testTeam = this.CreateTeam();
             var teamsFavoritePositions = testTeam.Roster.Select(player => player.PositionPreferenceRank)

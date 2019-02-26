@@ -57,15 +57,15 @@ namespace YouthSoccerLineupTests
         {
             // Arrange
             var unitUnderTest = CreateLineupFiller();
-           
+            var testGame = TestHelper.CreateGame(10, TestHelper.StandardLineupPositions, 7);
             // Act
-            unitUnderTest.FillLineupByPlayerPreference(this.mockGame.Object, mockTeam.Object.Roster);
+            unitUnderTest.FillLineupByPlayerPreference(testGame, mockTeam.Object.Roster);
 
             // Assert
-            var actualPositionName = this.mockGame.Object.Periods
+            var actualPositionName = testGame.Periods
                 .SelectMany(period => period.Positions
                 .SelectMany(position => position.Name)).FirstOrDefault();
-            var shouldNotBeAnOpenPosition = this.mockGame.Object.GetFirstOpenPosition(actualPositionName.ToString()).Name;
+            var shouldNotBeAnOpenPosition = testGame.GetFirstOpenPosition(actualPositionName.ToString()).Name;
             Assert.AreEqual(string.Empty, shouldNotBeAnOpenPosition, "There should not be an open position, but there was.");
         }
     }
