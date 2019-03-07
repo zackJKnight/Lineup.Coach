@@ -28,33 +28,40 @@ namespace YouthSoccerLineup
                         if (player.StartingPositions.Count < theGame.StartingPositionsPerPlayerCount)
                         {
 
-                            for (int p = 0; p < preferenceRank; p++)
+                            for (int p = 1; p < preferenceRank; p++)
                             {
-                                var positionName = player.GetPositionNameByPreferenceRank(preferenceRank);
-                                var firstOpenMatch = theGame.GetFirstOpenPosition(positionName);
+                                var positionName = player.GetPositionNameByPreferenceRank(p);
+                                if (!string.IsNullOrEmpty(positionName))
+                                {
+                                    var firstOpenMatch = theGame.GetFirstOpenPosition(positionName);
 
-                                if (firstOpenMatch == null)
-                                {
-                                    Console.WriteLine($"No match for {positionName} but we can try the next ranked position for {player.FirstName}");
-                                    if (p == preferenceRank - 1)
+                                    if (firstOpenMatch == null)
                                     {
-                                        var openBench = theGame.GetFirstOpenBench();
-                                        openBench.StartingPlayer = player;
+                                        Console.WriteLine($"No match for {positionName} but we can try the next ranked position for {player.FirstName}");
+                                        if (p == preferenceRank - 1)
+                                        {
+                                            var openBench = theGame.GetFirstOpenBench();
+                                            if (openBench != null)
+                                            {
+                                                //TODO make a new bench spot if all positions are full
+                                                openBench.StartingPlayer = player;
+                                            }
+                                        }
+                                        p++;
+                                        continue;
                                     }
-                                    p++;
-                                    continue;
-                                }
-                                else
-                                {
-                                    var periodWithFirstOpenMatch = theGame.GetPeriodById(firstOpenMatch.PeriodId);
-                                    var playerStartingThisPeriod = periodWithFirstOpenMatch.Positions
-                                        .Any(position => player.StartingPositions.Contains(position.Id));
-                                    if (!playerStartingThisPeriod)
+                                    else
                                     {
-                                        firstOpenMatch.StartingPlayer = player;
-                                        // probably redundant
-                                        player.StartingPositions.Add(firstOpenMatch.Id);
-                                        playersInRound.Remove(player);
+                                        var periodWithFirstOpenMatch = theGame.GetPeriodById(firstOpenMatch.PeriodId);
+                                        var playerStartingThisPeriod = periodWithFirstOpenMatch.Positions
+                                            .Any(position => player.StartingPositions.Contains(position.Id));
+                                        if (!playerStartingThisPeriod)
+                                        {
+                                            firstOpenMatch.StartingPlayer = player;
+                                            // probably redundant
+                                            player.StartingPositions.Add(firstOpenMatch.Id);
+                                            playersInRound.Remove(player);
+                                        }
                                     }
                                 }
                             }
