@@ -27,7 +27,7 @@ namespace YouthSoccerLineupTests
             "forward",
         }; set => standardLineupPositions = value; }
 
-        public static Game CreateGame(int positionCount, string[] positionList, int playersOnTeam)
+        public static Game CreateGame(int positionsPerPeriodCount, string[] positionList, int playersOnTeam)
         {
 
             var playDate = DateTime.Now;
@@ -45,7 +45,7 @@ namespace YouthSoccerLineupTests
             };
             TestGame.Periods = Periods;
             TestGame.Periods.ForEach(period =>
-            period.Positions = CreatePositions(positionCount, positionList));
+            period.Positions = CreatePositions(positionsPerPeriodCount, positionList));
             TestGame.SetStartingPositionsPerPlayerCount();
             return TestGame;
         }

@@ -64,7 +64,7 @@ namespace YouthSoccerLineupTests
             var actualPositionName = testGame.Periods
                 .SelectMany(period => period.Positions
                 .Select(position => position.Name)).FirstOrDefault();
-            var shouldNotBeAnOpenPosition = testGame.GetFirstOpenPosition(actualPositionName.ToString()).Name;
+            var shouldNotBeAnOpenPosition = testGame.GetFirstOpenPositionByName(actualPositionName.ToString()).Name;
             Assert.AreEqual(string.Empty, shouldNotBeAnOpenPosition, "There should not be an open position, but there was.");
         }
     }

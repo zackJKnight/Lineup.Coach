@@ -51,7 +51,7 @@ namespace YouthSoccerLineup.Model
                 .FirstOrDefault();
         }
 
-        public Position GetFirstOpenPosition(string name)
+        public Position GetFirstOpenPositionByName(string name)
         {
             // TODO Structure this to prevent returning an empty position.
             Position firstOpenMatch = new Position("", Guid.NewGuid());
@@ -71,6 +71,25 @@ namespace YouthSoccerLineup.Model
             }
 
             return firstOpenMatch;
+        }
+
+        public List<Position> GetOpenPositionsByName(string name)
+        {
+            List<Position> openMatches = new List<Position>();
+            try
+            {
+                openMatches = this.Periods
+                    .OrderBy(period => period.Number)
+                    .SelectMany(period => period.Positions
+                    .Where(position => position.Name.ToLower() != "bench")
+                    .Where(position => position.Name.ToLower() == name && position.StartingPlayer == null)).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return openMatches;
         }
 
         public Period GetPeriodById(Guid id)

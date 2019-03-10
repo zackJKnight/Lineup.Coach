@@ -66,7 +66,7 @@ namespace YouthSoccerLineupTests.Model
                 expectedName }, playersOnTeam);
 
             // Act
-            var result = unitUnderTest.GetFirstOpenPosition(expectedName);
+            var result = unitUnderTest.GetFirstOpenPositionByName(expectedName);
 
             // Assert
             Assert.AreEqual(result.Name, expectedName, "Expected open position not returned.");
@@ -91,6 +91,26 @@ namespace YouthSoccerLineupTests.Model
             // Assert
             Assert.IsTrue(unitUnderTest.Periods.SelectMany(period => period.Positions)
                 .Where(position => position.Name == "defense").Any());
+        }
+
+        [TestMethod]
+        public void ShouldIndicateAllPositionsAreFilled()
+        {
+            var PlayerOne = TestHelper.CreatePlayer();
+            var PlayerTwo = TestHelper.CreatePlayer();
+            var GameUnderTest = TestHelper.CreateGame(2, new string[] { "positionOne", "positionTwo"}, 2);
+            GameUnderTest.Periods.ForEach(period => period.Positions.Where(position => position.Name == "positionOne").ToList().ForEach(p => p.StartingPlayer = PlayerOne));
+            GameUnderTest.Periods.ForEach(period => period.Positions.Where(position => position.Name == "positionTwo").ToList().ForEach(p => p.StartingPlayer = PlayerTwo));
+            Assert.IsTrue(GameUnderTest.AllGamePositionsFilled(), "All positions should have a starting player but they do not.");
+        }
+
+        [TestMethod]
+        public void ShouldIndicateAllPositionsAreNotFilled()
+        {
+            var PlayerOne = TestHelper.CreatePlayer();
+            var GameUnderTest = TestHelper.CreateGame(2, new string[] { "positionOne", "positionTwo" }, 2);
+            GameUnderTest.Periods.ForEach(period => period.Positions.Where(position => position.Name == "positionOne").ToList().ForEach(p => p.StartingPlayer = PlayerOne));
+            Assert.IsFalse(GameUnderTest.AllGamePositionsFilled(), "There should be unfilled positions.");
         }
     }
 }
