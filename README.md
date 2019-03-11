@@ -1,4 +1,4 @@
-# Console App to Aid the New Youth Soccer Coach
+# Console App to Aid the New Youth Coach
 
 ![CI Badge](https://img.shields.io/azure-devops/build/zacharyknight/ce6418bd-131f-4ad6-b014-b24d45714fde/5.svg?label=Azure%20Devops&style=flat) ![Test Badge](https://img.shields.io/azure-devops/tests/zacharyknight/Lineup.Coach/5.svg?style=flat)
 
@@ -31,6 +31,8 @@ If inside the round we find that no more preferred positions are available... wh
 - [ ] Count the number of favorited positions vs available in the game.
 
 ## Feature Ideas
+
+- Abstract for use in other sports
 
 - Add ability to pick from list of positions and formations for multiple instances of the same position on the pitch or create your own.
 
