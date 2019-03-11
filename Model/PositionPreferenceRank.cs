@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace YouthSoccerLineup.Model
+namespace Lineup.Coach.Model
 {
     [JsonObject]
     public class PositionPreferenceRank

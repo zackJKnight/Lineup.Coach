@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using YouthSoccerLineup.Model;
+using Lineup.Coach.Model;
 
-namespace YouthSoccerLineupTests
+namespace Lineup.CoachTests
 {
     public static class TestHelper
     {

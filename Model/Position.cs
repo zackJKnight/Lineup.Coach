@@ -1,6 +1,6 @@
 using System;
 
-namespace YouthSoccerLineup.Model
+namespace Lineup.Coach.Model
 {
     public class Position
     {

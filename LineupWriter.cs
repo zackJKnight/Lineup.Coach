@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using YouthSoccerLineup.Model;
+using Lineup.Coach.Model;
 
-namespace YouthSoccerLineup
+namespace Lineup.Coach
 {
     public static class LineupWriter
     {

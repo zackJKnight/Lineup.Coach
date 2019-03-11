@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace YouthSoccerLineup.Model
+namespace Lineup.Coach.Model
 {
     public class Team
     {

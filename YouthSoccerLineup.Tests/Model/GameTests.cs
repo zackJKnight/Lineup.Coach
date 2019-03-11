@@ -3,9 +3,9 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using YouthSoccerLineup.Model;
+using Lineup.Coach.Model;
 
-namespace YouthSoccerLineupTests.Model
+namespace Lineup.CoachTests.Model
 {
     [TestClass]
     public class GameTests

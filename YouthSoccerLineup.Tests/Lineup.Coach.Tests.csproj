@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YouthSoccerLineup.csproj" />
+    <ProjectReference Include="..\Lineup.Coach.csproj" />
   </ItemGroup>
 
 </Project>
