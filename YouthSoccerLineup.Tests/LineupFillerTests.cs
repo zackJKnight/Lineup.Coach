@@ -3,10 +3,10 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using YouthSoccerLineup;
-using YouthSoccerLineup.Model;
+using Lineup.Coach;
+using Lineup.Coach.Model;
 
-namespace YouthSoccerLineupTests
+namespace Lineup.CoachTests
 {
     [TestClass]
     public class LineupFillerTests

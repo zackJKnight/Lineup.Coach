@@ -1,6 +1,6 @@
 .vscode/launch.json
-YouthSoccerLineup.Tests/bin/*
-YouthSoccerLineup.Tests/obj/*
-bin/*
-obj/*
+Lineup.Coach.Tests/bin/*
+Lineup.Coach.Tests/obj/*
+**/bin/*
+**/obj/*
 .vs/*

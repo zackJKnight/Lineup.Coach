@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace YouthSoccerLineup.Model
+namespace Lineup.Coach.Model
 {
     public class RootObject
     {

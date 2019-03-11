@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 using System.IO;
-using YouthSoccerLineup.Model;
+using Lineup.Coach.Model;
 
-namespace YouthSoccerLineup.Service
+namespace Lineup.Coach.Service
 {
     public class PlayerService
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using YouthSoccerLineup.Model;
-using YouthSoccerLineup.Service;
+using Lineup.Coach.Model;
+using Lineup.Coach.Service;
 
-namespace YouthSoccerLineup
+namespace Lineup.Coach
 {
     internal class Program
     {

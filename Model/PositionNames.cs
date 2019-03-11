@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace YouthSoccerLineup.Model
+namespace Lineup.Coach.Model
 {
     public enum PositionNames
     {
