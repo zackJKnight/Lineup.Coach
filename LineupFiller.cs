@@ -22,7 +22,7 @@ namespace YouthSoccerLineup
             // so we need some way to check that. and then move the player to a position that better 
             // suits the conditions of the team and game.
 
-            while (!theGame.AllGamePositionsFilled())// && round < theGame.StartingPositionsPerPlayerCount)
+            while (!theGame.AllGamePositionsFilled() && round < theGame.StartingPositionsPerPlayerCount)
             {
                 for (int i = 0; i < initialPlayerCount; i++)
                 {
@@ -32,7 +32,6 @@ namespace YouthSoccerLineup
                         // Likely there will be a remainder.
                         if (player.StartingPositions.Count < theGame.StartingPositionsPerPlayerCount)
                         {
-
                             for (int p = 1; p < preferenceRank; p++)
                             {
                                 var positionName = player.GetPositionNameByPreferenceRank(p);
@@ -83,6 +82,16 @@ namespace YouthSoccerLineup
                 }
                 round++;
                 playersInRound = players;
+            }
+
+            if(!theGame.AllGamePositionsFilled())
+            {
+                // what's left and why?
+                var openPositions = theGame.GetOpenPositions();
+                // periods where the positions are full.  and find a player that has been assigned the
+                // max number of positions. so they can only go to the bench.
+                var periodsWithOpenPositions = theGame.GetPeriodsWithOpenPositions();
+                periodsWithOpenPositions.ToList();
             }
         }
 
