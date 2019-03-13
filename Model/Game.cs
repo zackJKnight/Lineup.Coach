@@ -47,8 +47,35 @@ namespace Lineup.Coach.Model
             return this.Periods
                 .OrderBy(period => period.Number)
                 .SelectMany(period => period.Positions)
-                .Where(position => position.Name.ToLower() == "bench")
+                .Where(position => position.PositionType == PositionType.Bench)
                 .FirstOrDefault();
+        }
+
+        public IEnumerable<Position> GetOpenBenches()
+        {
+            return this.Periods
+                .OrderBy(period => period.Number)
+                .SelectMany(period => period.Positions)
+                .Where(position => position.PositionType == PositionType.Bench)
+                .Where(position => position.StartingPlayer == null);
+        }
+
+        public IEnumerable<Position> GetOpenBenchesByPeriod(Guid periodId)
+        {
+            return this.Periods
+                .Where(period => period.Id == periodId)
+                .SelectMany(period => period.Positions)
+                .Where(position => position.PositionType == PositionType.Bench)
+                .Where(position => position.StartingPlayer == null);
+        }
+
+        public IEnumerable<Position> GetFilledBenchesByPeriod(Guid periodId)
+        {
+            return this.Periods
+                .Where(period => period.Id == periodId)
+                .SelectMany(period => period.Positions)
+                .Where(position => position.PositionType == PositionType.Bench)
+                .Where(position => position.StartingPlayer != null);
         }
 
         public Position GetFirstOpenPositionByName(string name)
@@ -59,9 +86,7 @@ namespace Lineup.Coach.Model
             {
                 firstOpenMatch = this.Periods
                     .OrderBy(period => period.Number)
-                    //.Where(period => !period.NonBenchPositionsAreFilled())
                     .SelectMany(period => period.Positions
-                    .Where(position => position.Name.ToLower() != "bench")
                     .Where(position => position.Name.ToLower() == name && position.StartingPlayer == null))
                     .FirstOrDefault();
             }
@@ -80,7 +105,7 @@ namespace Lineup.Coach.Model
                 openPositions = this.Periods
                     .OrderBy(period => period.Number)
                     .SelectMany(period => period.Positions
-                    .Where(position => position.Name.ToLower() != "bench")
+                    .Where(position => position.PositionType != PositionType.Bench)
                     .Where(position => position.StartingPlayer == null)).ToList();
             }
             catch (Exception ex)
@@ -99,7 +124,7 @@ namespace Lineup.Coach.Model
                 openMatches = this.Periods
                     .OrderBy(period => period.Number)
                     .SelectMany(period => period.Positions
-                    .Where(position => position.Name.ToLower() != "bench")
+                    .Where(position => position.PositionType != PositionType.Bench)
                     .Where(position => position.Name.ToLower() == name && position.StartingPlayer == null)).ToList();
             }
             catch (Exception ex)
@@ -119,7 +144,7 @@ namespace Lineup.Coach.Model
         {
             return this.Periods.Where(per => per.Positions.Any(pos => pos.StartingPlayer == null));
         }
-        
+
         public void SetGamePositions(string[] preferredPositionNames)
         {
             int positionInstanceCount = 2;
@@ -135,7 +160,7 @@ namespace Lineup.Coach.Model
             for (int i = 0; i < BenchCount; i++)
             {
                 this.Periods.ToList()
-                .ForEach(period => period.Positions.Add(new Position("bench", period.Id)));
+                .ForEach(period => period.Positions.Add(new Position("bench", period.Id, PositionType.Bench)));
             }
         }
 

@@ -47,7 +47,7 @@ namespace Lineup.CoachTests
             var random = new Random();
             var randomString = random.Next(5);
             player.Object.FirstName = $"testname-{randomString}";
-            string[] ranking = new string[] { "posOne", "posTwo" };
+            string[] ranking = TestHelper.StandardLineupPositions.OrderBy(x => random.Next()).ToArray();
             player.Object.PositionPreferenceRank = new PositionPreferenceRank(ranking);
             return player.Object;
         }

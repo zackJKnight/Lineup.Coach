@@ -25,12 +25,17 @@ namespace Lineup.Coach.Model
         public bool NonBenchPositionsAreFilled()
         {
             return this.Positions
-                .All(position => (position.Name).ToLower() != "bench" && position.StartingPlayer != null);
+                .All(position => position.PositionType != PositionType.Bench && position.StartingPlayer != null);
         }
 
         public bool AllPeriodPositionsFilled()
         {
             return this.Positions.All(position => position.StartingPlayer != null);
+        }
+
+        public bool IsPlayerStartingThisPeriod(Player player)
+        {
+            return this.Positions.Any(position => player.StartingPositions.Contains(position.Id));
         }
     }
 }
