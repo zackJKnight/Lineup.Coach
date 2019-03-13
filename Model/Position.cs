@@ -25,5 +25,6 @@ namespace Lineup.Coach.Model
             // TODO this next line is making me cringe. Need to research why.
             this.StartingPlayer.StartingPositions.Add(this.Id);
         }
+
     }
 }

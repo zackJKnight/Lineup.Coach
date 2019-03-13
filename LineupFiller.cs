@@ -14,77 +14,82 @@ namespace Lineup.Coach
         public void FillLineupByPlayerPreference(Game theGame, List<Player> players)
         {
             int round = 0;
-            var playersInRound = players;
+            var playersInRound = new List<Player>();
+            playersInRound.AddRange(players);
             int preferenceRank = players.Max(player => player.PositionPreferenceRank.Ranking.Count());
             int initialPlayerCount = playersInRound.Count;
-            // this thing will go forever because: we may have filled a position, but a subsequent fill
-            // caused the previous filling to make the rest of the game impossible to fill
-            // so we need some way to check that. and then move the player to a position that better 
-            // suits the conditions of the team and game.
 
-            while (!theGame.AllGamePositionsFilled() && round < theGame.StartingPositionsPerPlayerCount)
+            while (!theGame.AllGamePositionsFilled() && round < (int)Math.Round(theGame.StartingPositionsPerPlayerCount) + 1)
             {
                 for (int i = 0; i < initialPlayerCount; i++)
                 {
                     if (playersInRound.Count > 0)
                     {
+                        bool playerPlaced = false;
+
                         var player = getRandomPlayer(playersInRound);
-                        // Likely there will be a remainder.
-                        if (player.StartingPositions.Count < theGame.StartingPositionsPerPlayerCount)
+                        for (int p = 1; p < preferenceRank; p++)
                         {
-                            for (int p = 1; p < preferenceRank; p++)
+                            if (!playerPlaced)
                             {
                                 var positionName = player.GetPositionNameByPreferenceRank(p);
                                 if (!string.IsNullOrEmpty(positionName))
                                 {
-                                    // instead get all open matching positions.
                                     var OpenMatchingPositions = theGame.GetOpenPositionsByName(positionName);
 
                                     if (!OpenMatchingPositions.Any())
                                     {
-                                        Console.WriteLine($"No match for {positionName} but we can try the next ranked position for {player.FirstName}");
-                                        //var goalies = theGame.Periods.SelectMany(per => per.Positions.Where(po => po.Name.ToLower() == "goalie")).Select(pos => pos.StartingPlayer.FirstName).ToList();
-                                        
+                                        if (p == preferenceRank - 1)
+                                        {
+                                            var openBenches = theGame.GetOpenBenches();
+                                            foreach (var openBench in openBenches)
+                                            {
+                                                if (!theGame.GetPeriodById(openBench.PeriodId).IsPlayerStartingThisPeriod(player))
+                                                {
+                                                    openBench.StartingPlayer = player;
+                                                    player.StartingPositions.Add(openBench.Id);
+                                                    playerPlaced = true;
+                                                    break;
+                                                }
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine($"No match for {positionName} but we can try the next ranked position for {player.FirstName}");
+                                        }
                                         p++;
-                                        continue;
+
                                     }
                                     else
                                     {
                                         foreach (var OpenMatchingPosition in OpenMatchingPositions)
                                         {
                                             var periodWithFirstOpenMatch = theGame.GetPeriodById(OpenMatchingPosition.PeriodId);
-                                            var playerStartingThisPeriod = periodWithFirstOpenMatch.Positions
-                                                .Any(position => player.StartingPositions.Contains(position.Id));
-                                            if (!playerStartingThisPeriod)
+                                            if (periodWithFirstOpenMatch != null)
                                             {
-                                                OpenMatchingPosition.StartingPlayer = player;
-                                                // probably redundant
-                                                player.StartingPositions.Add(OpenMatchingPosition.Id);
-                                                playersInRound.Remove(player);
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                //player is already starting this period. we want to put him in the next matching position.
-                                                continue;
+                                                var playerStartingThisPeriod = periodWithFirstOpenMatch.IsPlayerStartingThisPeriod(player);
+                                                if (!playerStartingThisPeriod)
+                                                {
+                                                    OpenMatchingPosition.StartingPlayer = player;
+                                                    player.StartingPositions.Add(OpenMatchingPosition.Id);
+                                                    playersInRound.Remove(player);
+                                                    playerPlaced = true;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                        else
-                        {
-                            var openBench = theGame.GetFirstOpenBench();
-                            openBench.StartingPlayer = player;
-                        }
                     }
                 }
                 round++;
-                playersInRound = players;
+                playersInRound.AddRange(players);
             }
 
-            if(!theGame.AllGamePositionsFilled())
+            if (!theGame.AllGamePositionsFilled())
             {
                 // what's left and why?
                 var openPositions = theGame.GetOpenPositions();
@@ -94,6 +99,7 @@ namespace Lineup.Coach
                 periodsWithOpenPositions.ToList();
             }
         }
+    
 
         private Player getRandomPlayer(List<Player> players)
         {

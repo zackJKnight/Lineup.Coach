@@ -86,9 +86,7 @@ namespace Lineup.Coach.Model
             {
                 firstOpenMatch = this.Periods
                     .OrderBy(period => period.Number)
-                    //.Where(period => !period.NonBenchPositionsAreFilled())
                     .SelectMany(period => period.Positions
-                    .Where(position => position.Name.ToLower() != "bench")
                     .Where(position => position.Name.ToLower() == name && position.StartingPlayer == null))
                     .FirstOrDefault();
             }
@@ -107,7 +105,7 @@ namespace Lineup.Coach.Model
                 openPositions = this.Periods
                     .OrderBy(period => period.Number)
                     .SelectMany(period => period.Positions
-                    .Where(position => position.Name.ToLower() != "bench")
+                    .Where(position => position.PositionType != PositionType.Bench)
                     .Where(position => position.StartingPlayer == null)).ToList();
             }
             catch (Exception ex)
@@ -126,7 +124,7 @@ namespace Lineup.Coach.Model
                 openMatches = this.Periods
                     .OrderBy(period => period.Number)
                     .SelectMany(period => period.Positions
-                    .Where(position => position.Name.ToLower() != "bench")
+                    .Where(position => position.PositionType != PositionType.Bench)
                     .Where(position => position.Name.ToLower() == name && position.StartingPlayer == null)).ToList();
             }
             catch (Exception ex)
