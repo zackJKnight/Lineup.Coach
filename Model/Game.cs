@@ -145,6 +145,10 @@ namespace Lineup.Coach.Model
             return this.Periods.Where(per => per.Positions.Any(pos => pos.StartingPlayer == null));
         }
 
+        public IEnumerable<Player> GetUnPlacedPlayers(List<Player> players)
+        {
+            return players.Where(player => player.StartingPositions.Count >= StartingPositionsPerPlayerCount);
+        }
         public void SetGamePositions(string[] preferredPositionNames)
         {
             int positionInstanceCount = 2;
@@ -168,7 +172,7 @@ namespace Lineup.Coach.Model
         {
             // determine how many starting positions each player can have.
 
-            this.StartingPositionsPerPlayerCount = (double)this.MaxPlayersOnFieldCount * this.Periods.Count / AvailablePlayerCount;
+            this.StartingPositionsPerPlayerCount = (int)this.MaxPlayersOnFieldCount * this.Periods.Count / AvailablePlayerCount;
         }
 
         public bool AllGamePositionsFilled()

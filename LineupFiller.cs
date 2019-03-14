@@ -19,7 +19,7 @@ namespace Lineup.Coach
             int preferenceRank = players.Max(player => player.PositionPreferenceRank.Ranking.Count());
             int initialPlayerCount = playersInRound.Count;
 
-            while (!theGame.AllGamePositionsFilled() && round < (int)Math.Round(theGame.StartingPositionsPerPlayerCount) + 1)
+            while (!theGame.AllGamePositionsFilled() && round < theGame.StartingPositionsPerPlayerCount + 1)
             {
                 for (int i = 0; i < initialPlayerCount; i++)
                 {
@@ -47,7 +47,7 @@ namespace Lineup.Coach
                                                 if (!theGame.GetPeriodById(openBench.PeriodId).IsPlayerStartingThisPeriod(player))
                                                 {
                                                     openBench.StartingPlayer = player;
-                                                    player.StartingPositions.Add(openBench.Id);
+                                                    player.Benches.Add(openBench.Id);
                                                     playerPlaced = true;
                                                     break;
                                                 }
@@ -93,6 +93,21 @@ namespace Lineup.Coach
             {
                 // what's left and why?
                 var openPositions = theGame.GetOpenPositions();
+                var unBenchedPlayers = players.Where(player => player.Benches.Count == 0);
+                var openBenches = theGame.GetOpenBenches();
+                foreach (var player in unBenchedPlayers)
+                {
+                    foreach (var openBench in openBenches)
+                    {
+                        if (!theGame.GetPeriodById(openBench.PeriodId).IsPlayerStartingThisPeriod(player))
+                        {
+                            openBench.StartingPlayer = player;
+                            player.Benches.Add(openBench.Id);
+                            openBenches.ToList().Remove(openBench);
+                        }
+                    }
+                }
+                var placeThesePlayers = theGame.GetUnPlacedPlayers(players);
                 // periods where the positions are full.  and find a player that has been assigned the
                 // max number of positions. so they can only go to the bench.
                 var periodsWithOpenPositions = theGame.GetPeriodsWithOpenPositions();
