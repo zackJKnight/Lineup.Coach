@@ -1,6 +1,6 @@
 # Console App to Aid the New Youth Coach
 
-![CI Badge](https://img.shields.io/azure-devops/build/zacharyknight/ce6418bd-131f-4ad6-b014-b24d45714fde/5.svg?label=Azure%20Devops&style=flat) ![Test Badge](https://img.shields.io/azure-devops/tests/zacharyknight/Lineup.Coach/5.svg?style=flat)
+![CI Badge](https://img.shields.io/azure-devops/build/zacharyknight/ce6418bd-131f-4ad6-b014-b24d45714fde/6.svg?label=Azure%20Devops&style=flat) ![Test Badge](https://img.shields.io/azure-devops/tests/zacharyknight/Lineup.Coach/6.svg?style=flat)
 
 Code in progress to aid my thinking about filling a lineup for a game of 8 year olds.
 
