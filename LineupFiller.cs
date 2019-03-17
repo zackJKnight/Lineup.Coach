@@ -74,6 +74,10 @@ namespace Lineup.Coach
         {
             // what's left and why?
             var openPositions = theGame.GetOpenPositions();
+
+            // grab players that have played the least and place them. this is where a placement score would help.
+
+
             var unBenchedPlayers = players.Where(player => player.Benches.Count == 0);
             bool success = TryBenchPlayers(theGame, unBenchedPlayers.ToList());
             var placeThesePlayers = theGame.GetUnPlacedPlayers(players);

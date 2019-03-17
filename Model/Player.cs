@@ -11,6 +11,8 @@ namespace Lineup.Coach.Model
         public string LastName { get; set; }
         public List<Guid> Benches { get; set; }
         public List<Guid> StartingPositions { get; set; }
+
+        public int PlacementScore { get; set; }
         public PositionPreferenceRank PositionPreferenceRank { get; set; }
 
         public Player()
