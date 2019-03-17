@@ -33,9 +33,14 @@ namespace Lineup.Coach.Model
             return this.Positions.All(position => position.StartingPlayer != null);
         }
 
+        public bool IsPlayerBenchedThisPeriod(Player player)
+        {
+            return this.Positions.Any(position => player.Benches.Contains(position.Id));
+        }
         public bool IsPlayerStartingThisPeriod(Player player)
         {
             return this.Positions.Any(position => player.StartingPositions.Contains(position.Id));
         }
+
     }
 }
