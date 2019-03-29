@@ -30,7 +30,7 @@ namespace Lineup.Coach
             var distinctPositionNames = PlayerInfo.Players
                 .SelectMany(player => player.PositionPreferenceRank.Ranking).Distinct().ToArray();
             TheGame.SetGamePositions(distinctPositionNames);
-            TheGame.SetStartingPositionsPerPlayerCount();
+            TheGame.StartingPositionsPerPlayerCount = TheGame.SetStartingPositionsPerPlayerCount();
 
             lineupfiller.FillLineupByPlayerPreference(TheGame, TheTeam.Roster);
             LineupWriter.WriteLineup(TheGame);

@@ -13,7 +13,15 @@ namespace Lineup.Coach
                     Console.WriteLine($"{Environment.NewLine}Period {period.Number} Starting Players: ");
                     period.Positions.ForEach(position =>
                 {
-                    Console.WriteLine($"{position.Name.ToUpper()}: {(position.StartingPlayer != null ? position.StartingPlayer.FirstName : "No Player Set")}");
+                    string placementScore = string.Empty;
+                    string name = "No Player Set";
+                    if (position.StartingPlayer != null)
+                        {
+                        name = position.StartingPlayer.FirstName;
+                        placementScore = position.StartingPlayer.PlacementScore.ToString();
+                    }
+
+                    Console.WriteLine($"{position.Name.ToUpper()}: {name}         ---Placement Score: {placementScore}");
                 });
                 });
         }

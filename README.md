@@ -18,13 +18,13 @@ Placing by player preference alone leaves out the fact that the Game has needs t
 
 - [x] Rounds: looping the player list in random order the first round.
 
-At some point the order may be that players that did not get their preference go to the top of the round.
+- [ ] Implement the player placement score: At some point the order may be that players that did not get their preference go to the top of the round.
 
 If inside the round we find that no more preferred positions are available... what do we do?
 
 - [x] Try to put the player in the next postion down the ranking
 
-- [ ] Do we need to know how many times each player can start in its favorite position?
+- [x] Do we need to know how many times each player can start in its favorite position?
 
 - [x] We should look at the number of times each player can start in a game.
 

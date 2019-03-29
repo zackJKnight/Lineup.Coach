@@ -100,6 +100,7 @@ namespace Lineup.Coach
                     {
                         OpenMatchingPosition.StartingPlayer = player;
                         player.StartingPositions.Add(OpenMatchingPosition.Id);
+                        player.PlacementScore += player.PositionPreferenceRank.Ranking.Length - Array.IndexOf(player.PositionPreferenceRank.Ranking, OpenMatchingPosition.Name.ToLower());
                         playersInRound.Remove(player);
                         playerPlaced = true;
                         break;
@@ -112,6 +113,7 @@ namespace Lineup.Coach
 
         private static bool TryBenchPlayers(Game theGame, List<Player> players)
         {
+            // TODO ITS BENCHING PLAYERS THAT ARE STARTING THIS PERIOD!!!
             bool playerPlaced = false;
             var openBenches = theGame.GetOpenBenches();
             foreach (var player in players)

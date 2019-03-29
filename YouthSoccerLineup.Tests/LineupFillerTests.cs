@@ -67,5 +67,16 @@ namespace Lineup.CoachTests
             var shouldNotBeAnOpenPosition = testGame.GetFirstOpenPositionByName(actualPositionName.ToString()).Name;
             Assert.AreEqual(string.Empty, shouldNotBeAnOpenPosition, "There should not be an open position, but there was.");
         }
+
+        [TestMethod]
+        public void ShouldNotBenchWhenPlayerStartsThisPeriod()
+        {
+            // Arrange
+            var unitUnderTest = CreateLineupFiller();
+            var testGame = TestHelper.CreateGame(10, TestHelper.StandardLineupPositions, 7);
+            // Act
+            unitUnderTest.FillLineupByPlayerPreference(testGame, mockTeam.Object.Roster);
+            Assert.Fail("Someone, anyone; finish the test.");
+        }
     }
 }

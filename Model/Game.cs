@@ -40,6 +40,7 @@ namespace Lineup.Coach.Model
             this.MaxPlayersOnFieldCount = maxNumberOfPlayersOnField;
             BenchCount = AvailablePlayerCount - MaxPlayersOnFieldCount;
             BenchCount = BenchCount < 0 ? 0 : BenchCount;
+            this.StartingPositionsPerPlayerCount = SetStartingPositionsPerPlayerCount();
         }
 
         public Position GetFirstOpenBench()
@@ -168,11 +169,10 @@ namespace Lineup.Coach.Model
             }
         }
 
-        public void SetStartingPositionsPerPlayerCount()
+        public int SetStartingPositionsPerPlayerCount()
         {
-            // determine how many starting positions each player can have.
+            return (int)this.MaxPlayersOnFieldCount * this.Periods.Count / AvailablePlayerCount;
 
-            this.StartingPositionsPerPlayerCount = (int)this.MaxPlayersOnFieldCount * this.Periods.Count / AvailablePlayerCount;
         }
 
         public bool AllGamePositionsFilled()

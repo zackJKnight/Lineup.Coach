@@ -46,7 +46,7 @@ namespace Lineup.CoachTests
             TestGame.Periods = Periods;
             TestGame.Periods.ForEach(period =>
             period.Positions = CreatePositions(positionsPerPeriodCount, positionList));
-            TestGame.SetStartingPositionsPerPlayerCount();
+            TestGame.StartingPositionsPerPlayerCount = TestGame.SetStartingPositionsPerPlayerCount();
             return TestGame;
         }
         public static Player CreatePlayer()
