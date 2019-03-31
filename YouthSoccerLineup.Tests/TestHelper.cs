@@ -45,7 +45,7 @@ namespace Lineup.CoachTests
             };
             TestGame.Periods = Periods;
             TestGame.Periods.ForEach(period =>
-            period.Positions = CreatePositions(positionsPerPeriodCount, positionList));
+            period.Positions = CreatePositions(positionsPerPeriodCount, positionList, period.Id));
             TestGame.StartingPositionsPerPlayerCount = TestGame.SetStartingPositionsPerPlayerCount();
             return TestGame;
         }
@@ -60,7 +60,7 @@ namespace Lineup.CoachTests
             return new Player(name.Substring(0, half), name.Substring(name.Length - half, half), ranking.ToArray());
         }
 
-        private static List<Position> CreatePositions(int positionCount, string[] positionList)
+        private static List<Position> CreatePositions(int positionCount, string[] positionList, Guid periodId)
         {
             if (positionList.Length > 0)
             {
@@ -68,7 +68,7 @@ namespace Lineup.CoachTests
                 var givenList = new List<Position>();
                 foreach (var positionName in positionList)
                 {
-                    givenList.Add(new Position(positionName, Guid.NewGuid()));
+                    givenList.Add(new Position(positionName, periodId));
 
                 }
 

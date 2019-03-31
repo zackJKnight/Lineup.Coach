@@ -82,7 +82,7 @@ namespace Lineup.Coach.Model
         public Position GetFirstOpenPositionByName(string name)
         {
             // TODO Structure this to prevent returning an empty position.
-            Position firstOpenMatch = new Position("", Guid.NewGuid());
+            Position firstOpenMatch = null;
             try
             {
                 firstOpenMatch = this.Periods
@@ -92,10 +92,14 @@ namespace Lineup.Coach.Model
                     .FirstOrDefault();
             }
             catch (Exception ex)
+
             {
                 throw ex;
             }
-
+            if(firstOpenMatch == null)
+            {
+                firstOpenMatch = new Position("", Guid.NewGuid());
+            }
             return firstOpenMatch;
         }
         public List<Position> GetOpenPositions()

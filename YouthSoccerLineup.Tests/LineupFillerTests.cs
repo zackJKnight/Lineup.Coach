@@ -65,7 +65,7 @@ namespace Lineup.CoachTests
                 .SelectMany(period => period.Positions
                 .Select(position => position.Name)).FirstOrDefault();
             var shouldNotBeAnOpenPosition = testGame.GetFirstOpenPositionByName(actualPositionName.ToString()).Name;
-            Assert.AreEqual(string.Empty, shouldNotBeAnOpenPosition, "There should not be an open position, but there was.");
+            Assert.AreNotEqual(string.Empty, shouldNotBeAnOpenPosition, "There should not be an open position, but there was.");
         }
 
         [TestMethod]
@@ -76,7 +76,13 @@ namespace Lineup.CoachTests
             var testGame = TestHelper.CreateGame(10, TestHelper.StandardLineupPositions, 7);
             // Act
             unitUnderTest.FillLineupByPlayerPreference(testGame, mockTeam.Object.Roster);
-            Assert.Fail("Someone, anyone; finish the test.");
+            var periods = testGame.Periods;
+            foreach (var period in periods)
+            {
+                var playersPlacedMoreThanOnceAPeriod = period.Positions
+                    .GroupBy(position => position.StartingPlayer);
+                Assert.Fail("Someone, anyone; finish the test.");
+            }
         }
     }
 }
