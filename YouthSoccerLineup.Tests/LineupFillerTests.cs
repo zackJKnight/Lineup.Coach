@@ -65,23 +65,26 @@ namespace Lineup.CoachTests
                 .SelectMany(period => period.Positions
                 .Select(position => position.Name)).FirstOrDefault();
             var shouldNotBeAnOpenPosition = testGame.GetFirstOpenPositionByName(actualPositionName.ToString()).Name;
-            Assert.AreNotEqual(string.Empty, shouldNotBeAnOpenPosition, "There should not be an open position, but there was.");
+            Assert.AreEqual(string.Empty, shouldNotBeAnOpenPosition, "There should not be an open position, but there was.");
         }
 
         [TestMethod]
         public void ShouldNotBenchWhenPlayerStartsThisPeriod()
         {
-            // Arrange
             var unitUnderTest = CreateLineupFiller();
             var testGame = TestHelper.CreateGame(10, TestHelper.StandardLineupPositions, 7);
-            // Act
+            for (int i = 0; i < 2; i++)
+            {
+                testGame.Periods.ForEach(period => period.Positions.Add(new Position("bench", period.Id, PositionType.Bench)));
+            }
             unitUnderTest.FillLineupByPlayerPreference(testGame, mockTeam.Object.Roster);
             var periods = testGame.Periods;
             foreach (var period in periods)
             {
                 var playersPlacedMoreThanOnceAPeriod = period.Positions
                     .GroupBy(position => position.StartingPlayer);
-                Assert.Fail("Someone, anyone; finish the test.");
+                Assert.IsFalse(playersPlacedMoreThanOnceAPeriod.Any(position => position.Count() > 1),
+                    "A player cannot start and bench in the same period.");
             }
         }
     }
