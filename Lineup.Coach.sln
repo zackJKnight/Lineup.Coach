@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lineup.Coach", "Lineup.Coach.csproj", "{9D1E76CF-E036-47A4-8A50-0D09A07786CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lineup.Coach.Tests", "YouthSoccerLineup.Tests\Lineup.Coach.Tests.csproj", "{7A5D356A-3EA0-4F74-B088-56B35F2B11E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lineup.Coach.Tests", "Lineup.Coach.Tests\Lineup.Coach.Tests.csproj", "{7A5D356A-3EA0-4F74-B088-56B35F2B11E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
