@@ -6,8 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Lineup.Coach.Tests\**" />
     <Compile Remove="YouthSoccerLineup.Tests\**" />
+    <EmbeddedResource Remove="Lineup.Coach.Tests\**" />
     <EmbeddedResource Remove="YouthSoccerLineup.Tests\**" />
+    <None Remove="Lineup.Coach.Tests\**" />
     <None Remove="YouthSoccerLineup.Tests\**" />
   </ItemGroup>
 
