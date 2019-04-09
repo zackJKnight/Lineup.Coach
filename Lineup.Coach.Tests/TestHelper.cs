@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Lineup.Coach.Model;
 
-namespace Lineup.CoachTests
+namespace Lineup.Coach.Tests
 {
     public static class TestHelper
     {

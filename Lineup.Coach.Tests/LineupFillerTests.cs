@@ -6,7 +6,7 @@ using System.Linq;
 using Lineup.Coach;
 using Lineup.Coach.Model;
 
-namespace Lineup.CoachTests
+namespace Lineup.Coach.Tests
 {
     [TestClass]
     public class LineupFillerTests

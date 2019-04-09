@@ -3,7 +3,7 @@ using Moq;
 using System;
 using Lineup.Coach.Model;
 
-namespace Lineup.CoachTests.Model
+namespace Lineup.Coach.Tests.Model
 {
     [TestClass]
     public class PlayerTests
