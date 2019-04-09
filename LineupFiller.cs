@@ -113,14 +113,14 @@ namespace Lineup.Coach
 
         private static bool TryBenchPlayers(Game theGame, List<Player> players)
         {
-            // TODO ITS BENCHING PLAYERS THAT ARE STARTING THIS PERIOD!!!
             bool playerPlaced = false;
             var openBenches = theGame.GetOpenBenches();
             foreach (var player in players)
             {
                 foreach (var openBench in openBenches)
                 {
-                    if (!theGame.GetPeriodById(openBench.PeriodId).IsPlayerBenchedThisPeriod(player))
+                    var currentPeriod = theGame.GetPeriodById(openBench.PeriodId);
+                    if (!currentPeriod.IsPlayerBenchedThisPeriod(player) && !currentPeriod.IsPlayerStartingThisPeriod(player))
                     {
                         openBench.StartingPlayer = player;
                         player.Benches.Add(openBench.Id);

@@ -8,7 +8,7 @@ Code in progress to aid my thinking about filling a lineup for a game of 8 year 
 
 Placing by player preference alone leaves out the fact that the Game has needs that aren't always met by the player's prefs.
 
-- [x] We know how many positions each player can start in. 
+- [x] We know how many positions each player can start in.
 
 - [ ] Determine bench count per game. How many times will each player sit?
 
