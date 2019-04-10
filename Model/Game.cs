@@ -147,7 +147,8 @@ namespace Lineup.Coach.Model
 
         public IEnumerable<Period> GetPeriodsWithOpenPositions()
         {
-            return this.Periods.Where(per => per.Positions.Any(pos => pos.StartingPlayer == null));
+            return this.Periods.Where(per => per.Positions
+            .Any(pos => pos.StartingPlayer == null && pos.PositionType != PositionType.Bench));
         }
 
         public IEnumerable<Player> GetUnPlacedPlayers(List<Player> players)
