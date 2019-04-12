@@ -72,19 +72,23 @@ namespace Lineup.Coach
 
         private static void FillRemainingPositions(Game theGame, List<Player> players)
         {
-            // what's left and why?
-            var openPositions = theGame.GetOpenPositions();
-
-            // grab players that have played the least and place them. this is where a placement score would help.
-
-
-            var unBenchedPlayers = players.Where(player => player.Benches.Count == 0);
+            var unBenchedPlayers = players
+                .Where(player => player.Benches.Count <= theGame.Periods.Count() - theGame.StartingPositionsPerPlayerCount)
+                .OrderBy(player => player.PlacementScore);
             bool success = TryBenchPlayers(theGame, unBenchedPlayers.ToList());
-            var placeThesePlayers = theGame.GetUnPlacedPlayers(players);
-            // periods where the positions are full.  and find a player that has been assigned the
-            // max number of positions. so they can only go to the bench.
-            var periodsWithOpenPositions = theGame.GetPeriodsWithOpenPositions();
-            periodsWithOpenPositions.ToList();
+
+            var placeThesePlayers = theGame.GetUnPlacedPlayers(players)
+                .OrderBy(player => player.PlacementScore);
+
+            var openPositions = theGame.GetOpenPositions();
+            if (openPositions.Any())
+            {
+                foreach (var lowScorePlayer in placeThesePlayers)
+                {
+                    TryPlacePlayer(theGame, placeThesePlayers.ToList(), lowScorePlayer, openPositions);
+                }
+            }
+            
         }
 
         private static bool TryPlacePlayer(Game theGame, List<Player> playersInRound, Player player, List<Position> OpenMatchingPositions)
@@ -96,7 +100,7 @@ namespace Lineup.Coach
                 if (periodWithFirstOpenMatch != null)
                 {
                     var playerStartingThisPeriod = periodWithFirstOpenMatch.IsPlayerStartingThisPeriod(player);
-                    if (!playerStartingThisPeriod)
+                    if (!playerStartingThisPeriod && OpenMatchingPosition.StartingPlayer == null)
                     {
                         OpenMatchingPosition.StartingPlayer = player;
                         player.StartingPositions.Add(OpenMatchingPosition.Id);
@@ -124,6 +128,7 @@ namespace Lineup.Coach
                     {
                         openBench.StartingPlayer = player;
                         player.Benches.Add(openBench.Id);
+                        player.PlacementScore = player.PlacementScore - 1;
                         playerPlaced = true;
                         break;
                     }
