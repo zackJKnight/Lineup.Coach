@@ -33,6 +33,12 @@ namespace Lineup.Coach
             TheGame.StartingPositionsPerPlayerCount = TheGame.SetStartingPositionsPerPlayerCount();
 
             lineupfiller.FillLineupByPlayerPreference(TheGame, TheTeam.Roster);
+
+            if (!TheGame.AllGamePositionsFilled())
+            {
+                lineupfiller.FillRemainingPositions(TheGame, TheTeam.Roster);
+            }
+
             LineupWriter.WriteLineup(TheGame);
 
             Console.ReadKey();

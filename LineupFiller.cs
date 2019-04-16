@@ -18,7 +18,7 @@ namespace Lineup.Coach
             playersInRound.AddRange(players);
             int preferenceRank = players.Max(player => player.PositionPreferenceRank.Ranking.Count());
             int initialPlayerCount = playersInRound.Count;
-
+            //Rounds - within the rounds the players (in random order) are placed based on preference.
             while (!theGame.AllGamePositionsFilled() && round < theGame.StartingPositionsPerPlayerCount + 1)
             {
                 for (int i = 0; i < initialPlayerCount; i++)
@@ -64,17 +64,13 @@ namespace Lineup.Coach
                 playersInRound.AddRange(players);
             }
 
-            if (!theGame.AllGamePositionsFilled())
-            {
-                FillRemainingPositions(theGame, players);
-            }
         }
 
-        private static void FillRemainingPositions(Game theGame, List<Player> players)
+        public void FillRemainingPositions(Game theGame, List<Player> players)
         {
             var unBenchedPlayers = players
                 .Where(player => player.Benches.Count <= theGame.Periods.Count() - theGame.StartingPositionsPerPlayerCount)
-                .OrderBy(player => player.PlacementScore);
+                .OrderBy(player => player.Benches.Count);
             bool success = TryBenchPlayers(theGame, unBenchedPlayers.ToList());
 
             var placeThesePlayers = theGame.GetUnPlacedPlayers(players)

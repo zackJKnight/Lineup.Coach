@@ -13,7 +13,6 @@ namespace Lineup.Coach.Tests.Model
         private MockRepository mockRepository;
         private const int playersOnTeam = 10;
 
-
         [TestInitialize]
         public void TestInitialize()
         {
