@@ -1,0 +1,2 @@
+http://.../api/teams/GREENMACHINE/games?playDate=030319
+http://.../api/teams/GREENMACHINE/games/1/periods/2/positions
