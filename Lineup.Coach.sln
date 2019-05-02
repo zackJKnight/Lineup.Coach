@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2016
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lineup.Coach", "Lineup.Coach.csproj", "{9D1E76CF-E036-47A4-8A50-0D09A07786CF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lineup.Coach.Tests", "Lineup.Coach.Tests\Lineup.Coach.Tests.csproj", "{7A5D356A-3EA0-4F74-B088-56B35F2B11E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lineup.Coach.Persistence", "Lineup.Coach.Persistence\Lineup.Coach.Persistence.csproj", "{C5ED9AD1-69AF-43B0-8277-8B56F453E0F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,9 @@ Global
 		{7A5D356A-3EA0-4F74-B088-56B35F2B11E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A5D356A-3EA0-4F74-B088-56B35F2B11E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A5D356A-3EA0-4F74-B088-56B35F2B11E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5ED9AD1-69AF-43B0-8277-8B56F453E0F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5ED9AD1-69AF-43B0-8277-8B56F453E0F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5ED9AD1-69AF-43B0-8277-8B56F453E0F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
