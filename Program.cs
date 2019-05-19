@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Lineup.Coach.Model;
+using Lineup.Coach.Application;
+using Lineup.Coach.Domain;
 using Lineup.Coach.Service;
 
 namespace Lineup.Coach

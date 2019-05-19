@@ -6,12 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Lineup.Coach.Domain\**" />
+    <Compile Remove="Lineup.Coach.Persistence\**" />
     <Compile Remove="Lineup.Coach.Tests\**" />
-    <Compile Remove="YouthSoccerLineup.Tests\**" />
+    <EmbeddedResource Remove="Lineup.Coach.Domain\**" />
+    <EmbeddedResource Remove="Lineup.Coach.Persistence\**" />
     <EmbeddedResource Remove="Lineup.Coach.Tests\**" />
-    <EmbeddedResource Remove="YouthSoccerLineup.Tests\**" />
+    <None Remove="Lineup.Coach.Domain\**" />
+    <None Remove="Lineup.Coach.Persistence\**" />
     <None Remove="Lineup.Coach.Tests\**" />
-    <None Remove="YouthSoccerLineup.Tests\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,7 +32,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="newtonsoft.json" Version="12.0.1" />
+    <PackageReference Include="newtonsoft.json" Version="12.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="Lineup.Coach.Domain\Lineup.Coach.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
   </ItemGroup>
 
 </Project>

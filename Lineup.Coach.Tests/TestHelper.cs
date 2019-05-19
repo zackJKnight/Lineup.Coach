@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Lineup.Coach.Model;
+using Lineup.Coach.Application;
+using Lineup.Coach.Domain;
 
 namespace Lineup.Coach.Tests
 {

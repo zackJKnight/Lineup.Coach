@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lineup.Coach.Model
+namespace Lineup.Coach.Domain
 {
     public enum PositionNames
     {

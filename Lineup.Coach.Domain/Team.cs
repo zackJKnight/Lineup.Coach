@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Lineup.Coach.Model
+namespace Lineup.Coach.Domain
 {
     public class Team
     {

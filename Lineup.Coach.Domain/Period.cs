@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lineup.Coach.Model
+namespace Lineup.Coach.Domain
 {
     public class Period
     {

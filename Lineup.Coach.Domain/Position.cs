@@ -1,6 +1,6 @@
 using System;
 
-namespace Lineup.Coach.Model
+namespace Lineup.Coach.Domain
 {
     public class Position
     {

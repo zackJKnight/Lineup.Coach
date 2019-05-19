@@ -11,10 +11,11 @@
     <PackageReference Include="Moq" Version="4.10.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+    <PackageReference Include="newtonsoft.json" Version="12.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lineup.Coach.csproj" />
+    <ProjectReference Include="..\Lineup.Coach.Application.csproj" />
   </ItemGroup>
 
 </Project>

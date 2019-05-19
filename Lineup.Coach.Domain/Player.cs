@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace Lineup.Coach.Model
+namespace Lineup.Coach.Domain
 {
     [JsonObject]
     public class Player

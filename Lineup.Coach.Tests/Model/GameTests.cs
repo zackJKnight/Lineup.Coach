@@ -3,7 +3,8 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lineup.Coach.Model;
+using Lineup.Coach.Application;
+using Lineup.Coach.Domain;
 
 namespace Lineup.Coach.Tests.Model
 {
@@ -110,6 +111,13 @@ namespace Lineup.Coach.Tests.Model
             var GameUnderTest = TestHelper.CreateGame(2, new string[] { "positionOne", "positionTwo" }, 2);
             GameUnderTest.Periods.ForEach(period => period.Positions.Where(position => position.Name == "positionOne").ToList().ForEach(p => p.StartingPlayer = PlayerOne));
             Assert.IsFalse(GameUnderTest.AllGamePositionsFilled(), "There should be unfilled positions.");
+        }
+
+        [TestMethod]
+        public void ShouldAddBenchPositionsWhenTeamGetsMorePlayers()
+        {
+            var GameUnderTest = TestHelper.CreateGame(2, new string[] { "positionOne", "positionTwo" }, 5);
+            Assert.AreEqual(GameUnderTest.BenchCount, 3, "There aren't enough benches per period.");
         }
     }
 }

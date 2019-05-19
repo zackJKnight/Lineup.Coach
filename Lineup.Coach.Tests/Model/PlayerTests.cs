@@ -1,7 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using Lineup.Coach.Model;
+using Lineup.Coach.Domain;
 
 namespace Lineup.Coach.Tests.Model
 {

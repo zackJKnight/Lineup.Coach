@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lineup.Coach.Model;
+using Lineup.Coach.Domain;
 
-namespace Lineup.Coach
+namespace Lineup.Coach.Application
 {
     public class LineupFiller
     {

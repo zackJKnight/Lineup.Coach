@@ -3,8 +3,8 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lineup.Coach;
-using Lineup.Coach.Model;
+using Lineup.Coach.Domain;
+using Lineup.Coach.Application;
 
 namespace Lineup.Coach.Tests
 {
@@ -23,7 +23,7 @@ namespace Lineup.Coach.Tests
             this.mockGame = new Mock<Game>(DateTime.Now);
             this.mockTeam = new Mock<Team>("TestTeamName");
             this.mockPlayerList = new Mock<List<Player>>();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 15; i++)
             {
                 this.mockPlayerList.Object.Add(GenerateTestPlayer());
             }
