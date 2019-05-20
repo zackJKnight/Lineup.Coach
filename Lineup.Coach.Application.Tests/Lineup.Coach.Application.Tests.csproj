@@ -15,7 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lineup.Coach.Application.csproj" />
+    <ProjectReference Include="..\Lineup.Coach.Application\Lineup.Coach.Application.csproj" />
+    <ProjectReference Include="..\Lineup.Coach.Domain\Lineup.Coach.Domain.csproj" />
   </ItemGroup>
 
 </Project>

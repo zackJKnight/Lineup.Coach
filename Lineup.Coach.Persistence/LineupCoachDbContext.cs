@@ -14,5 +14,8 @@ namespace Lineup.Coach.Persistence
         }
 
         public DbSet<Team> Teams { get; set; }
+        public DbSet<Game> Games { get; set; }
+
+        public DbSet<Player> Players { get; set; }
     }
 }

@@ -8,27 +8,17 @@
   <ItemGroup>
     <Compile Remove="Lineup.Coach.Domain\**" />
     <Compile Remove="Lineup.Coach.Persistence\**" />
-    <Compile Remove="Lineup.Coach.Tests\**" />
+    <Compile Remove="Lineup.Coach.Application.Tests\**" />
     <EmbeddedResource Remove="Lineup.Coach.Domain\**" />
     <EmbeddedResource Remove="Lineup.Coach.Persistence\**" />
-    <EmbeddedResource Remove="Lineup.Coach.Tests\**" />
+    <EmbeddedResource Remove="Lineup.Coach.Application.Tests\**" />
     <None Remove="Lineup.Coach.Domain\**" />
     <None Remove="Lineup.Coach.Persistence\**" />
-    <None Remove="Lineup.Coach.Tests\**" />
+    <None Remove="Lineup.Coach.Application.Tests\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="LineupDataPositionRankingByArrayOrder.json" />
-    <None Remove="u8Lineup.data.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="LineupDataPositionRankingByArrayOrder.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="u8Lineup.data.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Remove="../LineupDataPositionRankingByArrayOrder.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,11 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="Lineup.Coach.Domain\Lineup.Coach.Domain.csproj" />
+    <Folder Include="Model\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model\" />
+    <ProjectReference Include="..\Lineup.Coach.Domain\Lineup.Coach.Domain.csproj" />
   </ItemGroup>
 
 </Project>

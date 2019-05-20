@@ -5,7 +5,7 @@ using System.Text;
 using Lineup.Coach.Application;
 using Lineup.Coach.Domain;
 
-namespace Lineup.Coach.Tests
+namespace Lineup.Coach.Application.Tests
 {
     public static class TestHelper
     {

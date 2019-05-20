@@ -8,7 +8,7 @@ namespace Lineup.Coach
 {
     internal class Program
     {
-        private static string PLAYER_DATA_FILE = "./LineupDataPositionRankingByArrayOrder.json"; // "./u8Lineup.data.json";
+        private static string PLAYER_DATA_FILE = "../LineupDataPositionRankingByArrayOrder.json"; // "./u8Lineup.data.json";
         private static DateTime GamePlayDate = DateTime.Now.AddDays(5);
         private static string TEAM_NAME = "The Green Machine";
         private static int NumberOfPeriods = 4;
