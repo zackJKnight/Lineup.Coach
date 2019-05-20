@@ -8,7 +8,7 @@ namespace Lineup.Coach
 {
     internal class Program
     {
-        private static string PLAYER_DATA_FILE = "../LineupDataPositionRankingByArrayOrder.json"; // "./u8Lineup.data.json";
+        private static string PLAYER_DATA_FILE_PATH = "LineupDataPositionRankingByArrayOrder.json"; // "./u8Lineup.data.json";
         private static DateTime GamePlayDate = DateTime.Now.AddDays(5);
         private static string TEAM_NAME = "The Green Machine";
         private static int NumberOfPeriods = 4;
@@ -19,7 +19,7 @@ namespace Lineup.Coach
         {
             var playerService = new PlayerService();
             var lineupfiller = new LineupFiller();
-            var PlayerInfo = playerService.GetPlayerData(PLAYER_DATA_FILE);
+            var PlayerInfo = playerService.GetPlayerData(PLAYER_DATA_FILE_PATH);
             var TheTeam = new Team(TEAM_NAME);
             PlayerInfo.Players.ToList().ForEach(player => TheTeam.Roster.Add(player));
             var TheGame = new Game(GamePlayDate, TheTeam.Roster.Count, MAX_NUMBER_OF_PLAYERS);

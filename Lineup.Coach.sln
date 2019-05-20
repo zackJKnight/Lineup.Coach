@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lineup.Coach.Application.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lineup.Coach.Application.Tests", "Lineup.Coach.Application.Tests\Lineup.Coach.Application.Tests.csproj", "{8D520259-F542-4AE9-8075-E312F8AA33DB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{5EEFB4A8-FD56-411D-A7DA-A07AD81E87C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,7 @@ Global
 		{77EDD389-F615-4B39-AA8A-50C436D3B419} = {5D295FFE-170A-42C3-A5FC-3F5F49AE7C2C}
 		{95C963B0-6D67-42E5-B8C1-7AE6ABE5D35C} = {358DA212-83B8-47CC-91A1-B0AA4CF621E4}
 		{8D520259-F542-4AE9-8075-E312F8AA33DB} = {2672FA35-E8A7-4298-860B-B0B61B241E61}
+		{5EEFB4A8-FD56-411D-A7DA-A07AD81E87C0} = {358DA212-83B8-47CC-91A1-B0AA4CF621E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A48334FA-735B-4DB4-8228-5D83346F31B0}

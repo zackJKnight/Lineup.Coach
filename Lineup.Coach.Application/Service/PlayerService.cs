@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.IO;
 using Lineup.Coach.Domain;
+using System.Reflection;
 
 namespace Lineup.Coach.Service
 {

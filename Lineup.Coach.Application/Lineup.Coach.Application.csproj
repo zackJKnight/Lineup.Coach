@@ -22,11 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="newtonsoft.json" Version="12.0.2" />
+    <Content Include="..\LineupDataPositionRankingByArrayOrder.json" Link="LineupDataPositionRankingByArrayOrder.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model\" />
+    <PackageReference Include="newtonsoft.json" Version="12.0.2" />
   </ItemGroup>
 
   <ItemGroup>
