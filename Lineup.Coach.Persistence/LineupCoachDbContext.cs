@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Lineup.Coach.Application.Interfaces;
 using Lineup.Coach.Domain;
 
 namespace Lineup.Coach.Persistence
 {
-    public class LineupCoachDbContext : DbContext
+    public class LineupCoachDbContext : DbContext, ILineupCoachDbContext
     {
         public LineupCoachDbContext(DbContextOptions<LineupCoachDbContext> options)
             : base(options)

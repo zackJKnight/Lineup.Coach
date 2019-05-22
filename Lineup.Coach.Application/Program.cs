@@ -4,19 +4,24 @@ using Lineup.Coach.Application;
 using Lineup.Coach.Domain;
 using Lineup.Coach.Service;
 
-namespace Lineup.Coach
+namespace Lineup.Coach.Application
 {
     internal class Program
     {
-        private static string PLAYER_DATA_FILE_PATH = "LineupDataPositionRankingByArrayOrder.json"; // "./u8Lineup.data.json";
-        private static DateTime GamePlayDate = DateTime.Now.AddDays(5);
-        private static string TEAM_NAME = "The Green Machine";
-        private static int NumberOfPeriods = 4;
-        private static int PERIOD_DURATION = 15;
-        private static int MAX_NUMBER_OF_PLAYERS = 7;
+        private static readonly string PLAYER_DATA_FILE_PATH = "LineupDataPositionRankingByArrayOrder.json"; // "./u8Lineup.data.json";
+        private static readonly DateTime GamePlayDate = DateTime.Now.AddDays(5);
+        private static readonly string TEAM_NAME = "The Green Machine";
+        private static readonly int NumberOfPeriods = 4;
+        private static readonly int PERIOD_DURATION = 15;
+        private static readonly int MAX_NUMBER_OF_PLAYERS = 7;
 
         private static void Main(string[] args)
         {
+            if (args == null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             var playerService = new PlayerService();
             var lineupfiller = new LineupFiller();
             var PlayerInfo = playerService.GetPlayerData(PLAYER_DATA_FILE_PATH);
