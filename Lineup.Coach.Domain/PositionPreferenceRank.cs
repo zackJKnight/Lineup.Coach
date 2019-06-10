@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lineup.Coach.Domain
 {
@@ -8,6 +9,7 @@ namespace Lineup.Coach.Domain
     public class PositionPreferenceRank
     {
         public Guid Id { get; set; }
+        [NotMapped]
         public string[] Ranking { get; set; }
 
         [JsonConstructor]
