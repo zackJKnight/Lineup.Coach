@@ -18,5 +18,11 @@ namespace Lineup.Coach.Persistence
         public DbSet<Game> Games { get; set; }
 
         public DbSet<Player> Players { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(LineupCoachDbContext).Assembly);
+        }
+
     }
 }

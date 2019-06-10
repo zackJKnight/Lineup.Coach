@@ -8,12 +8,12 @@ namespace Lineup.Coach.Application
 {
     internal class Program
     {
-        private static readonly string PLAYER_DATA_FILE_PATH = "LineupDataPositionRankingByArrayOrder.json"; // "./u8Lineup.data.json";
+        private static readonly string PLAYER_DATA_FILE_PATH = "2019TarHeels.json"; //"LineupDataPositionRankingByArrayOrder.json"; // "./u8Lineup.data.json";
         private static readonly DateTime GamePlayDate = DateTime.Now.AddDays(5);
         private static readonly string TEAM_NAME = "The Green Machine";
-        private static readonly int NumberOfPeriods = 4;
-        private static readonly int PERIOD_DURATION = 15;
-        private static readonly int MAX_NUMBER_OF_PLAYERS = 7;
+        private static readonly int NumberOfPeriods = 6;
+        private static readonly int PERIOD_DURATION = 5;
+        private static readonly int MAX_NUMBER_OF_PLAYERS = 5;
 
         private static void Main(string[] args)
         {
@@ -45,8 +45,8 @@ namespace Lineup.Coach.Application
                 lineupfiller.FillRemainingPositions(TheGame, TheTeam.Roster);
             }
 
-            LineupWriter.WriteLineup(TheGame);
-
+            LineupWriter.WriteLineupToConsole(TheGame);
+            LineupWriter.WriteLineupToJson(TheGame);
             Console.ReadKey();
         }
     }

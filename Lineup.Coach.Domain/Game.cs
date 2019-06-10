@@ -157,6 +157,7 @@ namespace Lineup.Coach.Domain
         }
         public void SetGamePositions(string[] preferredPositionNames)
         {
+            //TODO this is the number of each postion. Need to add ability to have custom lineup.
             int positionInstanceCount = 2;
 
             for (int i = 0; i < positionInstanceCount; i++)

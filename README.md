@@ -37,3 +37,7 @@ If inside the round we find that no more preferred positions are available... wh
 - Add ability to pick from list of positions and formations for multiple instances of the same position on the pitch or create your own.
 
 - Goalie is added by default for local U8, but need to consider broader use
+
+## Notes
+
+can we know how many times a player will sit the bench? numbers we'd need: roster player count. game period count. period starting players
