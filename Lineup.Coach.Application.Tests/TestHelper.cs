@@ -32,8 +32,8 @@ namespace Lineup.Coach.Application.Tests
         {
 
             var playDate = DateTime.Now;
-            var TestGame = new Game(
-                playDate,
+            var TestGame = new Game();
+            TestGame.SetGameOptions(playDate,
                 playersOnTeam,
                 playersOnField);
 

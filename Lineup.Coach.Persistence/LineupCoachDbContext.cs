@@ -22,6 +22,12 @@ namespace Lineup.Coach.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(LineupCoachDbContext).Assembly);
+            modelBuilder.Entity<Game>(game =>
+            {
+                game.Property(prop => prop.PlayDate);
+                game.Property(prop => prop.AvailablePlayerCount);
+                game.Property(prop => prop.MaxPlayersOnFieldCount);
+            });
         }
 
     }

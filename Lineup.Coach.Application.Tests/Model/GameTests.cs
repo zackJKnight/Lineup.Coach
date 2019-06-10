@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Lineup.Coach.Application;
 using Lineup.Coach.Domain;
+using Lineup.Coach.Service;
 
 namespace Lineup.Coach.Application.Tests.Model
 {
@@ -12,12 +13,14 @@ namespace Lineup.Coach.Application.Tests.Model
     public class GameTests
     {
         private MockRepository mockRepository;
+        //private Mock<IPlayerService> mockPlayerService;
         private const int playersOnTeam = 10;
 
         [TestInitialize]
         public void TestInitialize()
         {
             this.mockRepository = new MockRepository(MockBehavior.Strict);
+            //this.mockPlayerService = new Mock<IPlayerService>()
         }
 
         [TestCleanup]
@@ -124,8 +127,8 @@ namespace Lineup.Coach.Application.Tests.Model
         public void ShouldDetermineOptimalPlacementScore()
         {
             // positions ranked 1st: for each position, a count of the number of times a player ranked it 1,2, and so on.
-            //the number of times per game a player can start.
-            // of positions available to the game... which will not be able to meet the player's demands.
+            // the number of times per game a player can start.
+            // of positions available to the game...which will not be able to meet the player's demands.
             // given that equal play time will take precedence to player preference.
         }
     }

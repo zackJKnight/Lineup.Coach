@@ -1,15 +1,19 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lineup.Coach.Domain
 {
     [JsonObject]
     public class Player
     {
+        public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [NotMapped]
         public List<Guid> Benches { get; set; }
+        [NotMapped]
         public List<Guid> StartingPositions { get; set; }
 
         public int PlacementScore { get; set; }

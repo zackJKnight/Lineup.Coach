@@ -21,6 +21,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lineup.Coach.Application.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{4A38D4E3-4044-4A30-9E7E-5BD7E7262660}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{3FA41D67-AD87-4C4D-8D69-11B0B1AF760F}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{54F46E84-E581-41CA-8E97-7BE6D981F56B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LineupCoach.App", "LineupCoach.App\LineupCoach.App.csproj", "{97AD15C4-C1B2-4739-A06E-7A1F48366919}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +52,10 @@ Global
 		{8D520259-F542-4AE9-8075-E312F8AA33DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D520259-F542-4AE9-8075-E312F8AA33DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D520259-F542-4AE9-8075-E312F8AA33DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97AD15C4-C1B2-4739-A06E-7A1F48366919}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97AD15C4-C1B2-4739-A06E-7A1F48366919}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97AD15C4-C1B2-4739-A06E-7A1F48366919}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97AD15C4-C1B2-4739-A06E-7A1F48366919}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +66,7 @@ Global
 		{358DA212-83B8-47CC-91A1-B0AA4CF621E4} = {4A38D4E3-4044-4A30-9E7E-5BD7E7262660}
 		{95C963B0-6D67-42E5-B8C1-7AE6ABE5D35C} = {358DA212-83B8-47CC-91A1-B0AA4CF621E4}
 		{8D520259-F542-4AE9-8075-E312F8AA33DB} = {2672FA35-E8A7-4298-860B-B0B61B241E61}
+		{97AD15C4-C1B2-4739-A06E-7A1F48366919} = {54F46E84-E581-41CA-8E97-7BE6D981F56B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A48334FA-735B-4DB4-8228-5D83346F31B0}

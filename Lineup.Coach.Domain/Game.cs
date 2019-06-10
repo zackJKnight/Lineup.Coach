@@ -6,11 +6,11 @@ namespace Lineup.Coach.Domain
 {
     public class Game : IGame
     {
-        private DateTime _playDate;
         private double _startingPositionPerPlayerCount;
         private int _benchCount;
 
-        public DateTime PlayDate { get => _playDate; set => _playDate = value; }
+        public Guid Id { get; set; }
+        public DateTime PlayDate { get; set; }
         public List<Period> Periods { get; set; }
         public int BenchCount { get => _benchCount; set => _benchCount = value; }
         public int MaxPlayersOnFieldCount { get; set; }
@@ -32,7 +32,12 @@ namespace Lineup.Coach.Domain
         /// The date on which the Game occurs.
         /// </summary>
         /// <param name="playDate"></param>
-        public Game(DateTime playDate, int availablePlayerCount, int maxNumberOfPlayersOnField)
+        public Game()
+        {
+            
+        }
+
+        public void SetGameOptions (DateTime playDate, int availablePlayerCount, int maxNumberOfPlayersOnField = 7)
         {
             this.PlayDate = playDate;
             this.Periods = new List<Period>();
@@ -42,7 +47,6 @@ namespace Lineup.Coach.Domain
             BenchCount = BenchCount < 0 ? 0 : BenchCount;
             this.StartingPositionsPerPlayerCount = SetStartingPositionsPerPlayerCount();
         }
-
         public Position GetFirstOpenBench()
         {
             return this.Periods

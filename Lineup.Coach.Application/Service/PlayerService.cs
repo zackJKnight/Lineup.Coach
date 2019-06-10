@@ -5,7 +5,12 @@ using System.Reflection;
 
 namespace Lineup.Coach.Service
 {
-    public class PlayerService
+    public interface IPlayerService
+    {
+        RootObject GetPlayerData(string dataFile);
+    }
+
+    public class PlayerService : IPlayerService
     {
         private static RootObject PlayerInfo { get; set; }
 

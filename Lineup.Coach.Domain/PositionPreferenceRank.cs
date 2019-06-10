@@ -7,6 +7,7 @@ namespace Lineup.Coach.Domain
     [JsonObject]
     public class PositionPreferenceRank
     {
+        public Guid Id { get; set; }
         public string[] Ranking { get; set; }
 
         [JsonConstructor]
