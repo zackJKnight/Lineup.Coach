@@ -31,7 +31,7 @@ namespace LineupCoach.App
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<LineupCoachDbContext>(
                 options => options.UseSqlite(
-                    "Data Source=LineupCoach"));
+                    "FileName=./LineupCoach.db"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

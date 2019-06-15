@@ -4,6 +4,8 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Lineup.Coach.Application.Interfaces;
 using Lineup.Coach.Domain;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lineup.Coach.Persistence
 {
@@ -30,5 +32,9 @@ namespace Lineup.Coach.Persistence
             });
         }
 
+        Task ILineupCoachDbContext.SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

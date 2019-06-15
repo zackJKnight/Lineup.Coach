@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Lineup.Coach.Application;
+using Lineup.Coach.Application.Interfaces;
 using Lineup.Coach.Domain;
 using Lineup.Coach.Service;
 
@@ -48,7 +49,8 @@ namespace Lineup.Coach.Application
 
             LineupWriter.WriteLineupToConsole(TheGame);
             LineupWriter.WriteLineupToJson(TheGame);
-            Console.ReadKey();
+            
+                Console.ReadKey();
         }
     }
 }

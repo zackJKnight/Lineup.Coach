@@ -9,7 +9,7 @@ namespace Lineup.Coach.Domain
         private double _startingPositionPerPlayerCount;
         private int _benchCount;
 
-        public Guid Id { get; set; }
+        public Guid GameId { get; set; }
         public DateTime PlayDate { get; set; }
         public List<Period> Periods { get; set; }
         public int BenchCount { get => _benchCount; set => _benchCount = value; }
