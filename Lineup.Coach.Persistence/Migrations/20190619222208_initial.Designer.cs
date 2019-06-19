@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lineup.Coach.Persistence.Migrations
 {
     [DbContext(typeof(LineupCoachDbContext))]
-    [Migration("20190610211446_initial")]
+    [Migration("20190619222208_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace Lineup.Coach.Persistence.Migrations
 
             modelBuilder.Entity("Lineup.Coach.Domain.Game", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("GameId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AvailablePlayerCount");
@@ -31,7 +31,7 @@ namespace Lineup.Coach.Persistence.Migrations
 
                     b.Property<int>("MaxPlayersOnFieldCount");
 
-                    b.Property<Guid?>("OpponentId");
+                    b.Property<string>("OpponentTeamId");
 
                     b.Property<DateTime>("PlayDate");
 
@@ -39,9 +39,9 @@ namespace Lineup.Coach.Persistence.Migrations
 
                     b.Property<double>("StartingPositionsPerPlayerCount");
 
-                    b.HasKey("Id");
+                    b.HasKey("GameId");
 
-                    b.HasIndex("OpponentId");
+                    b.HasIndex("OpponentTeamId");
 
                     b.ToTable("Games");
                 });
@@ -77,7 +77,7 @@ namespace Lineup.Coach.Persistence.Migrations
 
                     b.Property<Guid?>("PositionPreferenceRankId");
 
-                    b.Property<Guid?>("TeamId");
+                    b.Property<string>("TeamId");
 
                     b.HasKey("Id");
 
@@ -122,12 +122,12 @@ namespace Lineup.Coach.Persistence.Migrations
 
             modelBuilder.Entity("Lineup.Coach.Domain.Team", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("TeamId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
 
-                    b.HasKey("Id");
+                    b.HasKey("TeamId");
 
                     b.ToTable("Teams");
                 });
@@ -136,7 +136,7 @@ namespace Lineup.Coach.Persistence.Migrations
                 {
                     b.HasOne("Lineup.Coach.Domain.Team", "Opponent")
                         .WithMany("Games")
-                        .HasForeignKey("OpponentId");
+                        .HasForeignKey("OpponentTeamId");
                 });
 
             modelBuilder.Entity("Lineup.Coach.Domain.Period", b =>
