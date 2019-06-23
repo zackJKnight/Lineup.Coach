@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Lineup.Coach.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
+using NSwag.Generation.AspNetCore;
 
 namespace LineupCoach.App
 {
@@ -32,6 +33,7 @@ namespace LineupCoach.App
             services.AddDbContext<LineupCoachDbContext>(
                 options => options.UseSqlite(
                     "FileName=./LineupCoach.db"));
+            services.AddSwaggerDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +50,11 @@ namespace LineupCoach.App
             }
 
             app.UseHttpsRedirection();
+            app.UseSwaggerUi3(settings =>
+            {
+                settings.Path = "/api";
+                settings.DocumentPath = "/api/specification.json";
+            });
             app.UseMvc();
         }
     }

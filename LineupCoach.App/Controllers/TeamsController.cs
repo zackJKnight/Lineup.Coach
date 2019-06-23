@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Lineup.Coach.Domain;
 using Lineup.Coach.Persistence;
+using Lineup.Coach.Application.Teams.Commands;
 
 namespace LineupCoach.App.Controllers
 {
@@ -54,15 +55,11 @@ namespace LineupCoach.App.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] Team team)
+        public async Task<IActionResult> Create([FromBody] CreateTeamCommand command)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(team);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(team);
+            await Mediator.Send(command);
+
+            return NoContent();
         }
 
         // GET: Teams/Edit/5

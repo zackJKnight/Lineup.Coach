@@ -1,8 +1,8 @@
-# Console App to Aid the New Youth Coach
+# Fill a Game Lineup for the New Youth Coach
 
 ![CI Badge](https://img.shields.io/azure-devops/build/zacharyknight/ce6418bd-131f-4ad6-b014-b24d45714fde/6.svg?label=Azure%20Devops&style=flat) ![Test Badge](https://img.shields.io/azure-devops/tests/zacharyknight/Lineup.Coach/6.svg?style=flat)
 
-Code in progress to aid my thinking about filling a lineup for a game of 8 year olds.
+Code in progress to aid my thinking about filling a lineup for a game of youth soccer.
 
 ## Missing Concepts
 
@@ -16,7 +16,9 @@ Placing by player preference alone leaves out the fact that the Game has needs t
 
 - [ ] How about counting the number of preferred positions and determining which will get filled first/neglected?
 
-- [x] Rounds: looping the player list in random order the first round.
+- [x] Rounds: looping the player list in random order the first round. 
+
+     -- A note from the future; when we know placements will be unbalanced, we don't need to randomize
 
 - [ ] Implement the player placement score: At some point the order may be that players that did not get their preference go to the top of the round.
 

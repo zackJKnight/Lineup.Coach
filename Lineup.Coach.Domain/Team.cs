@@ -20,5 +20,7 @@ namespace Lineup.Coach.Domain
         {
 
         }
+
+        public ICollection<Team> Teams { get; private set; }
     }
 }
