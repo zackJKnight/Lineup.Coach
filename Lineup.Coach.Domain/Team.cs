@@ -10,17 +10,9 @@ namespace Lineup.Coach.Domain
         public List<Player> Roster { get; set; }
         public List<Game> Games { get; set; }
 
-        public Team(string name)
-        {
-            this.Name = name;
-            this.Roster = new List<Player>();
-        }
-
         public Team()
         {
-
         }
 
-        public ICollection<Team> Teams { get; private set; }
     }
 }

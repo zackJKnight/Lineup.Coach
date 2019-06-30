@@ -1,19 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using Lineup.Coach.Application.Infrastructure;
+using Lineup.Coach.Application.Infrastructure.AutoMapper;
+using Lineup.Coach.Application.Teams.Queries.GetTeamsList;
+using Lineup.Coach.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Lineup.Coach.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Sqlite;
-using NSwag.Generation.AspNetCore;
+using System.Reflection;
+using FluentValidation.AspNetCore;
+using MediatR.Pipeline;
+using Microsoft.AspNetCore.Http;
+using NSwag.AspNetCore;
+using Lineup.Coach.Application.Interfaces;
 
 namespace LineupCoach.App
 {
@@ -29,10 +31,19 @@ namespace LineupCoach.App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // Add AutoMapper
+            services.AddAutoMapper(new Assembly[] { typeof(AutoMapperProfile).GetTypeInfo().Assembly });
+
+            // Add MediatR
+            services.AddMediatR(typeof(GetTeamsListQueryHandler).GetTypeInfo().Assembly);
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDbContext<LineupCoachDbContext>(
+            services.AddDbContext<ILineupCoachDbContext, LineupCoachDbContext>(
                 options => options.UseSqlite(
-                    "FileName=./LineupCoach.db"));
+                    "FileName=../LineupCoach.db"));
             services.AddSwaggerDocument();
         }
 

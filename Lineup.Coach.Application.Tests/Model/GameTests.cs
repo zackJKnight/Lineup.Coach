@@ -32,7 +32,8 @@ namespace Lineup.Coach.Application.Tests.Model
 
         private Team CreateTeam()
         {
-            var TestTeam = new Team("NameOfTestTeam");
+            var TestTeam = new Team();
+            TestTeam.Name = "NameOfTestTeam";
             var Players = new List<Player>();
             for (int i = 0; i < playersOnTeam; i++)
             {

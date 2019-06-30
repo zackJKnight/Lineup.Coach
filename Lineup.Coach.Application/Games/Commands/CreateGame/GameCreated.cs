@@ -8,7 +8,7 @@ namespace Lineup.Coach.Application.Games.Commands.CreateGame
 {
     internal class GameCreated : INotification
     {
-        public Guid GameId { get; set; }
+        public string GameId { get; set; }
 
             public class GameCreatedHandler : INotificationHandler<GameCreated>
             {

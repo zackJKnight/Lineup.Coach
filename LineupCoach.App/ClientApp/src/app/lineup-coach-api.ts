@@ -16,7 +16,6 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IGamesClient {
     getGeneratedGame(): Observable<string[]>;
-    create(command: CreateGameCommand): Observable<void>;
 }
 
 @Injectable()
@@ -81,67 +80,10 @@ export class GamesClient implements IGamesClient {
         }
         return _observableOf<string[]>(<any>null);
     }
-
-    create(command: CreateGameCommand): Observable<void> {
-        let url_ = this.baseUrl + "/api/Games/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(command);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreate(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreate(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let resultdefault: any = null;
-            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            resultdefault = ProblemDetails.fromJS(resultDatadefault);
-            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
-            }));
-        }
-    }
 }
 
 export interface ITeamsClient {
-    index(): Observable<FileResponse>;
-    details(teamId: string | null): Observable<FileResponse>;
-    create(): Observable<FileResponse>;
-    create2(command: CreateTeamCommand): Observable<FileResponse>;
-    edit(teamId: string | null): Observable<FileResponse>;
-    edit2(teamId: string | null, team: Team): Observable<FileResponse>;
-    delete(teamId: string | null): Observable<FileResponse>;
-    delete2(teamId: string | null): Observable<FileResponse>;
+    getAll(): Observable<TeamsListViewModel>;
 }
 
 @Injectable()
@@ -155,400 +97,52 @@ export class TeamsClient implements ITeamsClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    index(): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Teams/Index";
+    getAll(): Observable<TeamsListViewModel> {
+        let url_ = this.baseUrl + "/api/Teams/GetAll";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processIndex(response_);
+            return this.processGetAll(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processIndex(<any>response_);
+                    return this.processGetAll(<any>response_);
                 } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
+                    return <Observable<TeamsListViewModel>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
+                return <Observable<TeamsListViewModel>><any>_observableThrow(response_);
         }));
     }
 
-    protected processIndex(response: HttpResponseBase): Observable<FileResponse> {
+    protected processGetAll(response: HttpResponseBase): Observable<TeamsListViewModel> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TeamsListViewModel.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
-    details(teamId: string | null): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Teams/Details?";
-        if (teamId === undefined)
-            throw new Error("The parameter 'teamId' must be defined.");
-        else
-            url_ += "teamId=" + encodeURIComponent("" + teamId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDetails(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDetails(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDetails(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
-    create(): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Teams/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreate(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreate(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
-    create2(command: CreateTeamCommand): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Teams/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(command);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate2(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreate2(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreate2(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
-    edit(teamId: string | null): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Teams/Edit?";
-        if (teamId === undefined)
-            throw new Error("The parameter 'teamId' must be defined.");
-        else
-            url_ += "teamId=" + encodeURIComponent("" + teamId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processEdit(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processEdit(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processEdit(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
-    edit2(teamId: string | null, team: Team): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Teams/Edit?";
-        if (teamId === undefined)
-            throw new Error("The parameter 'teamId' must be defined.");
-        else
-            url_ += "teamId=" + encodeURIComponent("" + teamId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(team);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processEdit2(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processEdit2(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processEdit2(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
-    delete(teamId: string | null): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Teams/Delete?";
-        if (teamId === undefined)
-            throw new Error("The parameter 'teamId' must be defined.");
-        else
-            url_ += "teamId=" + encodeURIComponent("" + teamId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDelete(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDelete(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDelete(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
-    delete2(teamId: string | null): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/Teams/Delete?";
-        if (teamId === undefined)
-            throw new Error("The parameter 'teamId' must be defined.");
-        else
-            url_ += "teamId=" + encodeURIComponent("" + teamId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDelete2(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDelete2(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDelete2(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
+        return _observableOf<TeamsListViewModel>(<any>null);
     }
 }
 
@@ -821,14 +415,10 @@ export class ValuesClient implements IValuesClient {
     }
 }
 
-export class ProblemDetails implements IProblemDetails {
-    type?: string | undefined;
-    title?: string | undefined;
-    status?: number | undefined;
-    detail?: string | undefined;
-    instance?: string | undefined;
+export class TeamsListViewModel implements ITeamsListViewModel {
+    teams?: TeamLookupModel[] | undefined;
 
-    constructor(data?: IProblemDetails) {
+    constructor(data?: ITeamsListViewModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -839,179 +429,23 @@ export class ProblemDetails implements IProblemDetails {
 
     init(data?: any) {
         if (data) {
-            this.type = data["type"];
-            this.title = data["title"];
-            this.status = data["status"];
-            this.detail = data["detail"];
-            this.instance = data["instance"];
-        }
-    }
-
-    static fromJS(data: any): ProblemDetails {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProblemDetails();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["type"] = this.type;
-        data["title"] = this.title;
-        data["status"] = this.status;
-        data["detail"] = this.detail;
-        data["instance"] = this.instance;
-        return data; 
-    }
-}
-
-export interface IProblemDetails {
-    type?: string | undefined;
-    title?: string | undefined;
-    status?: number | undefined;
-    detail?: string | undefined;
-    instance?: string | undefined;
-}
-
-export class CreateGameCommand implements ICreateGameCommand {
-    id?: string;
-    playDate?: Date;
-
-    constructor(data?: ICreateGameCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.playDate = data["playDate"] ? new Date(data["playDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): CreateGameCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateGameCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["playDate"] = this.playDate ? this.playDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ICreateGameCommand {
-    id?: string;
-    playDate?: Date;
-}
-
-export class CreateTeamCommand implements ICreateTeamCommand {
-    id?: string | undefined;
-    name?: string | undefined;
-
-    constructor(data?: ICreateTeamCommand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CreateTeamCommand {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateTeamCommand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICreateTeamCommand {
-    id?: string | undefined;
-    name?: string | undefined;
-}
-
-export class Team implements ITeam {
-    teamId?: string | undefined;
-    name?: string | undefined;
-    roster?: Player[] | undefined;
-    games?: Game[] | undefined;
-    teams?: Team[] | undefined;
-
-    constructor(data?: ITeam) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.teamId = data["teamId"];
-            this.name = data["name"];
-            if (Array.isArray(data["roster"])) {
-                this.roster = [] as any;
-                for (let item of data["roster"])
-                    this.roster!.push(Player.fromJS(item));
-            }
-            if (Array.isArray(data["games"])) {
-                this.games = [] as any;
-                for (let item of data["games"])
-                    this.games!.push(Game.fromJS(item));
-            }
             if (Array.isArray(data["teams"])) {
                 this.teams = [] as any;
                 for (let item of data["teams"])
-                    this.teams!.push(Team.fromJS(item));
+                    this.teams!.push(TeamLookupModel.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): Team {
+    static fromJS(data: any): TeamsListViewModel {
         data = typeof data === 'object' ? data : {};
-        let result = new Team();
+        let result = new TeamsListViewModel();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["teamId"] = this.teamId;
-        data["name"] = this.name;
-        if (Array.isArray(this.roster)) {
-            data["roster"] = [];
-            for (let item of this.roster)
-                data["roster"].push(item.toJSON());
-        }
-        if (Array.isArray(this.games)) {
-            data["games"] = [];
-            for (let item of this.games)
-                data["games"].push(item.toJSON());
-        }
         if (Array.isArray(this.teams)) {
             data["teams"] = [];
             for (let item of this.teams)
@@ -1021,24 +455,15 @@ export class Team implements ITeam {
     }
 }
 
-export interface ITeam {
-    teamId?: string | undefined;
+export interface ITeamsListViewModel {
+    teams?: TeamLookupModel[] | undefined;
+}
+
+export class TeamLookupModel implements ITeamLookupModel {
+    id?: string | undefined;
     name?: string | undefined;
-    roster?: Player[] | undefined;
-    games?: Game[] | undefined;
-    teams?: Team[] | undefined;
-}
 
-export class Player implements IPlayer {
-    id?: string;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    benches?: string[] | undefined;
-    startingPositions?: string[] | undefined;
-    placementScore?: number;
-    positionPreferenceRank?: PositionPreferenceRank | undefined;
-
-    constructor(data?: IPlayer) {
+    constructor(data?: ITeamLookupModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1050,274 +475,13 @@ export class Player implements IPlayer {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
-            if (Array.isArray(data["benches"])) {
-                this.benches = [] as any;
-                for (let item of data["benches"])
-                    this.benches!.push(item);
-            }
-            if (Array.isArray(data["startingPositions"])) {
-                this.startingPositions = [] as any;
-                for (let item of data["startingPositions"])
-                    this.startingPositions!.push(item);
-            }
-            this.placementScore = data["placementScore"];
-            this.positionPreferenceRank = data["positionPreferenceRank"] ? PositionPreferenceRank.fromJS(data["positionPreferenceRank"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): Player {
-        data = typeof data === 'object' ? data : {};
-        let result = new Player();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        if (Array.isArray(this.benches)) {
-            data["benches"] = [];
-            for (let item of this.benches)
-                data["benches"].push(item);
-        }
-        if (Array.isArray(this.startingPositions)) {
-            data["startingPositions"] = [];
-            for (let item of this.startingPositions)
-                data["startingPositions"].push(item);
-        }
-        data["placementScore"] = this.placementScore;
-        data["positionPreferenceRank"] = this.positionPreferenceRank ? this.positionPreferenceRank.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IPlayer {
-    id?: string;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    benches?: string[] | undefined;
-    startingPositions?: string[] | undefined;
-    placementScore?: number;
-    positionPreferenceRank?: PositionPreferenceRank | undefined;
-}
-
-export class PositionPreferenceRank implements IPositionPreferenceRank {
-    id?: string;
-    ranking?: string[] | undefined;
-
-    constructor(data?: IPositionPreferenceRank) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            if (Array.isArray(data["ranking"])) {
-                this.ranking = [] as any;
-                for (let item of data["ranking"])
-                    this.ranking!.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): PositionPreferenceRank {
-        data = typeof data === 'object' ? data : {};
-        let result = new PositionPreferenceRank();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        if (Array.isArray(this.ranking)) {
-            data["ranking"] = [];
-            for (let item of this.ranking)
-                data["ranking"].push(item);
-        }
-        return data; 
-    }
-}
-
-export interface IPositionPreferenceRank {
-    id?: string;
-    ranking?: string[] | undefined;
-}
-
-export class Game implements IGame {
-    gameId?: string;
-    playDate?: Date;
-    periods?: Period[] | undefined;
-    benchCount?: number;
-    maxPlayersOnFieldCount?: number;
-    availablePlayerCount?: number;
-    opponent?: Team | undefined;
-    isHomeGame?: boolean;
-    refereeName?: string | undefined;
-    startingPositionsPerPlayerCount?: number;
-
-    constructor(data?: IGame) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.gameId = data["gameId"];
-            this.playDate = data["playDate"] ? new Date(data["playDate"].toString()) : <any>undefined;
-            if (Array.isArray(data["periods"])) {
-                this.periods = [] as any;
-                for (let item of data["periods"])
-                    this.periods!.push(Period.fromJS(item));
-            }
-            this.benchCount = data["benchCount"];
-            this.maxPlayersOnFieldCount = data["maxPlayersOnFieldCount"];
-            this.availablePlayerCount = data["availablePlayerCount"];
-            this.opponent = data["opponent"] ? Team.fromJS(data["opponent"]) : <any>undefined;
-            this.isHomeGame = data["isHomeGame"];
-            this.refereeName = data["refereeName"];
-            this.startingPositionsPerPlayerCount = data["startingPositionsPerPlayerCount"];
-        }
-    }
-
-    static fromJS(data: any): Game {
-        data = typeof data === 'object' ? data : {};
-        let result = new Game();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["gameId"] = this.gameId;
-        data["playDate"] = this.playDate ? this.playDate.toISOString() : <any>undefined;
-        if (Array.isArray(this.periods)) {
-            data["periods"] = [];
-            for (let item of this.periods)
-                data["periods"].push(item.toJSON());
-        }
-        data["benchCount"] = this.benchCount;
-        data["maxPlayersOnFieldCount"] = this.maxPlayersOnFieldCount;
-        data["availablePlayerCount"] = this.availablePlayerCount;
-        data["opponent"] = this.opponent ? this.opponent.toJSON() : <any>undefined;
-        data["isHomeGame"] = this.isHomeGame;
-        data["refereeName"] = this.refereeName;
-        data["startingPositionsPerPlayerCount"] = this.startingPositionsPerPlayerCount;
-        return data; 
-    }
-}
-
-export interface IGame {
-    gameId?: string;
-    playDate?: Date;
-    periods?: Period[] | undefined;
-    benchCount?: number;
-    maxPlayersOnFieldCount?: number;
-    availablePlayerCount?: number;
-    opponent?: Team | undefined;
-    isHomeGame?: boolean;
-    refereeName?: string | undefined;
-    startingPositionsPerPlayerCount?: number;
-}
-
-export class Period implements IPeriod {
-    id?: string;
-    number?: number;
-    durationInMinutes?: number;
-    positions?: Position[] | undefined;
-
-    constructor(data?: IPeriod) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.number = data["number"];
-            this.durationInMinutes = data["durationInMinutes"];
-            if (Array.isArray(data["positions"])) {
-                this.positions = [] as any;
-                for (let item of data["positions"])
-                    this.positions!.push(Position.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): Period {
-        data = typeof data === 'object' ? data : {};
-        let result = new Period();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["number"] = this.number;
-        data["durationInMinutes"] = this.durationInMinutes;
-        if (Array.isArray(this.positions)) {
-            data["positions"] = [];
-            for (let item of this.positions)
-                data["positions"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IPeriod {
-    id?: string;
-    number?: number;
-    durationInMinutes?: number;
-    positions?: Position[] | undefined;
-}
-
-export class Position implements IPosition {
-    id?: string;
-    positionType?: PositionType;
-    name?: string | undefined;
-    periodId?: string;
-    startingPlayer?: Player | undefined;
-
-    constructor(data?: IPosition) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.positionType = data["positionType"];
             this.name = data["name"];
-            this.periodId = data["periodId"];
-            this.startingPlayer = data["startingPlayer"] ? Player.fromJS(data["startingPlayer"]) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): Position {
+    static fromJS(data: any): TeamLookupModel {
         data = typeof data === 'object' ? data : {};
-        let result = new Position();
+        let result = new TeamLookupModel();
         result.init(data);
         return result;
     }
@@ -1325,34 +489,14 @@ export class Position implements IPosition {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["positionType"] = this.positionType;
         data["name"] = this.name;
-        data["periodId"] = this.periodId;
-        data["startingPlayer"] = this.startingPlayer ? this.startingPlayer.toJSON() : <any>undefined;
         return data; 
     }
 }
 
-export interface IPosition {
-    id?: string;
-    positionType?: PositionType;
+export interface ITeamLookupModel {
+    id?: string | undefined;
     name?: string | undefined;
-    periodId?: string;
-    startingPlayer?: Player | undefined;
-}
-
-export enum PositionType {
-    Bench = 0, 
-    Defense = 1, 
-    Offense = 2, 
-    Starting = 3, 
-}
-
-export interface FileResponse {
-    data: Blob;
-    status: number;
-    fileName?: string;
-    headers?: { [name: string]: any };
 }
 
 export class SwaggerException extends Error {

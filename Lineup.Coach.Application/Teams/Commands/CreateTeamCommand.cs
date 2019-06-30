@@ -36,7 +36,7 @@ namespace Lineup.Coach.Application.Teams.Commands
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                await _mediator.Publish(new TeamCreated { TeamId = entity.TeamId }, cancellationToken);
+                await _mediator.Publish(new TeamCreated { TeamCreatedId = entity.TeamId }, cancellationToken);
 
                 return Unit.Value;
             }

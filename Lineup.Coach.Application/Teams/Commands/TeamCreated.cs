@@ -11,7 +11,7 @@ namespace Lineup.Coach.Application.Teams.Commands
 {
     internal class TeamCreated : INotification
     {
-        public string TeamId { get; set; }
+        public string TeamCreatedId { get; set; }
 
         public class TeamCreatedHandler : INotificationHandler<TeamCreated>
         {

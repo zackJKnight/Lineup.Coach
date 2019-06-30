@@ -15,14 +15,14 @@ namespace LineupCoach.App.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesDefaultResponseType]
-        public async Task<IActionResult> Create([FromBody]CreateGameCommand command)
-        {
-            await Mediator.Send(command);
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesDefaultResponseType]
+        //public async Task<IActionResult> Create([FromBody]CreateGameCommand command)
+        //{
+        //    await Mediator.Send(command);
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
     }
 }

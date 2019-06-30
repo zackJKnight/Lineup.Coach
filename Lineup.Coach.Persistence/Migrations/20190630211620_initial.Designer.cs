@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lineup.Coach.Persistence.Migrations
 {
     [DbContext(typeof(LineupCoachDbContext))]
-    [Migration("20190619222208_initial")]
+    [Migration("20190630211620_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace Lineup.Coach.Persistence.Migrations
 
             modelBuilder.Entity("Lineup.Coach.Domain.Game", b =>
                 {
-                    b.Property<Guid>("GameId")
+                    b.Property<string>("GameId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AvailablePlayerCount");
@@ -43,7 +43,7 @@ namespace Lineup.Coach.Persistence.Migrations
 
                     b.HasIndex("OpponentTeamId");
 
-                    b.ToTable("Games");
+                    b.ToTable("Game");
                 });
 
             modelBuilder.Entity("Lineup.Coach.Domain.Period", b =>
@@ -53,7 +53,7 @@ namespace Lineup.Coach.Persistence.Migrations
 
                     b.Property<int>("DurationInMinutes");
 
-                    b.Property<Guid?>("GameId");
+                    b.Property<string>("GameId");
 
                     b.Property<int>("Number");
 
@@ -85,7 +85,7 @@ namespace Lineup.Coach.Persistence.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Players");
+                    b.ToTable("Player");
                 });
 
             modelBuilder.Entity("Lineup.Coach.Domain.Position", b =>

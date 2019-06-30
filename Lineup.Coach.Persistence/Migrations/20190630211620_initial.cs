@@ -31,10 +31,10 @@ namespace Lineup.Coach.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Games",
+                name: "Game",
                 columns: table => new
                 {
-                    GameId = table.Column<Guid>(nullable: false),
+                    GameId = table.Column<string>(nullable: false),
                     PlayDate = table.Column<DateTime>(nullable: false),
                     BenchCount = table.Column<int>(nullable: false),
                     MaxPlayersOnFieldCount = table.Column<int>(nullable: false),
@@ -46,9 +46,9 @@ namespace Lineup.Coach.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Games", x => x.GameId);
+                    table.PrimaryKey("PK_Game", x => x.GameId);
                     table.ForeignKey(
-                        name: "FK_Games_Teams_OpponentTeamId",
+                        name: "FK_Game_Teams_OpponentTeamId",
                         column: x => x.OpponentTeamId,
                         principalTable: "Teams",
                         principalColumn: "TeamId",
@@ -56,7 +56,7 @@ namespace Lineup.Coach.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Players",
+                name: "Player",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -68,15 +68,15 @@ namespace Lineup.Coach.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Players", x => x.Id);
+                    table.PrimaryKey("PK_Player", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Players_PositionPreferenceRank_PositionPreferenceRankId",
+                        name: "FK_Player_PositionPreferenceRank_PositionPreferenceRankId",
                         column: x => x.PositionPreferenceRankId,
                         principalTable: "PositionPreferenceRank",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Players_Teams_TeamId",
+                        name: "FK_Player_Teams_TeamId",
                         column: x => x.TeamId,
                         principalTable: "Teams",
                         principalColumn: "TeamId",
@@ -90,15 +90,15 @@ namespace Lineup.Coach.Persistence.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Number = table.Column<int>(nullable: false),
                     DurationInMinutes = table.Column<int>(nullable: false),
-                    GameId = table.Column<Guid>(nullable: true)
+                    GameId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Period", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Period_Games_GameId",
+                        name: "FK_Period_Game_GameId",
                         column: x => x.GameId,
-                        principalTable: "Games",
+                        principalTable: "Game",
                         principalColumn: "GameId",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -123,16 +123,16 @@ namespace Lineup.Coach.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Position_Players_StartingPlayerId",
+                        name: "FK_Position_Player_StartingPlayerId",
                         column: x => x.StartingPlayerId,
-                        principalTable: "Players",
+                        principalTable: "Player",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Games_OpponentTeamId",
-                table: "Games",
+                name: "IX_Game_OpponentTeamId",
+                table: "Game",
                 column: "OpponentTeamId");
 
             migrationBuilder.CreateIndex(
@@ -141,13 +141,13 @@ namespace Lineup.Coach.Persistence.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Players_PositionPreferenceRankId",
-                table: "Players",
+                name: "IX_Player_PositionPreferenceRankId",
+                table: "Player",
                 column: "PositionPreferenceRankId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Players_TeamId",
-                table: "Players",
+                name: "IX_Player_TeamId",
+                table: "Player",
                 column: "TeamId");
 
             migrationBuilder.CreateIndex(
@@ -170,10 +170,10 @@ namespace Lineup.Coach.Persistence.Migrations
                 name: "Period");
 
             migrationBuilder.DropTable(
-                name: "Players");
+                name: "Player");
 
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "Game");
 
             migrationBuilder.DropTable(
                 name: "PositionPreferenceRank");

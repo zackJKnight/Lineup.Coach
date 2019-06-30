@@ -9,7 +9,7 @@ namespace Lineup.Coach.Domain
         private double _startingPositionPerPlayerCount;
         private int _benchCount;
 
-        public Guid GameId { get; set; }
+        public string GameId { get; set; }
         public DateTime PlayDate { get; set; }
         public List<Period> Periods { get; set; }
         public int BenchCount { get => _benchCount; set => _benchCount = value; }
@@ -161,7 +161,7 @@ namespace Lineup.Coach.Domain
         }
         public void SetGamePositions(string[] preferredPositionNames)
         {
-            //TODO this is the number of each postion. Need to add ability to have custom lineup.
+            //TODO this is the number of each postion on the field at one time. Need to add ability to have custom lineup.
             int positionInstanceCount = 2;
 
             for (int i = 0; i < positionInstanceCount; i++)

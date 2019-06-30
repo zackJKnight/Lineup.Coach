@@ -28,7 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{3FA41D67-A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{54F46E84-E581-41CA-8E97-7BE6D981F56B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LineupCoach.App", "LineupCoach.App\LineupCoach.App.csproj", "{97AD15C4-C1B2-4739-A06E-7A1F48366919}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LineupCoach.App", "LineupCoach.App\LineupCoach.App.csproj", "{97AD15C4-C1B2-4739-A06E-7A1F48366919}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
