@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lineup.Coach.Persistence", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lineup.Coach.Domain", "Lineup.Coach.Domain", "{5D295FFE-170A-42C3-A5FC-3F5F49AE7C2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lineup.Coach.Domain", "Lineup.Coach.Domain\Lineup.Coach.Domain.csproj", "{77EDD389-F615-4B39-AA8A-50C436D3B419}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lineup.Coach.Domain", "Lineup.Coach.Domain\Lineup.Coach.Domain.csproj", "{77EDD389-F615-4B39-AA8A-50C436D3B419}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lineup.Coach.Application", "Lineup.Coach.Application", "{358DA212-83B8-47CC-91A1-B0AA4CF621E4}"
 EndProject

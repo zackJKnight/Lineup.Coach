@@ -23,7 +23,7 @@ namespace Lineup.Coach.Domain
         {
             this.StartingPlayer = startingPlayer;
             // TODO this next line is making me cringe. Need to research why.
-            this.StartingPlayer.StartingPositions.Add(this.Id);
+            this.StartingPlayer.StartingPositions.Add(this);
         }
 
     }

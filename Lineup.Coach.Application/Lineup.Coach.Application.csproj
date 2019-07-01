@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <StartupObject></StartupObject>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,20 +14,6 @@
     <None Remove="Lineup.Coach.Domain\**" />
     <None Remove="Lineup.Coach.Persistence\**" />
     <None Remove="Lineup.Coach.Application.Tests\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="../LineupDataPositionRankingByArrayOrder.json" />
-    <None Remove="2019TarHeels.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="..\LineupDataPositionRankingByArrayOrder.json" Link="LineupDataPositionRankingByArrayOrder.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="2019TarHeels.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>

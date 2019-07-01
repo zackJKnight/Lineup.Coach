@@ -9,6 +9,7 @@ namespace Lineup.Coach.Domain
     public class PositionPreferenceRank
     {
         public Guid Id { get; set; }
+        
         [NotMapped]
         public string[] Ranking { get; set; }
 

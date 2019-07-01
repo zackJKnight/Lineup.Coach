@@ -99,7 +99,7 @@ namespace Lineup.Coach.Application
                     if (!playerStartingThisPeriod && OpenMatchingPosition.StartingPlayer == null)
                     {
                         OpenMatchingPosition.StartingPlayer = player;
-                        player.StartingPositions.Add(OpenMatchingPosition.Id);
+                        player.StartingPositions.Add(OpenMatchingPosition);
                         player.PlacementScore += player.PositionPreferenceRank.Ranking.Length - Array.IndexOf(player.PositionPreferenceRank.Ranking, OpenMatchingPosition.Name.ToLower());
                         playersInRound.Remove(player);
                         playerPlaced = true;
@@ -123,7 +123,7 @@ namespace Lineup.Coach.Application
                     if (!currentPeriod.IsPlayerBenchedThisPeriod(player) && !currentPeriod.IsPlayerStartingThisPeriod(player))
                     {
                         openBench.StartingPlayer = player;
-                        player.Benches.Add(openBench.Id);
+                        player.Benches.Add(openBench);
                         player.PlacementScore = player.PlacementScore - 1;
                         playerPlaced = true;
                         break;

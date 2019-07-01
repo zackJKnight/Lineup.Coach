@@ -35,11 +35,11 @@ namespace Lineup.Coach.Domain
 
         public bool IsPlayerBenchedThisPeriod(Player player)
         {
-            return this.Positions.Any(position => player.Benches.Contains(position.Id));
+            return this.Positions.Any(position => player.Benches.Contains(position));
         }
         public bool IsPlayerStartingThisPeriod(Player player)
         {
-            return this.Positions.Any(position => player.StartingPositions.Contains(position.Id));
+            return this.Positions.Any(position => player.StartingPositions.Contains(position));
         }
 
     }

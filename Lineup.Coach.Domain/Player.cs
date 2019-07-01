@@ -12,17 +12,17 @@ namespace Lineup.Coach.Domain
         public string FirstName { get; set; }
         public string LastName { get; set; }
         [NotMapped]
-        public List<Guid> Benches { get; set; }
+        public List<Position> Benches { get; set; }
         [NotMapped]
-        public List<Guid> StartingPositions { get; set; }
+        public List<Position> StartingPositions { get; set; }
 
         public int PlacementScore { get; set; }
         public PositionPreferenceRank PositionPreferenceRank { get; set; }
 
         public Player()
         {
-            this.Benches = new List<Guid>();
-            this.StartingPositions = new List<Guid>();
+            this.Benches = new List<Position>();
+            this.StartingPositions = new List<Position>();
         }
         public Player(string firstName, string lastName, string[] ranking)
         {
