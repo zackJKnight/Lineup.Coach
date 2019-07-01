@@ -3,14 +3,16 @@ using System;
 using Lineup.Coach.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Lineup.Coach.Persistence.Migrations
 {
     [DbContext(typeof(LineupCoachDbContext))]
-    partial class LineupCoachDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190701033714_initialize-team-entity-props")]
+    partial class initializeteamentityprops
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

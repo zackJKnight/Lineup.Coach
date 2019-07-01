@@ -22,5 +22,15 @@ namespace LineupCoach.App.Controllers
         {
             return Ok(await Mediator.Send(new GetTeamsListQuery()));
         }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> Create([FromBody]CreateTeamCommand command)
+        {
+            await Mediator.Send(command);
+
+            return NoContent();
+        }
     }
 }
