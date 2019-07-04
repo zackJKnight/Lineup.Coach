@@ -11,11 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using FluentValidation.AspNetCore;
-using MediatR.Pipeline;
-using Microsoft.AspNetCore.Http;
-using NSwag.AspNetCore;
 using Lineup.Coach.Application.Interfaces;
+using Lineup.Coach.Application.Teams.Commands;
+using LineupCoach.Infrastructure;
 
 namespace LineupCoach.App
 {
@@ -37,9 +35,12 @@ namespace LineupCoach.App
 
             // Add MediatR
             services.AddMediatR(typeof(GetTeamsListQueryHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(CreateTeamCommand).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
-
+            
+            services.AddTransient<INotificationService, NotificationService>();
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<ILineupCoachDbContext, LineupCoachDbContext>(
                 options => options.UseSqlite(

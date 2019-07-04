@@ -1,15 +1,13 @@
 ﻿using Lineup.Coach.Application.Games.Commands.CreateGame;
+using Lineup.Coach.Application.Interfaces;
 using Lineup.Coach.Application.Notifications;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lineup.Coach.Application.Teams.Commands
 {
-    internal class TeamCreated : INotification
+    public class TeamCreated : INotification
     {
         public string TeamCreatedId { get; set; }
 

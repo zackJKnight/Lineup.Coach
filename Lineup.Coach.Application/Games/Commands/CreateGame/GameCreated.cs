@@ -1,4 +1,5 @@
-﻿using Lineup.Coach.Application.Notifications;
+﻿using Lineup.Coach.Application.Interfaces;
+using Lineup.Coach.Application.Notifications;
 using MediatR;
 using System;
 using System.Threading;

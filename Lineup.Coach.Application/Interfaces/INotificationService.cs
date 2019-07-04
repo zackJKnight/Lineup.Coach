@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Lineup.Coach.Application.Notifications;
 
-namespace Lineup.Coach.Application.Games.Commands.CreateGame
+namespace Lineup.Coach.Application.Interfaces
 {
-    internal interface INotificationService
+    public interface INotificationService
     {
         Task SendAsync(Message message);
     }

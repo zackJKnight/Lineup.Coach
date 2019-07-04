@@ -39,7 +39,7 @@ namespace Lineup.Coach.Application.Tests.Model
             {
                 Players.Add(TestHelper.CreatePlayer());
             }
-            TestTeam.Roster = Players;
+            TestTeam.Players.ToList().AddRange(Players);
             return TestTeam;
         }
 
@@ -49,7 +49,7 @@ namespace Lineup.Coach.Application.Tests.Model
             var unitUnderTest = TestHelper.CreateGame(0, TestHelper.StandardLineupPositions, playersOnTeam);
             // declare my team's needs; number of players and their position prefs
             var testTeam = this.CreateTeam();
-            var teamsFavoritePositions = testTeam.Roster.Select(player => player.PositionPreferenceRank)
+            var teamsFavoritePositions = testTeam.Players.ToList().Select(player => player.PositionPreferenceRank)
                 .Select(pref => pref.Ranking[0].ToLower());
             // Ask the game whether it has a position for each of the team's players in their fav. pos.
             var availableGamePositionNames = unitUnderTest.Periods.SelectMany(period => period.Positions)

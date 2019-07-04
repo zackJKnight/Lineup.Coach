@@ -27,7 +27,7 @@ namespace Lineup.Coach.Application.Tests
             {
                 this.mockPlayerList.Object.Add(GenerateTestPlayer());
             }
-            this.mockTeam.Object.Roster = this.mockPlayerList.Object;
+            this.mockTeam.Object.Players.ToList().AddRange(this.mockPlayerList.Object);
         }
 
         [TestCleanup]
@@ -59,7 +59,7 @@ namespace Lineup.Coach.Application.Tests
             var unitUnderTest = CreateLineupFiller();
             var testGame = TestHelper.CreateGame(10, TestHelper.StandardLineupPositions, 7);
             // Act
-            unitUnderTest.FillLineupByPlayerPreference(testGame, mockTeam.Object.Roster);
+            unitUnderTest.FillLineupByPlayerPreference(testGame, mockTeam.Object.Players.ToList());
 
             var actualPositionName = testGame.Periods
                 .SelectMany(period => period.Positions
@@ -77,7 +77,7 @@ namespace Lineup.Coach.Application.Tests
             {
                 testGame.Periods.ForEach(period => period.Positions.Add(new Position("bench", period.Id, PositionType.Bench)));
             }
-            unitUnderTest.FillLineupByPlayerPreference(testGame, mockTeam.Object.Roster);
+            unitUnderTest.FillLineupByPlayerPreference(testGame, mockTeam.Object.Players.ToList());
             var periods = testGame.Periods;
             foreach (var period in periods)
             {
