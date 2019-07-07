@@ -45,6 +45,11 @@ namespace LineupCoach.App
             services.AddDbContext<ILineupCoachDbContext, LineupCoachDbContext>(
                 options => options.UseSqlite(
                     "FileName=../LineupCoach.db"));
+            
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
             services.AddSwaggerDocument();
         }
 
@@ -61,13 +66,35 @@ namespace LineupCoach.App
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            if (!env.IsDevelopment())
+                app.UseHttpsRedirection();
+                
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
             app.UseSwaggerUi3(settings =>
             {
                 settings.Path = "/api";
                 settings.DocumentPath = "/api/specification.json";
             });
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller}/{action=Index}/{id?}");
+            });
+
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                }
+            });
         }
     }
 }
