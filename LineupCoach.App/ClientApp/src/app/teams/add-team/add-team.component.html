@@ -1,4 +1,5 @@
-<p>add-team works!</p>
+<h2>Teams</h2>
 <table>
-  <tr>{{teamsListVM}}</tr>
+  <th>Name</th>
+  <tr *ngFor="let team of teamsListVM.teams">{{team.name}}</tr>
 </table>

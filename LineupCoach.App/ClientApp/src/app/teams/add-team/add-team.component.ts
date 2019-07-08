@@ -8,9 +8,9 @@ import { TeamsClient, TeamsListViewModel} from '../../lineup-coach-api';
 export class AddTeamComponent implements OnInit {
 teamsListVM: TeamsListViewModel = new TeamsListViewModel();
   constructor(client: TeamsClient) {
-    // client.getAll().subscribe(result => {
-    //   this.teamsListVM = result;
-    // }, error => console.error(error));
+    client.getAll().subscribe(result => {
+      this.teamsListVM = result;
+    }, error => console.error(error));
   }
 
   ngOnInit() {
