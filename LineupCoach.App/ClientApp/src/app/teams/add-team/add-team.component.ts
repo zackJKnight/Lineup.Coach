@@ -1,19 +1,34 @@
 import { Component, OnInit } from '@angular/core';
-import { TeamsClient, TeamsListViewModel} from '../../lineup-coach-api';
+import { Team } from '../team';
+import { TeamsClient, CreateTeamCommand} from '../../lineup-coach-api';
+
 @Component({
   selector: 'app-add-team',
   templateUrl: './add-team.component.html',
   styleUrls: ['./add-team.component.less']
 })
 export class AddTeamComponent implements OnInit {
-teamsListVM: TeamsListViewModel = new TeamsListViewModel();
+team = new Team();
+client: TeamsClient;
+command: CreateTeamCommand;
+
   constructor(client: TeamsClient) {
-    client.getAll().subscribe(result => {
-      this.teamsListVM = result;
-    }, error => console.error(error));
+    this.client = client;
   }
 
   ngOnInit() {
   }
 
+  addName(name: string) {
+    if (name) {
+      this.team.name = name;
+    }
+  }
+
+  onSave() {
+    this.command.name = this.team.name;
+    this.client.create(this.command);
+    this.team = null;
+    this.team = new Team();
+  }
 }

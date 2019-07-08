@@ -1,5 +1,10 @@
-<h2>Teams</h2>
-<table>
-  <th>Name</th>
-  <tr *ngFor="let team of teamsListVM.teams">{{team.name}}</tr>
-</table>
+<h2>New Team</h2>
+<div class="form-container">
+    <mat-form-field appearance="standard">
+      <mat-label>Team Name</mat-label>
+      <input matInput #name placeholder="Name"
+      (keyup.enter)="addName(name.value)"
+      (blur)="addName(name.value)"/>
+    </mat-form-field>
+    <button (click)="onSave()">Save</button>
+</div>
