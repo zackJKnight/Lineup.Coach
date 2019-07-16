@@ -1,9 +1,17 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<section class="mat-typography">
-  <h1>
-    {{ title }}
-  </h1>
-</section>
-<app-add-team>
+<div class="flexbox-parent">
+    <div layout="row" layout-align="center center" style="min-height: 500px">
+     <div flex="15"><section class="mat-typography">
+        <h3>
+          {{ title }}
+        </h3>
+      </section></div>
+     <div flex="15"><h1>Tar Heels</h1></div>
+     <div><app-list-players></app-list-players></div>
+     <div fxLayoutAlign="center">  <button mat-flat-button color="primary" class='action-button'>Generate Game Lineup</button></div>
+    </div>
+  </div>
+
+
+
 
 <router-outlet></router-outlet>

@@ -7,12 +7,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddTeamComponent } from './teams/add-team/add-team.component';
 import { TeamsClient } from './lineup-coach-api';
 import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatInputModule } from '@angular/material';
+import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
+MatExpansionModule,
+MatCheckboxModule } from '@angular/material';
+import { ListPlayersComponent } from './players/list-players/list-players.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AddTeamComponent
+    AddTeamComponent,
+    ListPlayersComponent
   ],
   imports: [
     BrowserModule,
@@ -22,6 +26,10 @@ import { MatFormFieldModule, MatInputModule } from '@angular/material';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatButtonModule,
+    MatListModule,
+    MatExpansionModule,
+    MatCheckboxModule
   ],
   providers: [TeamsClient],
   bootstrap: [AppComponent]
