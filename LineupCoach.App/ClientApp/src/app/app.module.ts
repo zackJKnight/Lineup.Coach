@@ -9,7 +9,8 @@ import { TeamsClient } from './lineup-coach-api';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
 MatExpansionModule,
-MatCheckboxModule } from '@angular/material';
+MatCheckboxModule,
+MatCommonModule } from '@angular/material';
 import { ListPlayersComponent } from './players/list-players/list-players.component';
 
 @NgModule({
@@ -29,7 +30,8 @@ import { ListPlayersComponent } from './players/list-players/list-players.compon
     MatButtonModule,
     MatListModule,
     MatExpansionModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatCommonModule
   ],
   providers: [TeamsClient],
   bootstrap: [AppComponent]

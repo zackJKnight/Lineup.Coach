@@ -1,17 +1,20 @@
 <div class="flexbox-parent">
-    <div layout="row" layout-align="center center" style="min-height: 500px">
-     <div flex="15"><section class="mat-typography">
-        <h3>
+  <div layout="row" layout-align="center center" style="min-height: 500px">
+    <section class="mat-typography">
+      <div flex="15" class='centered'>
+        <mat-panel-title>
           {{ title }}
-        </h3>
-      </section></div>
-     <div flex="15"><h1>Tar Heels</h1></div>
-     <div><app-list-players></app-list-players></div>
-     <div fxLayoutAlign="center">  <button mat-flat-button color="primary" class='action-button'>Generate Game Lineup</button></div>
-    </div>
+        </mat-panel-title>
+      </div>
+      <div flex="15"><h1>Tar Heels</h1></div>
+      <div><app-list-players></app-list-players></div>
+      <div class="centered">
+        <button mat-flat-button color='primary' class="action-button">
+          Generate Game Lineup
+        </button>
+      </div>
+    </section>
   </div>
-
-
-
+</div>
 
 <router-outlet></router-outlet>
