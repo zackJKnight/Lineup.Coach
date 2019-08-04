@@ -4,3 +4,7 @@ Lineup.Coach.Tests/obj/*
 **/bin/*
 **/obj/*
 .vs/*
+LineupCoach.db
+.vscode/settings.json
+LineupCoach.App/ClientApp/src/app/.deployment
+LineupCoach.App/ClientApp/src/.deployment
