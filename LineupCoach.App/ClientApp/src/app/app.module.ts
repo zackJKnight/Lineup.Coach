@@ -10,7 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
 MatExpansionModule,
 MatCheckboxModule,
-MatCommonModule } from '@angular/material';
+MatCommonModule,
+MatToolbarModule} from '@angular/material';
 import { ListPlayersComponent } from './players/list-players/list-players.component';
 
 @NgModule({
@@ -31,7 +32,8 @@ import { ListPlayersComponent } from './players/list-players/list-players.compon
     MatListModule,
     MatExpansionModule,
     MatCheckboxModule,
-    MatCommonModule
+    MatCommonModule,
+    MatToolbarModule
   ],
   providers: [TeamsClient],
   bootstrap: [AppComponent]
