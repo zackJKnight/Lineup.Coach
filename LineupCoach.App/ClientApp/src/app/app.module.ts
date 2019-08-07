@@ -12,13 +12,13 @@ MatExpansionModule,
 MatCheckboxModule,
 MatCommonModule,
 MatToolbarModule} from '@angular/material';
-import { ListPlayersComponent } from './players/list-players/list-players.component';
+import { PeriodsModule } from './periods/periods.module';
+import { TeamsModule } from './teams/teams.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AddTeamComponent,
-    ListPlayersComponent
+    AddTeamComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +33,9 @@ import { ListPlayersComponent } from './players/list-players/list-players.compon
     MatExpansionModule,
     MatCheckboxModule,
     MatCommonModule,
-    MatToolbarModule
+    MatToolbarModule,
+    PeriodsModule,
+    TeamsModule
   ],
   providers: [TeamsClient],
   bootstrap: [AppComponent]
