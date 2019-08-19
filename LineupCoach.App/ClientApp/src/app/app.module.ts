@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddTeamComponent } from './teams/add-team/add-team.component';
 import { TeamsClient } from './lineup-coach-api';
+import { PlayerService } from './players/player.service';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
 MatExpansionModule,
@@ -14,7 +15,6 @@ MatCommonModule,
 MatToolbarModule} from '@angular/material';
 import { PeriodsModule } from './periods/periods.module';
 import { TeamsModule } from './teams/teams.module';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,7 +37,9 @@ import { TeamsModule } from './teams/teams.module';
     PeriodsModule,
     TeamsModule
   ],
-  providers: [TeamsClient],
+  providers: [TeamsClient,
+  PlayerService
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
