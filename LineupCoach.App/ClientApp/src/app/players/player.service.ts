@@ -8,11 +8,6 @@ import { Subject } from 'rxjs';
 })
 export class PlayerService {
   getPlayers() {
-    //const subject = new Subject();
-    //setTimeout(() => {
-    //   subject.next(PLAYERS); subject.complete();
-    //}, 100);
-    //return subject;
     return PLAYERS;
   }
 
@@ -33,8 +28,56 @@ export class PlayerService {
 
 const PLAYERS: Player[] = [
   {
-    firstName: 'Myles',
-    lastName: 'Knight',
+    firstName: 'Merve',
+    lastName: 'Green',
+    isPresent: true,
+    positionPreferenceRank: {
+      ranking: [
+        ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    firstName: 'Hal',
+    lastName: 'Blue',
+    isPresent: true,
+    positionPreferenceRank: {
+      ranking: [
+        ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    firstName: 'JoeJoe',
+    lastName: 'Orange',
+    isPresent: true,
+    positionPreferenceRank: {
+      ranking: [
+        ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    firstName: 'Mark',
+    lastName: 'Brown',
+    isPresent: true,
+    positionPreferenceRank: {
+      ranking: [
+        ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    firstName: 'Chip',
+    lastName: 'Red',
     isPresent: true,
     positionPreferenceRank: {
       ranking: [

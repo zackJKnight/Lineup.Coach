@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddTeamComponent } from './teams/add-team/add-team.component';
 import { TeamsClient } from './lineup-coach-api';
+import { GameService } from './games/game.service';
 import { PlayerService } from './players/player.service';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
@@ -38,6 +39,7 @@ import { TeamsModule } from './teams/teams.module';
     TeamsModule
   ],
   providers: [TeamsClient,
+    GameService,
   PlayerService
 ],
   bootstrap: [AppComponent]
