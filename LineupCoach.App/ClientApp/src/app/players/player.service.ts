@@ -18,7 +18,7 @@ export class PlayerService {
     let result: string;
     if ( currentPrefRank > 0 &&
       (typeof player.positionPreferenceRank !== 'undefined') &&
-      currentPrefRank <= player.positionPreferenceRank.ranking.length
+      currentPrefRank <= player.positionPreferenceRank.ranking
     ) {
       result = player.positionPreferenceRank.ranking[currentPrefRank - 1];
     }
@@ -32,8 +32,13 @@ const PLAYERS: Player[] = [
     lastName: 'Green',
     isPresent: true,
     positionPreferenceRank: {
-      ranking: [
-        ]
+      ranking: {
+        goalie: '2',
+        defense: '4',
+        mid: '1',
+        forward: '3'
+      }
+
     },
     startingPositions: [],
     placementScore: 0,
@@ -44,8 +49,12 @@ const PLAYERS: Player[] = [
     lastName: 'Blue',
     isPresent: true,
     positionPreferenceRank: {
-      ranking: [
-        ]
+      ranking: {
+        goalie: '2',
+          defense: '4',
+          mid: '1',
+          forward: '3'
+      }
     },
     startingPositions: [],
     placementScore: 0,
@@ -56,8 +65,12 @@ const PLAYERS: Player[] = [
     lastName: 'Orange',
     isPresent: true,
     positionPreferenceRank: {
-      ranking: [
-        ]
+      ranking: {
+        goalie: '3',
+          defense: '1',
+          mid: '4',
+          forward: '2'
+      }
     },
     startingPositions: [],
     placementScore: 0,
@@ -68,8 +81,12 @@ const PLAYERS: Player[] = [
     lastName: 'Brown',
     isPresent: true,
     positionPreferenceRank: {
-      ranking: [
-        ]
+      ranking: {
+        goalie: '2',
+        defense: '1',
+        mid: '3',
+        forward: '4'
+    }
     },
     startingPositions: [],
     placementScore: 0,
@@ -80,8 +97,12 @@ const PLAYERS: Player[] = [
     lastName: 'Red',
     isPresent: true,
     positionPreferenceRank: {
-      ranking: [
-        ]
+      ranking: {
+        goalie: '4',
+        defense: '3',
+        mid: '2',
+        forward: '1'
+    }
     },
     startingPositions: [],
     placementScore: 0,

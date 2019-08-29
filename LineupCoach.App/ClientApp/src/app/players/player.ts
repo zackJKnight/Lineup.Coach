@@ -4,7 +4,7 @@ export interface Player {
   lastName: string;
   isPresent: boolean;
   positionPreferenceRank: {
-    ranking: [];
+    ranking: {};
   };
   startingPositions: Position[];
   placementScore: number;

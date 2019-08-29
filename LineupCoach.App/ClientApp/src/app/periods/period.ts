@@ -1,6 +1,10 @@
 import { Position } from '../positions/position';
 
-export class Period {
+export class      Period {
   periodNumber: number;
-  positions: Position[];
+  positions?: Position[];
+
+  constructor(periodNumber: number){
+  this.periodNumber = periodNumber;
+  }
 }

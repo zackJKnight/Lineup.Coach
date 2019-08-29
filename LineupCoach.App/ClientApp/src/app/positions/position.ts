@@ -12,4 +12,8 @@ export class Position {
   ];
   periodId: number;
   periodNumber: number;
+
+  constructor(name: string) {
+this.name = name;
+  }
 }

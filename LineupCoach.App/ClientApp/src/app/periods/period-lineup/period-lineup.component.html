@@ -1,3 +1,6 @@
-<div>
-  <p>period-lineup works!</p>
+<div *ngFor="let period of periods">
+<p>Period: </p>{{period.periodNumber}}
+<div *ngFor="let position of period.positions">
+  {{position.name}} - {{position.startingPlayer}}
+</div>
 </div>

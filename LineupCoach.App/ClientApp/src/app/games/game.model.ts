@@ -4,6 +4,7 @@ import { Team } from '../teams/team';
 export interface Game {
   _startingPositionPerPlayerCount: number;
   _benchCount: number;
+  NUMBER_OF_PERIODS: number;
 
   GameId: string;
   PlayDate: Date | string;

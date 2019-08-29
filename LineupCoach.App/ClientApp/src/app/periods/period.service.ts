@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { PeriodsModule } from './periods.module';
 import { Period } from './period';
 import { Player } from '../players/player';
 import { Position } from '../positions/position';
 
 @Injectable({
-  providedIn: PeriodsModule
+  providedIn: 'root'
 })
 export class PeriodService {
 
