@@ -38,7 +38,7 @@ setPeriods() {
 
     // ToDo if the players don't have ranking, need default or throw here.
     const preferenceRankMax: number = Math.max.apply(Math, players.map(player =>
-      player.positionPreferenceRank.ranking));
+      Object.keys(player.positionPreferenceRank.ranking).length));
     const initialPlayerCount = playersInRound.length;
 
     // Rounds - within the rounds the players (in random order) are placed based on preference.
