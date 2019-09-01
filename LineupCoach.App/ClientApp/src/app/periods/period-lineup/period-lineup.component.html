@@ -4,10 +4,12 @@
   <tr>
     <th>Position</th>
     <th>Player</th>
+    <th>Placement Score</th>
   </tr>
   <tr *ngFor="let position of period.positions">
     <td>{{position.name}}</td>
     <td>{{position.startingPlayer?.firstName}}</td>
+    <td>{{position.startingPlayer?.placementScore}}</td>
     </tr>
 </table>
 </div>

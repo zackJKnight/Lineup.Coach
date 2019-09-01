@@ -50,9 +50,9 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
-        'mid',
-        'goalie',
         'forward',
+        'goalie',
+        'mid',
         'defense'
       ]
     },

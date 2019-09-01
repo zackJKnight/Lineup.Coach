@@ -153,7 +153,7 @@ export class GameService {
   allGamePositionsFilled(): boolean {
     // flatten the positions in all periods
     const allPositions = this.periods.reduce((pos, period) => [...pos, ...period.positions], []);
-    const allFilled = allPositions.some(position => typeof(position.startingPlayer) !== 'undefined');
+    const allFilled = !allPositions.some(position => typeof(position.startingPlayer) === 'undefined');
     return allFilled;
   }
 
