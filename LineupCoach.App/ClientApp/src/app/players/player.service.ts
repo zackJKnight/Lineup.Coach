@@ -28,6 +28,7 @@ export class PlayerService {
 
 const PLAYERS: Player[] = [
   {
+    id: 1,
     firstName: 'Merve',
     lastName: 'Green',
     isPresent: true,
@@ -45,6 +46,7 @@ const PLAYERS: Player[] = [
     benches: []
   },
   {
+    id: 2,
     firstName: 'Hal',
     lastName: 'Blue',
     isPresent: true,
@@ -61,6 +63,7 @@ const PLAYERS: Player[] = [
     benches: []
   },
   {
+    id: 3,
     firstName: 'JoeJoe',
     lastName: 'Orange',
     isPresent: true,
@@ -77,6 +80,7 @@ const PLAYERS: Player[] = [
     benches: []
   },
   {
+    id: 4,
     firstName: 'Mark',
     lastName: 'Brown',
     isPresent: true,
@@ -93,6 +97,7 @@ const PLAYERS: Player[] = [
     benches: []
   },
   {
+    id: 5,
     firstName: 'Chip',
     lastName: 'Red',
     isPresent: true,
