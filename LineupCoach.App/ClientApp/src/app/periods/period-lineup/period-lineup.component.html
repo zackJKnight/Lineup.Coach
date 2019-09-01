@@ -1,6 +1,13 @@
 <div *ngFor="let period of periods">
-<p>Period: </p>{{period.periodNumber}}
-<div *ngFor="let position of period.positions">
-  {{position.name}} - {{position.startingPlayer}}
-</div>
+<h2>Period: {{period.periodNumber}}</h2>
+<table>
+  <tr>
+    <th>Position</th>
+    <th>Player</th>
+  </tr>
+  <tr *ngFor="let position of period.positions">
+    <td>{{position.name}}</td>
+    <td>{{position.startingPlayer?.firstName}}</td>
+    </tr>
+</table>
 </div>

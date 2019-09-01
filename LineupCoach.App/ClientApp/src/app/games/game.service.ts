@@ -10,50 +10,50 @@ import * as cloneDeep from 'lodash/cloneDeep';
 @Injectable({
   providedIn: 'root'
 })
+
 export class GameService {
   theGame: Game;
-  StartingPositionsPerPlayerCount: number;
+  startingPositionsPerPlayer: number;
+  availablePlayerCount: number;
+  MAX_PLAYERS_ON_FIELD = 8;
+
   public periods: Array<Period>;
 
   constructor(
     private playerService: PlayerService,
     private periodService: PeriodService
     ) {
-      this.periods = new Array<Period>();
+      this.periods = this.periodService.getPeriods();
+      this.availablePlayerCount = this.playerService.getPlayers().map(
+        player => player.isPresent).length;
+      this.startingPositionsPerPlayer = this.setStartingPositionsPerPlayerCount();
+      // ToDo this is still organized as copied from the C# console app. need to improve this
+      this.theGame = new Game();
+      this.theGame.Periods = this.periods;
     }
 
-setPeriods() {
-  const period1 = new Period(1);
-  period1.positions = new Array<Position>();
-  period1.positions.push(new Position('goalie'));
-  period1.positions.push(new Position('forward'));
-  period1.positions.push(new Position('defense'));
-  period1.positions.push(new Position('mid'));
-  period1.positions.push(new Position('mid'));
-  this.periods.push(period1);
-}
   generateLineup(players: Player[]) {
-    let round: number;
-    const playersInRound = cloneDeep(players);
+    let round = 0;
+    let playersInRound = cloneDeep(players);
 
     // ToDo if the players don't have ranking, need default or throw here.
     const preferenceRankMax: number = Math.max.apply(Math, players.map(player =>
-      Object.keys(player.positionPreferenceRank.ranking).length));
+      player.positionPreferenceRank.ranking.length));
     const initialPlayerCount = playersInRound.length;
 
     // Rounds - within the rounds the players (in random order) are placed based on preference.
-    while (!this.allGamePositionsFilled() && round < this.StartingPositionsPerPlayerCount + 1) {
-      for (let i: number; i < initialPlayerCount; i++) {
+    while (!this.allGamePositionsFilled() && round < this.startingPositionsPerPlayer + 1) {
+      for (let i = 0; i < initialPlayerCount; i++) {
         if (playersInRound.length > 0) {
-          let playerPlaced: boolean;
-          const player: Player = this.getRandomPlayer(playersInRound);
-          for (let currentPrefRank: number; currentPrefRank < preferenceRankMax; currentPrefRank++) {
-            if (!playerPlaced) {
-              const positionName: string = this.playerService.getPositionNameByPreferenceRank(player, currentPrefRank);
+          let playerPlaced = false;
+          let player = this.getRandomPlayer(playersInRound);
+          for (let currentPrefRankIndex = 0; currentPrefRankIndex < preferenceRankMax; currentPrefRankIndex++) {
+            if (!playerPlaced && typeof(player) !== 'undefined') {
+              const positionName: string = this.playerService.getPositionNameByPreferenceRank(player, currentPrefRankIndex);
               if (typeof positionName !== 'undefined' && positionName) {
                 const OpenMatchingPositions: Position[] = this.getOpenPositionsByName(positionName);
-                if (!OpenMatchingPositions.some(open => open == null || typeof open === 'undefined')) {
-                  if (currentPrefRank === preferenceRankMax - 1) {
+                if (!OpenMatchingPositions.some(open => typeof(open) !== 'undefined')) {
+                  if (currentPrefRankIndex === preferenceRankMax) {
                     const benchPlayers: Player[] = [player];
                     // benchPlayers.push(player);
                     playerPlaced = this.tryBenchPlayers(this.theGame, benchPlayers);
@@ -70,18 +70,21 @@ setPeriods() {
       }
 
       round++;
-      playersInRound.push(...players);
+      playersInRound = cloneDeep(players);
     }
     return this.periods;
   }
   getOpenPositionsByName(positionName: string): Position[] {
     let openMatches: Position[];
     try {
-      openMatches = this.periods
+      const flattenedGamePositions = this.periods
         .sort(period => period.periodNumber)
-        .reduce((pos, period) => [...pos, ...period.positions], [])
-        .filter(position => position.positionType !== 'bench')
-        .filter(position => position.name.ToLower() === name && position.startingPlayer == null);
+        .reduce((pos, period) => [...pos, ...period.positions], []);
+
+      const nonBenchPositions = flattenedGamePositions.filter(position => position.positionType !== 'bench');
+
+      openMatches = nonBenchPositions
+      .filter(position => position.name.toLowerCase() === positionName && typeof(position.startingPlayer) === 'undefined');
     } catch (e) {
       throw new Error(e);
     }
@@ -98,8 +101,8 @@ setPeriods() {
         if (!playerStartingThisPeriod && OpenMatchingPosition.startingPlayer == null) {
           OpenMatchingPosition.startingPlayer = player;
           player.startingPositions.push(OpenMatchingPosition);
-          const rank = player.positionPreferenceRank.ranking[OpenMatchingPosition.name.toLowerCase()];
-          player.placementScore += player.positionPreferenceRank.ranking[0] - rank;
+          const rank = player.positionPreferenceRank.ranking.indexOf(OpenMatchingPosition.name.toLowerCase());
+          player.placementScore += player.positionPreferenceRank.ranking.length - rank;
           const index = playersInRound.indexOf(player, 0);
           if (index > -1) {
             playersInRound.splice(index, 1);
@@ -122,8 +125,8 @@ setPeriods() {
   tryBenchPlayers(theGame: any, benchPlayers: Player[]): boolean {
     let playerPlaced = false;
     const openBenches = this.getOpenBenches();
-    for (let player of benchPlayers) {
-      for (let openBench of openBenches) {
+    for (const player of benchPlayers) {
+      for (const openBench of openBenches) {
         const currentPeriod: Period = this.periods.filter(period => period.periodNumber === openBench.periodNumber)[0];
         if (!this.periodService.isPlayerBenchedThisPeriod(currentPeriod, player)
           && !this.periodService.isPlayerStartingThisPeriod(currentPeriod, player)) {
@@ -149,7 +152,13 @@ setPeriods() {
 
   allGamePositionsFilled(): boolean {
     // flatten the positions in all periods
-    return this.periods.reduce((pos, period) => [...pos, ...period.positions], [])
-      .some(position => position.startingPlayer != null);
+    const allPositions = this.periods.reduce((pos, period) => [...pos, ...period.positions], []);
+    const allFilled = allPositions.some(position => typeof(position.startingPlayer) !== 'undefined');
+    return allFilled;
+  }
+
+  setStartingPositionsPerPlayerCount(): number {
+      return this.MAX_PLAYERS_ON_FIELD * this.periods.length / this.availablePlayerCount;
   }
 }
+

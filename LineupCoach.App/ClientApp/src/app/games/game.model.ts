@@ -1,7 +1,7 @@
 import { Period } from '../periods/period';
 import { Team } from '../teams/team';
 
-export interface Game {
+export class Game {
   _startingPositionPerPlayerCount: number;
   _benchCount: number;
   NUMBER_OF_PERIODS: number;
