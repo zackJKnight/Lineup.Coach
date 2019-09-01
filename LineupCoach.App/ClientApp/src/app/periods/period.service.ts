@@ -18,7 +18,10 @@ export class PeriodService {
   }
 
   isPlayerStartingThisPeriod(periodWithFirstOpenMatchthis: Period, player: Player): boolean {
-    return periodWithFirstOpenMatchthis.positions.some(position => player.startingPositions.includes(position));
+    if (typeof(player.startingPositions) === 'undefined' || player.startingPositions.length === 0) {
+      return false;
+    }
+    return player.startingPositions.some(position => position.periodId === periodWithFirstOpenMatchthis.periodNumber);
   }
 
   getPeriods(): Period[] {
