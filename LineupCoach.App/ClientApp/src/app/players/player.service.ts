@@ -139,6 +139,38 @@ const PLAYERS: Player[] = [
     startingPositions: [],
     placementScore: 0,
     benches: []
+  },
+  {
+    id: 8,
+    firstName: 'Hubert',
+    lastName: 'Mauve',
+    positionPreferenceRank: {
+      ranking: [
+        'defense',
+        'forward',
+        'mid',
+        'goalie'
+      ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    id: 9,
+    firstName: 'Gene',
+    lastName: 'Yellow',
+    positionPreferenceRank: {
+      ranking: [
+        'forward',
+        'mid',
+        'goalie',
+        'defense'
+      ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
   }
 ];
 

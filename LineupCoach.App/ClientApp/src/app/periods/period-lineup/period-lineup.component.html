@@ -1,15 +1,21 @@
-<div class='padded-page' *ngFor="let period of periods">
+<section *ngIf="periods" class="mat-typography">
+<div class='padded-page' *ngFor="let period of periods | async">
 <h2>Period: {{period.periodNumber}}</h2>
-<table>
-  <tr>
-    <th>Position</th>
-    <th>Player</th>
-    <th>Placement Score</th>
-  </tr>
-  <tr *ngFor="let position of period.positions">
-    <td>{{position.name}}</td>
-    <td>{{position.startingPlayer?.firstName}}</td>
-    <td>{{position.startingPlayer?.placementScore}}</td>
-    </tr>
-</table>
+<mat-table [dataSource]="period.positions" class="mat-elevation-z8">
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Position</th>
+        <td mat-cell *matCellDef="let element">{{element.name}}</td>
+    </ng-container>
+    <ng-container matColumnDef="player">
+          <th mat-header-cell *matHeaderCellDef>Player</th>
+          <td mat-cell *matCellDef="let element">{{element.startingPlayer?.firstName}}</td>
+    </ng-container>
+    <ng-container matColumnDef="score">
+        <th mat-header-cell *matHeaderCellDef>Fairness</th>
+        <td mat-cell *matCellDef="let element">{{element.startingPlayer?.placementScore}}</td>
+  </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</mat-table>
 </div>
+</section>

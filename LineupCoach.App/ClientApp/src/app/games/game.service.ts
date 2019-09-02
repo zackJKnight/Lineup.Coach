@@ -6,6 +6,7 @@ import { PlayerService } from '../players/player.service';
 import { Period } from '../periods/period';
 import { PeriodService } from '../periods/period.service';
 import * as cloneDeep from 'lodash/cloneDeep';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,7 @@ export class GameService {
       this.theGame.Periods = this.periods;
     }
 
-  generateLineup(players: Player[]) {
+  generateLineup(players: Player[]): Observable<Period[]> {
     let round = 0;
     let playerIdsInRound = cloneDeep(players.map(player => player.id));
 
@@ -87,15 +88,19 @@ export class GameService {
     }
     if (this.allStartingPositionsFilled()) {
       this.tryBenchPlayers(players);
+    } else {
+      const unplacedPlayers = cloneDeep(players); //.filter(player => player.startingPositions.length < this.startingPositionsPerPlayer);
+      for (const player of unplacedPlayers) {
+        this.tryPlacePlayer(player, this.flattenGamePositions());
+      }
     }
-    return this.periods;
+    return of(this.periods);
   }
+
   getOpenPositionsByName(positionName: string): Position[] {
     let openMatches: Position[];
     try {
-      const flattenedGamePositions = this.periods
-        .sort(period => period.periodNumber)
-        .reduce((pos, period) => [...pos, ...period.positions], []);
+      const flattenedGamePositions = this.flattenGamePositions();
 
       const nonBenchPositions = flattenedGamePositions.filter(position => position.positionType !== 'bench');
 
@@ -106,6 +111,12 @@ export class GameService {
     }
 
     return openMatches;
+  }
+
+  flattenGamePositions() {
+    return this.periods
+        .sort(period => period.periodNumber)
+        .reduce((pos, period) => [...pos, ...period.positions], []);
   }
 
   tryPlacePlayer(player: Player, OpenMatchingPositions: Position[]): boolean {
@@ -158,9 +169,7 @@ export class GameService {
   getOpenBenches(): Position[] {
     let openBenches: Position[];
     try {
-      const flattenedGamePositions = this.periods
-        .sort(period => period.periodNumber)
-        .reduce((pos, period) => [...pos, ...period.positions], []);
+      const flattenedGamePositions = this.flattenGamePositions();
 
       const benchPositions = flattenedGamePositions.filter(position => position.positionType === 'bench');
 
@@ -174,15 +183,14 @@ export class GameService {
 
   allGamePositionsFilled(): boolean {
     // flatten the positions in all periods
-    const allPositions = this.periods.reduce((pos, period) => [...pos, ...period.positions], []);
+    const allPositions = this.flattenGamePositions();
     const allFilled = !allPositions.some(position => typeof(position.startingPlayer) === 'undefined');
     return allFilled;
   }
 
   allStartingPositionsFilled(): boolean {
     // flatten the positions in all periods
-    const allPositions = this.periods
-      .reduce((pos, period) => [...pos, ...period.positions], [])
+    const allPositions = this.flattenGamePositions()
       .filter(position => position.name !== 'bench');
     const allFilled = !allPositions.some(position => typeof(position.startingPlayer) === 'undefined');
     return allFilled;

@@ -12,7 +12,7 @@ enum PositionType {
 
 export class Position {
   name: string;
-  startingPlayer: Player;
+  startingPlayer?: Player;
   periodId: number;
   periodNumber: number;
   positionType?: PositionType;

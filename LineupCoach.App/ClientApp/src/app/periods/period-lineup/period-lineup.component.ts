@@ -4,6 +4,7 @@ import { GameService } from '../../games/game.service';
 import { PlayerService } from '../../players/player.service';
 import { Player } from 'src/app/players/player';
 import { Period } from '../period';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-period-lineup',
@@ -11,8 +12,8 @@ import { Period } from '../period';
   styleUrls: ['./period-lineup.component.less']
 })
 export class PeriodLineupComponent implements OnInit {
-
-  public periods: Period[];
+  displayedColumns = ['name', 'player', 'score'];
+  public periods: Observable<Period[]>;
   public players: Player[];
 
   constructor(
@@ -25,6 +26,10 @@ export class PeriodLineupComponent implements OnInit {
 
   ngOnInit() {
     this.players = this.playerService.getPlayers();
+    this.setLineup();
+  }
+
+  setLineup(){
     this.periods = this.gameService.generateLineup(this.players);
   }
 
