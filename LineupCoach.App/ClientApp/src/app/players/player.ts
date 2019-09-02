@@ -3,7 +3,7 @@ export interface Player {
   id: number;
   firstName: string;
   lastName: string;
-  isPresent: boolean;
+  isPresent?: boolean;
   positionPreferenceRank: {
     ranking: string[];
   };

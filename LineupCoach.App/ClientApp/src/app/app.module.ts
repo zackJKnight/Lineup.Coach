@@ -11,7 +11,6 @@ import { PlayerService } from './players/player.service';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
 MatExpansionModule,
-MatCheckboxModule,
 MatCommonModule,
 MatToolbarModule} from '@angular/material';
 import { PeriodsModule } from './periods/periods.module';
@@ -32,7 +31,6 @@ import { TeamsModule } from './teams/teams.module';
     MatButtonModule,
     MatListModule,
     MatExpansionModule,
-    MatCheckboxModule,
     MatCommonModule,
     MatToolbarModule,
     PeriodsModule,

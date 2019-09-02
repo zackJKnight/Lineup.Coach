@@ -20,9 +20,6 @@ export class ListPlayersComponent implements OnInit{
   ngOnInit(
   ) {
     this.players = this.playerService.getPlayers();
-
-//    this.players = this.route.snapshot.data['players']
-
+    this.players.forEach(plyr => plyr.isPresent = true);
   }
-
 }

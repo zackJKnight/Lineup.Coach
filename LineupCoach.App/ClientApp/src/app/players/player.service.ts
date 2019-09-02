@@ -31,7 +31,6 @@ const PLAYERS: Player[] = [
     id: 1,
     firstName: 'Merve',
     lastName: 'Green',
-    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'mid',
@@ -49,7 +48,6 @@ const PLAYERS: Player[] = [
     id: 2,
     firstName: 'Hal',
     lastName: 'Blue',
-    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'forward',
@@ -66,7 +64,6 @@ const PLAYERS: Player[] = [
     id: 3,
     firstName: 'JoeJoe',
     lastName: 'Orange',
-    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'defense',
@@ -83,7 +80,6 @@ const PLAYERS: Player[] = [
     id: 4,
     firstName: 'Mark',
     lastName: 'Brown',
-    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'defense',
@@ -100,13 +96,44 @@ const PLAYERS: Player[] = [
     id: 5,
     firstName: 'Chip',
     lastName: 'Red',
-    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'forward',
         'mid',
         'defense',
         'goalie'
+      ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    id: 4,
+    firstName: 'Myles',
+    lastName: 'Turquiose',
+    positionPreferenceRank: {
+      ranking: [
+        'mid',
+        'defense',
+        'goalie',
+        'forward'
+      ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    id: 4,
+    firstName: 'Brannon',
+    lastName: 'Cannon',
+    positionPreferenceRank: {
+      ranking: [
+        'forward',
+        'mid',
+        'goalie',
+        'defense'
       ]
     },
     startingPositions: [],

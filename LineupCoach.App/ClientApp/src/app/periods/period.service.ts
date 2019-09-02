@@ -33,6 +33,9 @@ export class PeriodService {
     period1.positions.push(new Position('defense', 1));
     period1.positions.push(new Position('mid', 1));
     period1.positions.push(new Position('mid', 1));
+    period1.positions.push(new Position('bench', 1));
+    period1.positions.push(new Position('bench', 1));
+    period1.positions.push(new Position('bench', 1));
     periods.push(period1);
     const period2 = new Period(2);
     period2.positions = new Array<Position>();
@@ -41,6 +44,10 @@ export class PeriodService {
     period2.positions.push(new Position('defense', 2));
     period2.positions.push(new Position('mid', 2));
     period2.positions.push(new Position('mid', 2));
+    period2.positions.push(new Position('bench', 2));
+    period2.positions.push(new Position('bench', 2));
+    period2.positions.push(new Position('bench', 2));
+
     periods.push(period2);
     const period3 = new Period(3);
     period3.positions = new Array<Position>();
@@ -49,6 +56,9 @@ export class PeriodService {
     period3.positions.push(new Position('defense', 3));
     period3.positions.push(new Position('mid', 3));
     period3.positions.push(new Position('mid', 3));
+    period3.positions.push(new Position('bench', 3));
+    period3.positions.push(new Position('bench', 3));
+    period3.positions.push(new Position('bench', 3));
     periods.push(period3);
     const period4 = new Period(4);
     period4.positions = new Array<Position>();
@@ -57,6 +67,9 @@ export class PeriodService {
     period4.positions.push(new Position('defense', 4));
     period4.positions.push(new Position('mid', 4));
     period4.positions.push(new Position('mid', 4));
+    period4.positions.push(new Position('bench', 4));
+    period4.positions.push(new Position('bench', 4));
+    period4.positions.push(new Position('bench', 4));
     periods.push(period4);
     return periods;
   }

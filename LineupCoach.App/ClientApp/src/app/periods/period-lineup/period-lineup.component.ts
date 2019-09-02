@@ -13,6 +13,7 @@ import { Period } from '../period';
 export class PeriodLineupComponent implements OnInit {
 
   public periods: Period[];
+  public players: Player[];
 
   constructor(
     private route: ActivatedRoute,
@@ -23,9 +24,8 @@ export class PeriodLineupComponent implements OnInit {
   }
 
   ngOnInit() {
-    let players: Player[];
-    players = this.playerService.getPlayers();
-    this.periods = this.gameService.generateLineup(players);
+    this.players = this.playerService.getPlayers();
+    this.periods = this.gameService.generateLineup(this.players);
   }
 
 }

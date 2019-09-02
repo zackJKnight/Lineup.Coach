@@ -1,16 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { TeamsRoutingModule } from './teams-routing.module';
 import { ListPlayersComponent } from '../players/list-players/list-players.component';
 import { TeamAttendanceComponent } from './team-attendance/team-attendance.component';
-
-// import { ListPlayersResolver } from '../players/list-players/list-players-resolver.service';
-import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
-  MatExpansionModule,
-  MatCheckboxModule,
+import { FormsModule } from '@angular/forms';
+import {
   MatCommonModule,
-  MatToolbarModule} from '@angular/material';
+  MatFormFieldModule,
+  MatInputModule,
+  MatCheckboxModule,
+  MatButtonModule,
+  MatListModule,
+  MatExpansionModule,
+  MatToolbarModule
+} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -19,12 +22,13 @@ import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatListModule,
     MatExpansionModule,
-    MatCheckboxModule,
     MatCommonModule,
     MatToolbarModule,
     TeamsRoutingModule
