@@ -17,7 +17,7 @@ export class PeriodService {
     if (!player.benches) {
       return false;
     }
-    return player.benches.some(bench => bench.periodNumber === currentPeriod.periodNumber);
+    return player.benches.some(bench => bench.periodId === currentPeriod.periodNumber);
   }
 
   isPlayerStartingThisPeriod(periodWithFirstOpenMatchthis: Period, player: Player): boolean {

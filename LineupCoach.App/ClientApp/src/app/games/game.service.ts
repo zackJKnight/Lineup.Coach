@@ -53,9 +53,9 @@ export class GameService {
               if (typeof positionName !== 'undefined' && positionName) {
                 const OpenMatchingPositions: Position[] = this.getOpenPositionsByName(positionName);
                 if (typeof(OpenMatchingPositions) === 'undefined' || OpenMatchingPositions.length === 0) {
+                  // We've tried to put this player in each position.
                   if (currentPrefRankIndex + 1 === preferenceRankMax) {
                     const benchPlayers: Player[] = [player];
-                    // benchPlayers.push(player);
                     playerPlaced = this.tryBenchPlayers(benchPlayers);
                     const index = playerIdsInRound.indexOf(player.id, 0);
                     if (index > -1) {
@@ -84,6 +84,9 @@ export class GameService {
 
       round++;
       playerIdsInRound = cloneDeep(players.map(player => player.id));
+    }
+    if (this.allStartingPositionsFilled()) {
+      this.tryBenchPlayers(players);
     }
     return this.periods;
   }
@@ -136,11 +139,10 @@ export class GameService {
     for (const player of benchPlayers) {
       for (const openBench of openBenches) {
         const currentPeriod: Period = this.periods.filter(period => period.periodNumber === openBench.periodId)[0];
-        if (!currentPeriod) {
+        if (!currentPeriod || this.periodService.isPlayerBenchedThisPeriod(currentPeriod, player)) {
           break;
         }
-        if (!this.periodService.isPlayerBenchedThisPeriod(currentPeriod, player)
-          && !this.periodService.isPlayerStartingThisPeriod(currentPeriod, player)) {
+        if (!this.periodService.isPlayerStartingThisPeriod(currentPeriod, player)) {
           openBench.startingPlayer = player;
           player.benches.push(openBench);
           player.placementScore = player.placementScore - 1;
@@ -173,6 +175,15 @@ export class GameService {
   allGamePositionsFilled(): boolean {
     // flatten the positions in all periods
     const allPositions = this.periods.reduce((pos, period) => [...pos, ...period.positions], []);
+    const allFilled = !allPositions.some(position => typeof(position.startingPlayer) === 'undefined');
+    return allFilled;
+  }
+
+  allStartingPositionsFilled(): boolean {
+    // flatten the positions in all periods
+    const allPositions = this.periods
+      .reduce((pos, period) => [...pos, ...period.positions], [])
+      .filter(position => position.name !== 'bench');
     const allFilled = !allPositions.some(position => typeof(position.startingPlayer) === 'undefined');
     return allFilled;
   }
