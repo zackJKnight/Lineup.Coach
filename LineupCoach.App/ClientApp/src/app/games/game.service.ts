@@ -53,7 +53,7 @@ export class GameService {
               if (typeof positionName !== 'undefined' && positionName) {
                 const OpenMatchingPositions: Position[] = this.getOpenPositionsByName(positionName);
                 if (typeof(OpenMatchingPositions) === 'undefined' || OpenMatchingPositions.length === 0) {
-                  if (currentPrefRankIndex === preferenceRankMax) {
+                  if (currentPrefRankIndex + 1 === preferenceRankMax) {
                     const benchPlayers: Player[] = [player];
                     // benchPlayers.push(player);
                     playerPlaced = this.tryBenchPlayers(benchPlayers);
@@ -69,6 +69,11 @@ export class GameService {
                   const index = playerIdsInRound.indexOf(player.id, 0);
                   if (index > -1) {
                     playerIdsInRound.splice(index, 1);
+                    break;
+                  }
+                  for (const position of OpenMatchingPositions) {
+                  // tslint:disable-next-line:max-line-length
+                  console.log(`${player.firstName} not placed in open position ${position.name} of period ${position.periodNumber} in round ${round}`);
                   }
                 }
               }
@@ -130,7 +135,10 @@ export class GameService {
     const openBenches: Position[] = this.getOpenBenches();
     for (const player of benchPlayers) {
       for (const openBench of openBenches) {
-        const currentPeriod: Period = this.periods.filter(period => period.periodNumber === openBench.periodNumber)[0];
+        const currentPeriod: Period = this.periods.filter(period => period.periodNumber === openBench.periodId)[0];
+        if (!currentPeriod) {
+          break;
+        }
         if (!this.periodService.isPlayerBenchedThisPeriod(currentPeriod, player)
           && !this.periodService.isPlayerStartingThisPeriod(currentPeriod, player)) {
           openBench.startingPlayer = player;
@@ -146,11 +154,20 @@ export class GameService {
   }
 
   getOpenBenches(): Position[] {
-    return this.periods
-      .sort(period => period.periodNumber)
-      .reduce((pos, period) => [...pos, ...period.positions], [])
-      .filter(position => position.PositionType === 'bench')
-      .filter(position => position.startingPlayer == null);
+    let openBenches: Position[];
+    try {
+      const flattenedGamePositions = this.periods
+        .sort(period => period.periodNumber)
+        .reduce((pos, period) => [...pos, ...period.positions], []);
+
+      const benchPositions = flattenedGamePositions.filter(position => position.positionType === 'bench');
+
+      openBenches = benchPositions
+      .filter(position => typeof(position.startingPlayer) === 'undefined');
+    } catch (e) {
+      throw new Error(e);
+    }
+    return openBenches;
   }
 
   allGamePositionsFilled(): boolean {

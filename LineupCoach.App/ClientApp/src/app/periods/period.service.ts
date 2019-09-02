@@ -14,7 +14,10 @@ export class PeriodService {
   constructor() { }
 
   isPlayerBenchedThisPeriod(currentPeriod: Period, player: Player): boolean {
-    return this.positions.some(position => player.benches.includes(position));
+    if (!player.benches) {
+      return false;
+    }
+    return player.benches.some(bench => bench.periodNumber === currentPeriod.periodNumber);
   }
 
   isPlayerStartingThisPeriod(periodWithFirstOpenMatchthis: Period, player: Player): boolean {

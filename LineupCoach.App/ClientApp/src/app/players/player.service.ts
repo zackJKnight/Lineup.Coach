@@ -109,7 +109,7 @@ const PLAYERS: Player[] = [
     benches: []
   },
   {
-    id: 4,
+    id: 6,
     firstName: 'Myles',
     lastName: 'Turquiose',
     positionPreferenceRank: {
@@ -125,7 +125,7 @@ const PLAYERS: Player[] = [
     benches: []
   },
   {
-    id: 4,
+    id: 7,
     firstName: 'Brannon',
     lastName: 'Cannon',
     positionPreferenceRank: {
