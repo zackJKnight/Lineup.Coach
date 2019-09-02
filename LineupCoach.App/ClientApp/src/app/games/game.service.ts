@@ -56,12 +56,20 @@ export class GameService {
                   if (currentPrefRankIndex === preferenceRankMax) {
                     const benchPlayers: Player[] = [player];
                     // benchPlayers.push(player);
-                    playerPlaced = this.tryBenchPlayers(this.theGame, benchPlayers);
+                    playerPlaced = this.tryBenchPlayers(benchPlayers);
+                    const index = playerIdsInRound.indexOf(player.id, 0);
+                    if (index > -1) {
+                      playerIdsInRound.splice(index, 1);
+                    }
                   } else {
                     console.log(`No match for ${positionName} but we can try the next ranked position for ${player.firstName}`);
                   }
                 } else {
-                  playerPlaced = this.tryPlacePlayer(this.theGame, playerIdsInRound, player, OpenMatchingPositions);
+                  playerPlaced = this.tryPlacePlayer(player, OpenMatchingPositions);
+                  const index = playerIdsInRound.indexOf(player.id, 0);
+                  if (index > -1) {
+                    playerIdsInRound.splice(index, 1);
+                  }
                 }
               }
             }
@@ -92,21 +100,17 @@ export class GameService {
     return openMatches;
   }
 
-  tryPlacePlayer(theGame: Game, playerIdsInRound: number[], player: Player, OpenMatchingPositions: Position[]): boolean {
+  tryPlacePlayer(player: Player, OpenMatchingPositions: Position[]): boolean {
     let playerPlaced = false;
     for (const OpenMatchingPosition of OpenMatchingPositions) {
       const periodWithFirstOpenMatch = this.periods.filter(period => period.periodNumber === OpenMatchingPosition.periodId)[0];
-      if (periodWithFirstOpenMatch != null) {
+      if (periodWithFirstOpenMatch && typeof(periodWithFirstOpenMatch) !== 'undefined') {
         const playerStartingThisPeriod = this.periodService.isPlayerStartingThisPeriod(periodWithFirstOpenMatch, player);
         if (!playerStartingThisPeriod && OpenMatchingPosition.startingPlayer == null) {
           OpenMatchingPosition.startingPlayer = player;
           player.startingPositions.push(OpenMatchingPosition);
           const rank = player.positionPreferenceRank.ranking.indexOf(OpenMatchingPosition.name.toLowerCase());
           player.placementScore += player.positionPreferenceRank.ranking.length - rank;
-          const index = playerIdsInRound.indexOf(player.id, 0);
-          if (index > -1) {
-            playerIdsInRound.splice(index, 1);
-          }
 
           playerPlaced = true;
           break;
@@ -116,11 +120,12 @@ export class GameService {
 
     return playerPlaced;
   }
+
   getRandomPlayerIndex(playerIdsInRound: number[]): number {
     return Math.round(Math.random() * playerIdsInRound.length);
   }
 
-  tryBenchPlayers(theGame: Game, benchPlayers: Player[]): boolean {
+  tryBenchPlayers(benchPlayers: Player[]): boolean {
     let playerPlaced = false;
     const openBenches: Position[] = this.getOpenBenches();
     for (const player of benchPlayers) {
