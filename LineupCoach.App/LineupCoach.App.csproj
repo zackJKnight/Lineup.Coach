@@ -4,8 +4,9 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <TypeScriptToolsVersion>3.3</TypeScriptToolsVersion>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
-    <SpaRoot>ClientApp</SpaRoot>
+    <SpaRoot>ClientApp\</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+    <BuildServerSideRenderer>false</BuildServerSideRenderer>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,12 +39,6 @@
     <Content Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
-    <ItemGroup>
-      <None Remove="ClientApp\src\app\players\list-players\list-players-resolver.service.ts" />
-    </ItemGroup>
-    <ItemGroup>
-      <TypeScriptCompile Include="ClientApp\src\app\players\list-players\list-players-resolver.service.ts" />
-    </ItemGroup>
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
