@@ -46,13 +46,13 @@ export class GameService {
       for (let i = 0; i < initialPlayerCount; i++) {
         if (playerIdsInRound.length > 0) {
           let playerPlaced = false;
-          const player = this.getRandomPlayer(playerIdsInRound);
+          const player = players[this.getRandomPlayerIndex(playerIdsInRound)];
           for (let currentPrefRankIndex = 0; currentPrefRankIndex < preferenceRankMax; currentPrefRankIndex++) {
             if (!playerPlaced && typeof(player) !== 'undefined') {
               const positionName: string = this.playerService.getPositionNameByPreferenceRank(player, currentPrefRankIndex);
               if (typeof positionName !== 'undefined' && positionName) {
                 const OpenMatchingPositions: Position[] = this.getOpenPositionsByName(positionName);
-                if (!OpenMatchingPositions.some(open => typeof(open) !== 'undefined')) {
+                if (typeof(OpenMatchingPositions) === 'undefined' || OpenMatchingPositions.length === 0) {
                   if (currentPrefRankIndex === preferenceRankMax) {
                     const benchPlayers: Player[] = [player];
                     // benchPlayers.push(player);
@@ -116,16 +116,13 @@ export class GameService {
 
     return playerPlaced;
   }
-  getRandomPlayer(playersInRound: Player[]): Player {
-    const randomIndex: number = Math.round(Math.random() * playersInRound.length);
-
-    return this.playerService.getPlayers()
-    .filter(player => player.isPresent)[randomIndex];
+  getRandomPlayerIndex(playerIdsInRound: number[]): number {
+    return Math.round(Math.random() * playerIdsInRound.length);
   }
 
-  tryBenchPlayers(theGame: any, benchPlayers: Player[]): boolean {
+  tryBenchPlayers(theGame: Game, benchPlayers: Player[]): boolean {
     let playerPlaced = false;
-    const openBenches = this.getOpenBenches();
+    const openBenches: Position[] = this.getOpenBenches();
     for (const player of benchPlayers) {
       for (const openBench of openBenches) {
         const currentPeriod: Period = this.periods.filter(period => period.periodNumber === openBench.periodNumber)[0];

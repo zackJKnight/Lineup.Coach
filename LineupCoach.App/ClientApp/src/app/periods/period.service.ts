@@ -25,7 +25,7 @@ export class PeriodService {
   }
 
   getPeriods(): Period[] {
-    let periods: Period[] = new Array<Period>();
+    const periods: Period[] = new Array<Period>();
     const period1 = new Period(1);
     period1.positions = new Array<Position>();
     period1.positions.push(new Position('goalie', 1));
