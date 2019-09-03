@@ -35,7 +35,9 @@ export class GameService {
 
   generateLineup(players: Player[]): Observable<Period[]> {
     let round = 0;
-    let playerIdsInRound = cloneDeep(players.map(player => player.id));
+    let playerIdsInRound = cloneDeep(players
+      .filter(player => player.isPresent)
+      .map(player => player.id));
 
     // ToDo if the players don't have ranking, need default or throw here.
     const preferenceRankMax: number = Math.max.apply(Math, players.map(player =>
@@ -43,7 +45,7 @@ export class GameService {
     const initialPlayerCount = playerIdsInRound.length;
 
     // Rounds - within the rounds the players (in random order) are placed based on preference.
-    while (!this.allGamePositionsFilled() && round < this.startingPositionsPerPlayer + 1) {
+    while (!this.allGamePositionsFilled() && round < Math.floor(this.startingPositionsPerPlayer + 1)) {
       for (let i = 0; i < initialPlayerCount; i++) {
         if (playerIdsInRound.length > 0) {
           let playerPlaced = false;
@@ -60,7 +62,10 @@ export class GameService {
                     playerPlaced = this.tryBenchPlayers(benchPlayers);
                     const index = playerIdsInRound.indexOf(player.id, 0);
                     if (index > -1) {
-                      playerIdsInRound.splice(index, 1);
+                      delete playerIdsInRound[index];
+                    } else {
+                      console.log(`Player ${player.firstName} not removed from round after attempted bench.`);
+                      break;
                     }
                   } else {
                     console.log(`No match for ${positionName} but we can try the next ranked position for ${player.firstName}`);
@@ -69,12 +74,15 @@ export class GameService {
                   playerPlaced = this.tryPlacePlayer(player, OpenMatchingPositions);
                   const index = playerIdsInRound.indexOf(player.id, 0);
                   if (index > -1) {
-                    playerIdsInRound.splice(index, 1);
+                    delete playerIdsInRound[index];
                     break;
                   }
                   for (const position of OpenMatchingPositions) {
-                  // tslint:disable-next-line:max-line-length
-                  console.log(`${player.firstName} not placed in open position ${position.name} of period ${position.periodNumber} in round ${round}`);
+                    if (position.startingPlayer !== player) {
+                      // tslint:disable-next-line:max-line-length
+                      console.log(`${player.firstName} not placed in open position ${position.name} of period ${position.periodId} in round ${round}`);
+                      break;
+                    }
                   }
                 }
               }
@@ -89,7 +97,7 @@ export class GameService {
     if (this.allStartingPositionsFilled()) {
       this.tryBenchPlayers(players);
     } else {
-      const unplacedPlayers = cloneDeep(players); //.filter(player => player.startingPositions.length < this.startingPositionsPerPlayer);
+      const unplacedPlayers = cloneDeep(players);
       for (const player of unplacedPlayers) {
         this.tryPlacePlayer(player, this.flattenGamePositions());
       }
@@ -141,7 +149,7 @@ export class GameService {
   }
 
   getRandomPlayerIndex(playerIdsInRound: number[]): number {
-    return Math.round(Math.random() * playerIdsInRound.length);
+    return Math.round(Math.random() * playerIdsInRound.length - 1);
   }
 
   tryBenchPlayers(benchPlayers: Player[]): boolean {

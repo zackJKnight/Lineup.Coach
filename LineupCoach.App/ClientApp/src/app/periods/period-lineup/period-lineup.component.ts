@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { GameService } from '../../games/game.service';
 import { PlayerService } from '../../players/player.service';
@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 export class PeriodLineupComponent implements OnInit {
   displayedColumns = ['name', 'player', 'score'];
   public periods: Observable<Period[]>;
-  public players: Player[];
+  players: Player[];
 
   constructor(
     private route: ActivatedRoute,
@@ -29,7 +29,7 @@ export class PeriodLineupComponent implements OnInit {
     this.setLineup();
   }
 
-  setLineup(){
+  setLineup() {
     this.periods = this.gameService.generateLineup(this.players);
   }
 

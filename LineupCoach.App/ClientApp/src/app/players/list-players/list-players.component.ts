@@ -20,6 +20,9 @@ export class ListPlayersComponent implements OnInit{
   ngOnInit(
   ) {
     this.players = this.playerService.getPlayers();
-    this.players.forEach(plyr => plyr.isPresent = true);
+  }
+
+  updatePlayers() {
+    this.playerService.savePlayers(this.players);
   }
 }

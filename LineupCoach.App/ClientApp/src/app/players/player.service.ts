@@ -1,14 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Player } from './player';
 import { Subject } from 'rxjs';
-// import { TeamsModule } from '../teams/teams.module';
+import * as cloneDeep from 'lodash/cloneDeep';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlayerService {
+  public players: Player[];
+
+  constructor() {
+    this.players = PLAYERS;
+  }
+  savePlayers(players: Player[]) {
+    this.players = players;
+  }
+
   getPlayers() {
-    return PLAYERS;
+    return this.players;
   }
 
   getPositionNameByPreferenceRank(
@@ -29,8 +38,9 @@ export class PlayerService {
 const PLAYERS: Player[] = [
   {
     id: 1,
-    firstName: 'Merve',
+    firstName: 'B.H.',
     lastName: 'Green',
+    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'mid',
@@ -46,8 +56,9 @@ const PLAYERS: Player[] = [
   },
   {
     id: 2,
-    firstName: 'Hal',
+    firstName: 'E.C.',
     lastName: 'Blue',
+    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'forward',
@@ -62,8 +73,9 @@ const PLAYERS: Player[] = [
   },
   {
     id: 3,
-    firstName: 'JoeJoe',
+    firstName: 'G.R.',
     lastName: 'Orange',
+    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'defense',
@@ -78,8 +90,9 @@ const PLAYERS: Player[] = [
   },
   {
     id: 4,
-    firstName: 'Mark',
+    firstName: 'G.G.',
     lastName: 'Brown',
+    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'defense',
@@ -94,8 +107,9 @@ const PLAYERS: Player[] = [
   },
   {
     id: 5,
-    firstName: 'Chip',
+    firstName: 'J.F.',
     lastName: 'Red',
+    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'forward',
@@ -110,8 +124,9 @@ const PLAYERS: Player[] = [
   },
   {
     id: 6,
-    firstName: 'Myles',
+    firstName: 'M.K.',
     lastName: 'Turquiose',
+    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'mid',
@@ -126,8 +141,9 @@ const PLAYERS: Player[] = [
   },
   {
     id: 7,
-    firstName: 'Brannon',
+    firstName: 'B.S.',
     lastName: 'Cannon',
+    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'forward',
@@ -142,8 +158,9 @@ const PLAYERS: Player[] = [
   },
   {
     id: 8,
-    firstName: 'Hubert',
+    firstName: 'J.C.',
     lastName: 'Mauve',
+    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'defense',
@@ -158,14 +175,49 @@ const PLAYERS: Player[] = [
   },
   {
     id: 9,
-    firstName: 'Gene',
+    firstName: 'K.T.',
     lastName: 'Yellow',
+    isPresent: true,
     positionPreferenceRank: {
       ranking: [
         'forward',
         'mid',
         'goalie',
         'defense'
+      ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    id: 10,
+    firstName: 'M.C.',
+    lastName: 'LiteUrple',
+    isPresent: true,
+    positionPreferenceRank: {
+      ranking: [
+        'forward',
+        'defense',
+        'goalie',
+        'mid'
+      ]
+    },
+    startingPositions: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    id: 11,
+    firstName: 'P.F.',
+    lastName: 'Urple',
+    isPresent: true,
+    positionPreferenceRank: {
+      ranking: [
+        'defense',
+        'goalie',
+        'mid',
+        'forward'
       ]
     },
     startingPositions: [],
