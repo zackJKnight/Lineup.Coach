@@ -7,7 +7,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "less"
+          "style": "scss"
         }
       },
       "root": "",
@@ -29,7 +29,8 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
-              "src/styles.less"
+              "src/styles.less",
+              "lineup-app-theme.scss"
             ],
             "scripts": []
           },
@@ -89,8 +90,8 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
-              "src/styles.less"
+              "src/styles.less",
+              "lineup-app-theme.scss"
             ],
             "scripts": []
           }
