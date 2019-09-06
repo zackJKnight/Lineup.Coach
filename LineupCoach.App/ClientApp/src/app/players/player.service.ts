@@ -36,6 +36,11 @@ export class PlayerService {
     }
     return result;
   }
+  playerPlacementIsComplete(playerId: number, periodCount: number) {
+    const player: Player = this.players.filter(plyer =>
+      plyer.id === playerId)[0];
+    return (player.benches.length + player.startingPositionIds.length) === periodCount;
+    }
 }
 
 const PLAYERS: Player[] = [

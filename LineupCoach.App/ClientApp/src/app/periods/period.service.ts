@@ -18,12 +18,13 @@ periods;
     return player.benches.some(bench => bench.periodId === currentPeriod.periodNumber);
   }
 
-  isPlayerStartingThisPeriod(periodWithFirstOpenMatchthis: Period, player: Player): boolean {
+  isPlayerStartingThisPeriod(periodWithFirstOpenMatch: Period, player: Player): boolean {
     if (typeof(player.startingPositionIds) === 'undefined' || player.startingPositionIds.length === 0) {
       return false;
     }
     return player.startingPositionIds
-    .some(positionId => this.getPositionById(positionId).periodId === periodWithFirstOpenMatchthis.periodNumber);
+    .some(positionId =>
+      this.getPositionById(positionId).periodId === periodWithFirstOpenMatch.periodNumber);
   }
 
 getPositionById(id: number): Position {

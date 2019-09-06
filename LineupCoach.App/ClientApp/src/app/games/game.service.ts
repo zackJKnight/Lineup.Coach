@@ -94,11 +94,14 @@ export class GameService {
       playerIdsInRound = cloneDeep(players.map(player => player.id));
     }
     if (this.allStartingPositionsFilled()) {
-      this.tryBenchPlayers(players);
+      this.tryBenchPlayers(players
+        .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
     } else {
-      const unplacedPlayers = cloneDeep(players);
+      const unplacedPlayers = cloneDeep(players
+        .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
       for (const player of unplacedPlayers) {
-        this.tryPlacePlayer(player, this.flattenGamePositions());
+        this.tryPlacePlayer(player, this.flattenGamePositions()
+        .filter(position => typeof(position.startingPlayer) === 'undefined'));
       }
     }
     return of(this.periods);
@@ -120,7 +123,7 @@ export class GameService {
     return openMatches;
   }
 
-  flattenGamePositions() {
+  flattenGamePositions(): Position[] {
     return this.periods
         .sort(period => period.periodNumber)
         .reduce((pos, period) => [...pos, ...period.positions], []);
