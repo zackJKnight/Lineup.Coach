@@ -46,10 +46,10 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
-        'mid',
         'goalie',
+        'defense',
         'forward',
-        'defense'
+        'mid'
       ]
 
     },
@@ -64,10 +64,10 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
-        'forward',
         'goalie',
-        'mid',
-        'defense'
+        'forward',
+        'defense',
+        'mid'
       ]
     },
     startingPositionIds: [],
@@ -81,10 +81,10 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
-        'defense',
+        'mid',
         'forward',
         'goalie',
-        'mid'
+        'defense'
       ]
     },
     startingPositionIds: [],
@@ -98,10 +98,10 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
+        'forward',
         'defense',
         'goalie',
-        'mid',
-        'forward'
+        'mid'
       ]
     },
     startingPositionIds: [],
@@ -115,9 +115,9 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
+        'defense',
         'forward',
         'mid',
-        'defense',
         'goalie'
       ]
     },
@@ -149,10 +149,10 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
-        'forward',
         'mid',
-        'goalie',
-        'defense'
+        'forward',
+        'defense',
+        'goalie'
       ]
     },
     startingPositionIds: [],
@@ -166,10 +166,10 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
-        'defense',
-        'forward',
+        'goalie',
         'mid',
-        'goalie'
+        'forward',
+        'defense'
       ]
     },
     startingPositionIds: [],
@@ -185,8 +185,8 @@ const PLAYERS: Player[] = [
       ranking: [
         'forward',
         'mid',
-        'goalie',
-        'defense'
+        'defense',
+        'goalie'
       ]
     },
     startingPositionIds: [],
@@ -200,10 +200,10 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
-        'forward',
-        'defense',
         'goalie',
-        'mid'
+        'mid',
+        'forward',
+        'defense'
       ]
     },
     startingPositionIds: [],
@@ -217,10 +217,27 @@ const PLAYERS: Player[] = [
     isPresent: true,
     positionPreferenceRank: {
       ranking: [
-        'defense',
         'goalie',
         'mid',
+        'defense',
         'forward'
+      ]
+    },
+    startingPositionIds: [],
+    placementScore: 0,
+    benches: []
+  },
+  {
+    id: 12,
+    firstName: 'Br.E.',
+    lastName: 'Clear',
+    isPresent: true,
+    positionPreferenceRank: {
+      ranking: [
+        'forward',
+        'goalie',
+        'mid',
+        'defense'
       ]
     },
     startingPositionIds: [],
