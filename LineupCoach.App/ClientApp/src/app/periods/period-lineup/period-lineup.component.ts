@@ -25,7 +25,7 @@ export class PeriodLineupComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.players = this.playerService.getPlayers();
+    this.players = this.playerService.getPresentPlayers();
     this.setLineup();
   }
 

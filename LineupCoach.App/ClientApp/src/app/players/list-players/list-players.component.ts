@@ -22,7 +22,9 @@ export class ListPlayersComponent implements OnInit{
     this.players = this.playerService.getPlayers();
   }
 
-  updatePlayers() {
+  onCheckboxChecked(event, element) {
+
+    console.log(JSON.stringify(this.players));
     this.playerService.savePlayers(this.players);
   }
 }

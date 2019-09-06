@@ -18,6 +18,11 @@ export class PlayerService {
     return this.players;
   }
 
+  getPresentPlayers() {
+    return this.players
+    .filter(player => player.isPresent);
+  }
+
   getPositionNameByPreferenceRank(
     player: Player,
     currentPrefRank: number
@@ -48,7 +53,7 @@ const PLAYERS: Player[] = [
       ]
 
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -65,7 +70,7 @@ const PLAYERS: Player[] = [
         'defense'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -82,7 +87,7 @@ const PLAYERS: Player[] = [
         'mid'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -99,7 +104,7 @@ const PLAYERS: Player[] = [
         'forward'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -116,7 +121,7 @@ const PLAYERS: Player[] = [
         'goalie'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -133,7 +138,7 @@ const PLAYERS: Player[] = [
         'forward'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -150,7 +155,7 @@ const PLAYERS: Player[] = [
         'defense'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -167,7 +172,7 @@ const PLAYERS: Player[] = [
         'goalie'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -184,7 +189,7 @@ const PLAYERS: Player[] = [
         'defense'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -201,7 +206,7 @@ const PLAYERS: Player[] = [
         'mid'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   },
@@ -218,7 +223,7 @@ const PLAYERS: Player[] = [
         'forward'
       ]
     },
-    startingPositions: [],
+    startingPositionIds: [],
     placementScore: 0,
     benches: []
   }

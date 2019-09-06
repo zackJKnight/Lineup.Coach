@@ -25,8 +25,7 @@ export class GameService {
     private periodService: PeriodService
     ) {
       this.periods = this.periodService.getPeriods();
-      this.availablePlayerCount = this.playerService.getPlayers().map(
-        player => player.isPresent).length;
+      this.availablePlayerCount = this.playerService.getPresentPlayers().length;
       this.startingPositionsPerPlayer = this.setStartingPositionsPerPlayerCount();
       // ToDo this is still organized as copied from the C# console app. need to improve this
       this.theGame = new Game();
@@ -135,7 +134,7 @@ export class GameService {
         const playerStartingThisPeriod = this.periodService.isPlayerStartingThisPeriod(periodWithFirstOpenMatch, player);
         if (!playerStartingThisPeriod && OpenMatchingPosition.startingPlayer == null) {
           OpenMatchingPosition.startingPlayer = player;
-          player.startingPositions.push(OpenMatchingPosition);
+          player.startingPositionIds.push(OpenMatchingPosition.id);
           const rank = player.positionPreferenceRank.ranking.indexOf(OpenMatchingPosition.name.toLowerCase());
           player.placementScore += player.positionPreferenceRank.ranking.length - rank;
 

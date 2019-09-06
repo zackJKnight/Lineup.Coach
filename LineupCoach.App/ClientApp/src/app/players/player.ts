@@ -7,7 +7,7 @@ export interface Player {
   positionPreferenceRank: {
     ranking: string[];
   };
-  startingPositions: Position[];
+  startingPositionIds: number[];
   placementScore: number;
   benches: Position[];
 }
