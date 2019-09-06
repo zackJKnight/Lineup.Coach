@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Player } from './player';
-import { Subject } from 'rxjs';
-import * as cloneDeep from 'lodash/cloneDeep';
 
 @Injectable({
   providedIn: 'root'

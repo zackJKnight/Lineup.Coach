@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TeamsRoutingModule } from './teams-routing.module';
 import { ListPlayersComponent } from '../players/list-players/list-players.component';
 import { TeamAttendanceComponent } from './team-attendance/team-attendance.component';
+import { TeamDetailComponent } from './team-detail/team-detail.component';
 import { FormsModule } from '@angular/forms';
 import {
   MatCommonModule,
@@ -18,7 +19,8 @@ import {
 @NgModule({
   declarations: [
     ListPlayersComponent,
-    TeamAttendanceComponent
+    TeamAttendanceComponent,
+    TeamDetailComponent
   ],
   imports: [
     CommonModule,

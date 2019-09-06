@@ -15,6 +15,8 @@ MatCommonModule,
 MatToolbarModule} from '@angular/material';
 import { PeriodsModule } from './periods/periods.module';
 import { TeamsModule } from './teams/teams.module';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,7 +36,8 @@ import { TeamsModule } from './teams/teams.module';
     MatCommonModule,
     MatToolbarModule,
     PeriodsModule,
-    TeamsModule
+    TeamsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [TeamsClient,
     GameService,
