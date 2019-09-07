@@ -12,10 +12,10 @@ periods;
   constructor( ) { }
 
   isPlayerBenchedThisPeriod(currentPeriod: Period, player: Player): boolean {
-    if (!player.benches) {
+    if (!player.benchIds || player.benchIds.length === 0) {
       return false;
     }
-    return player.benches.some(bench => bench.periodId === currentPeriod.periodNumber);
+    return player.benchIds.some(benchId => this.getPositionById(benchId).periodId === currentPeriod.periodNumber);
   }
 
   isPlayerStartingThisPeriod(periodWithFirstOpenMatch: Period, player: Player): boolean {

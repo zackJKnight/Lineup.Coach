@@ -23,14 +23,14 @@ export class GameService {
   constructor(
     private playerService: PlayerService,
     private periodService: PeriodService
-    ) {
-      this.periods = this.periodService.getPeriods();
-      this.availablePlayerCount = this.playerService.getPresentPlayers().length;
-      this.startingPositionsPerPlayer = this.setStartingPositionsPerPlayerCount();
-      // ToDo this is still organized as copied from the C# console app. need to improve this
-      this.theGame = new Game();
-      this.theGame.Periods = this.periods;
-    }
+  ) {
+    this.periods = this.periodService.getPeriods();
+    this.availablePlayerCount = this.playerService.getPresentPlayers().length;
+    this.startingPositionsPerPlayer = this.setStartingPositionsPerPlayerCount();
+    // ToDo this is still organized as copied from the C# console app. need to improve this
+    this.theGame = new Game();
+    this.theGame.Periods = this.periods;
+  }
 
   generateLineup(players: Player[]): Observable<Period[]> {
     let round = 0;
@@ -50,21 +50,22 @@ export class GameService {
           let playerPlaced = false;
           const player = players[this.getRandomPlayerIndex(playerIdsInRound)];
           for (let currentPrefRankIndex = 0; currentPrefRankIndex < preferenceRankMax; currentPrefRankIndex++) {
-            if (!playerPlaced && typeof(player) !== 'undefined') {
+            if (!playerPlaced && typeof (player) !== 'undefined') {
               const positionName: string = this.playerService.getPositionNameByPreferenceRank(player, currentPrefRankIndex);
               if (typeof positionName !== 'undefined' && positionName) {
                 const OpenMatchingPositions: Position[] = this.getOpenPositionsByName(positionName);
-                if (typeof(OpenMatchingPositions) === 'undefined' || OpenMatchingPositions.length === 0) {
+                if (typeof (OpenMatchingPositions) === 'undefined' || OpenMatchingPositions.length === 0) {
                   // We've tried to put this player in each position.
                   if (currentPrefRankIndex + 1 === preferenceRankMax) {
                     const benchPlayers: Player[] = [player];
-                    playerPlaced = this.tryBenchPlayers(benchPlayers);
-                    const index = playerIdsInRound.indexOf(player.id, 0);
-                    if (index > -1) {
-                      delete playerIdsInRound[index];
-                    } else {
-                      console.log(`Player ${player.firstName} not removed from round after attempted bench.`);
-                      break;
+                    if (this.tryBenchPlayers(benchPlayers)) {
+                      const index = playerIdsInRound.indexOf(player.id, 0);
+                      if (index > -1) {
+                        delete playerIdsInRound[index];
+                      } else {
+                        console.log(`Player ${player.firstName} not removed from round after attempted bench.`);
+                        break;
+                      }
                     }
                   } else {
                     console.log(`No match for ${positionName} but we can try the next ranked position for ${player.firstName}`);
@@ -93,16 +94,16 @@ export class GameService {
       round++;
       playerIdsInRound = cloneDeep(players.map(player => player.id));
     }
-    if (this.allStartingPositionsFilled()) {
-      this.tryBenchPlayers(players
-        .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
-    } else {
+    if (!this.allStartingPositionsFilled()) {
       const unplacedPlayers = cloneDeep(players
         .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
       for (const player of unplacedPlayers) {
         this.tryPlacePlayer(player, this.flattenGamePositions()
-        .filter(position => typeof(position.startingPlayer) === 'undefined'));
+          .filter(position => typeof (position.startingPlayer) === 'undefined'));
       }
+    } else {
+      this.tryBenchPlayers(players
+        .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
     }
     return of(this.periods);
   }
@@ -115,7 +116,7 @@ export class GameService {
       const nonBenchPositions = flattenedGamePositions.filter(position => position.positionType !== 'bench');
 
       openMatches = nonBenchPositions
-      .filter(position => position.name.toLowerCase() === positionName && typeof(position.startingPlayer) === 'undefined');
+        .filter(position => position.name.toLowerCase() === positionName && typeof (position.startingPlayer) === 'undefined');
     } catch (e) {
       throw new Error(e);
     }
@@ -125,15 +126,15 @@ export class GameService {
 
   flattenGamePositions(): Position[] {
     return this.periods
-        .sort(period => period.periodNumber)
-        .reduce((pos, period) => [...pos, ...period.positions], []);
+      .sort(period => period.periodNumber)
+      .reduce((pos, period) => [...pos, ...period.positions], []);
   }
 
   tryPlacePlayer(player: Player, OpenMatchingPositions: Position[]): boolean {
     let playerPlaced = false;
     for (const OpenMatchingPosition of OpenMatchingPositions) {
       const periodWithFirstOpenMatch = this.periods.filter(period => period.periodNumber === OpenMatchingPosition.periodId)[0];
-      if (periodWithFirstOpenMatch && typeof(periodWithFirstOpenMatch) !== 'undefined') {
+      if (periodWithFirstOpenMatch && typeof (periodWithFirstOpenMatch) !== 'undefined') {
         const playerStartingThisPeriod = this.periodService.isPlayerStartingThisPeriod(periodWithFirstOpenMatch, player);
         if (!playerStartingThisPeriod && OpenMatchingPosition.startingPlayer == null) {
           OpenMatchingPosition.startingPlayer = player;
@@ -161,11 +162,13 @@ export class GameService {
       for (const openBench of openBenches) {
         const currentPeriod: Period = this.periods.filter(period => period.periodNumber === openBench.periodId)[0];
         if (!currentPeriod || this.periodService.isPlayerBenchedThisPeriod(currentPeriod, player)) {
-          break;
+          console.log(`Player ${player.firstName} already benched in period ${currentPeriod.periodNumber}`);
+          continue;
         }
         if (!this.periodService.isPlayerStartingThisPeriod(currentPeriod, player)) {
           openBench.startingPlayer = player;
-          player.benches.push(openBench);
+          player.benchIds.push(openBench.id);
+          console.log(`player ${player.firstName} placed in bench ${openBench.id} in period ${currentPeriod.periodNumber}`);
           player.placementScore = player.placementScore - 1;
           playerPlaced = true;
           break;
@@ -184,7 +187,7 @@ export class GameService {
       const benchPositions = flattenedGamePositions.filter(position => position.positionType === 'bench');
 
       openBenches = benchPositions
-      .filter(position => typeof(position.startingPlayer) === 'undefined');
+        .filter(position => typeof (position.startingPlayer) === 'undefined');
     } catch (e) {
       throw new Error(e);
     }
@@ -194,7 +197,7 @@ export class GameService {
   allGamePositionsFilled(): boolean {
     // flatten the positions in all periods
     const allPositions = this.flattenGamePositions();
-    const allFilled = !allPositions.some(position => typeof(position.startingPlayer) === 'undefined');
+    const allFilled = !allPositions.some(position => typeof (position.startingPlayer) === 'undefined');
     return allFilled;
   }
 
@@ -202,12 +205,12 @@ export class GameService {
     // flatten the positions in all periods
     const allPositions = this.flattenGamePositions()
       .filter(position => position.name !== 'bench');
-    const allFilled = !allPositions.some(position => typeof(position.startingPlayer) === 'undefined');
+    const allFilled = !allPositions.some(position => typeof (position.startingPlayer) === 'undefined');
     return allFilled;
   }
 
   setStartingPositionsPerPlayerCount(): number {
-      return this.MAX_PLAYERS_ON_FIELD * this.periods.length / this.availablePlayerCount;
+    return this.MAX_PLAYERS_ON_FIELD * this.periods.length / this.availablePlayerCount;
   }
 }
 

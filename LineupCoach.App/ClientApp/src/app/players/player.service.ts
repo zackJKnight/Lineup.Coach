@@ -39,7 +39,7 @@ export class PlayerService {
   playerPlacementIsComplete(playerId: number, periodCount: number) {
     const player: Player = this.players.filter(plyer =>
       plyer.id === playerId)[0];
-    return (player.benches.length + player.startingPositionIds.length) === periodCount;
+    return (player.benchIds.length + player.startingPositionIds.length) === periodCount;
     }
 }
 
@@ -60,7 +60,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 2,
@@ -77,7 +77,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 3,
@@ -94,7 +94,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 4,
@@ -111,7 +111,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 5,
@@ -128,7 +128,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 6,
@@ -145,7 +145,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 7,
@@ -162,7 +162,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 8,
@@ -179,7 +179,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 9,
@@ -196,7 +196,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 10,
@@ -213,7 +213,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 11,
@@ -230,7 +230,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   },
   {
     id: 12,
@@ -247,7 +247,7 @@ const PLAYERS: Player[] = [
     },
     startingPositionIds: [],
     placementScore: 0,
-    benches: []
+    benchIds: []
   }
 ];
 
