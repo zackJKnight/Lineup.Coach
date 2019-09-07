@@ -77,6 +77,7 @@ namespace LineupCoach.App
                 settings.Path = "/api";
                 settings.DocumentPath = "/api/specification.json";
             });
+            app.UseResponseCompression();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -96,7 +97,7 @@ namespace LineupCoach.App
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
-            app.UseResponseCompression();
+
         }
     }
 }
