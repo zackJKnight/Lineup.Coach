@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, HostListener, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { GameService } from '../../games/game.service';
 import { PlayerService } from '../../players/player.service';
@@ -15,6 +15,7 @@ export class PeriodLineupComponent implements OnInit {
   displayedColumns = ['name', 'player', 'score'];
   public periods: Observable<Period[]>;
   players: Player[];
+  public backButtonPressed: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,6 +32,13 @@ export class PeriodLineupComponent implements OnInit {
 
   setLineup() {
     this.periods = this.gameService.generateLineup(this.players);
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event) {
+    console.log('Back button pressed');
+    this.periods.forEach(item => item = []);
+    this.backButtonPressed = true;
   }
 
 }
