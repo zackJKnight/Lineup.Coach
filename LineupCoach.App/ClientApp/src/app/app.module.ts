@@ -17,6 +17,7 @@ import { PeriodsModule } from './periods/periods.module';
 import { TeamsModule } from './teams/teams.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { PeriodLineupResolver } from './periods/period-lineup-resolver.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,7 +42,8 @@ import { environment } from '../environments/environment';
   ],
   providers: [TeamsClient,
     GameService,
-  PlayerService
+  PlayerService,
+  PeriodLineupResolver
 ],
   bootstrap: [AppComponent]
 })

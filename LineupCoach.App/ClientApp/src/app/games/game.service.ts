@@ -6,7 +6,7 @@ import { PlayerService } from '../players/player.service';
 import { Period } from '../periods/period';
 import { PeriodService } from '../periods/period.service';
 import * as cloneDeep from 'lodash/cloneDeep';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +33,7 @@ export class GameService {
   }
 
   generateLineup(players: Player[]): Observable<Period[]> {
+    const subject = new Subject<Period[]>();
     let round = 0;
     let playerIdsInRound = cloneDeep(players
       .filter(player => player.isPresent)
@@ -105,7 +106,11 @@ export class GameService {
       this.tryBenchPlayers(players
         .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
     }
-    return of(this.periods);
+    setTimeout(() => {
+    subject.next(this.periods);
+    subject.complete();
+    }, 10);
+    return subject;
   }
 
   getOpenPositionsByName(positionName: string): Position[] {

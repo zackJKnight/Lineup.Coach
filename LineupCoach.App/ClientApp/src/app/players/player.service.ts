@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Player } from './player';
+import { Subject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +11,18 @@ export class PlayerService {
   constructor() {
     this.players = PLAYERS;
   }
+
   savePlayers(players: Player[]) {
     this.players = players;
   }
 
-  getPlayers() {
-    return this.players;
+  getPlayers(): Observable<Player[]> {
+    const subject = new Subject<Player[]>();
+    setTimeout(() => {
+      subject.next(this.players);
+      subject.complete();
+    }, 100);
+    return subject;
   }
 
   getPresentPlayers() {

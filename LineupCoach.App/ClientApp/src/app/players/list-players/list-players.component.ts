@@ -19,7 +19,10 @@ export class ListPlayersComponent implements OnInit{
   }
   ngOnInit(
   ) {
-    this.players = this.playerService.getPlayers();
+    this.playerService.getPlayers()
+    .subscribe(players => {
+      this.players = players;
+    });
   }
 
   onCheckboxChecked(event, element) {

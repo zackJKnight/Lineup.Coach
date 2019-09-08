@@ -1,5 +1,5 @@
 <section *ngIf="!backButtonPressed" class="mat-typography">
-<div class='padded-page' *ngFor="let period of periods | async">
+<div class='padded-page' *ngFor="let period of periods">
 <h2>Period: {{period.periodNumber}}</h2>
 <mat-table [dataSource]="period.positions" class="mat-elevation-z8">
     <ng-container matColumnDef="name">

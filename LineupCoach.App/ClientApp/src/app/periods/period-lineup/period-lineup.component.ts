@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 })
 export class PeriodLineupComponent implements OnInit {
   displayedColumns = ['name', 'player', 'score'];
-  public periods: Observable<Period[]>;
+  public periods: Period[];
   players: Player[];
   public backButtonPressed: boolean;
 
@@ -27,17 +27,13 @@ export class PeriodLineupComponent implements OnInit {
 
   ngOnInit() {
     this.players = this.playerService.getPresentPlayers();
-    this.setLineup();
-  }
-
-  setLineup() {
-    this.periods = this.gameService.generateLineup(this.players);
+    this.periods = this.route.snapshot.data.periods;
   }
 
   @HostListener('window:popstate', ['$event'])
   onPopState(event) {
     console.log('Back button pressed');
-    this.periods.forEach(item => item = []);
+    this.periods = [];
     this.backButtonPressed = true;
   }
 
