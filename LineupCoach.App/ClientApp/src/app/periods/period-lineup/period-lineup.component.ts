@@ -20,13 +20,10 @@ export class PeriodLineupComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public router: Router,
-    private gameService: GameService,
-    private playerService: PlayerService
   ) {
   }
 
   ngOnInit() {
-    this.players = this.playerService.getPresentPlayers();
     this.periods = this.route.snapshot.data.periods;
   }
 
@@ -34,6 +31,8 @@ export class PeriodLineupComponent implements OnInit {
   onPopState(event) {
     console.log('Back button pressed');
     this.periods = [];
+    this.players = [];
+    this.route = new ActivatedRoute();
     this.backButtonPressed = true;
   }
 

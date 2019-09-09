@@ -13,7 +13,6 @@ import { Observable, of, Subject } from 'rxjs';
 })
 
 export class GameService {
-  theGame: Game;
   startingPositionsPerPlayer: number;
   availablePlayerCount: number;
   MAX_PLAYERS_ON_FIELD = 8;
@@ -27,12 +26,11 @@ export class GameService {
     this.periods = this.periodService.getPeriods();
     this.availablePlayerCount = this.playerService.getPresentPlayers().length;
     this.startingPositionsPerPlayer = this.setStartingPositionsPerPlayerCount();
-    // ToDo this is still organized as copied from the C# console app. need to improve this
-    this.theGame = new Game();
-    this.theGame.Periods = this.periods;
+
   }
 
-  generateLineup(players: Player[]): Observable<Period[]> {
+  generateLineup(): Observable<Period[]> {
+    const players: Player[] = this.playerService.getPresentPlayers();
     const subject = new Subject<Period[]>();
     let round = 0;
     let playerIdsInRound = cloneDeep(players
@@ -72,12 +70,14 @@ export class GameService {
                     console.log(`No match for ${positionName} but we can try the next ranked position for ${player.firstName}`);
                   }
                 } else {
+                  if (player.startingPositionIds.length < this.startingPositionsPerPlayer) {
                   playerPlaced = this.tryPlacePlayer(player, OpenMatchingPositions);
                   const index = playerIdsInRound.indexOf(player.id, 0);
                   if (index > -1) {
                     delete playerIdsInRound[index];
                     break;
                   }
+                }
                   for (const position of OpenMatchingPositions) {
                     if (position.startingPlayer !== player) {
                       // tslint:disable-next-line:max-line-length
@@ -215,7 +215,7 @@ export class GameService {
   }
 
   setStartingPositionsPerPlayerCount(): number {
-    return this.MAX_PLAYERS_ON_FIELD * this.periods.length / this.availablePlayerCount;
+    return Math.round(this.MAX_PLAYERS_ON_FIELD * this.periods.length / this.availablePlayerCount);
   }
 }
 
