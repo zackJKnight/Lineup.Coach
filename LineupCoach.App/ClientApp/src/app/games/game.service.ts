@@ -162,7 +162,10 @@ export class GameService {
 
   tryBenchPlayers(benchPlayers: Player[]): boolean {
     let playerPlaced = false;
-    const openBenches: Position[] = this.getOpenBenches();
+    const openBenches: Position[] = this.getOpenBenches().filter(bench =>
+      benchPlayers.some(player => player.startingPositionIds
+        .some(positionId =>
+        this.periodService.getPositionById(positionId).periodId !== bench.periodId)));
     for (const player of benchPlayers) {
       for (const openBench of openBenches) {
         const currentPeriod: Period = this.periods.filter(period => period.periodNumber === openBench.periodId)[0];

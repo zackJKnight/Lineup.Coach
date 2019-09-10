@@ -24,7 +24,7 @@ periods;
     }
     return player.startingPositionIds
     .some(positionId =>
-      this.getPositionById(positionId).periodId === periodWithFirstOpenMatch.periodNumber);
+      this.getPositionById(positionId).periodId === periodWithFirstOpenMatch.id);
   }
 
 getPositionById(id: number): Position {

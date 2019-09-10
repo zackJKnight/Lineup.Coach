@@ -15,7 +15,6 @@ export class Position {
   name: string;
   startingPlayer?: Player;
   periodId: number;
-  periodNumber: number;
   positionType?: PositionType;
 
   constructor(name: string, id: number, periodId: number) {
