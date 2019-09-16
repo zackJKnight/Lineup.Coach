@@ -18,6 +18,7 @@ export class PeriodLineupComponent implements OnInit {
   public backButtonPressed: boolean;
 
   constructor(
+    private playerService: PlayerService,
     private route: ActivatedRoute,
     public router: Router,
   ) {
@@ -32,6 +33,8 @@ export class PeriodLineupComponent implements OnInit {
     console.log('Back button pressed');
     this.periods = [];
     this.players = [];
+    this.playerService.removeStartingPositions();
+    this.playerService.removeBenchPositions();
     this.route = new ActivatedRoute();
     this.backButtonPressed = true;
   }

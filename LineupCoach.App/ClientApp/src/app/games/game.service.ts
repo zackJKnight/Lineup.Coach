@@ -6,6 +6,7 @@ import { PlayerService } from '../players/player.service';
 import { Period } from '../periods/period';
 import { PeriodService } from '../periods/period.service';
 import * as cloneDeep from 'lodash/cloneDeep';
+import * as _shuffle from 'lodash/shuffle';
 import { Observable, of, Subject } from 'rxjs';
 
 @Injectable({
@@ -33,67 +34,47 @@ export class GameService {
     const players: Player[] = this.playerService.getPresentPlayers();
     const subject = new Subject<Period[]>();
     let round = 0;
-    let playerIdsInRound = cloneDeep(players
+    const playerIdsInRound = cloneDeep(players
       .filter(player => player.isPresent)
       .map(player => player.id));
 
     // ToDo if the players don't have ranking, need default or throw here.
     const preferenceRankMax: number = Math.max.apply(Math, players.map(player =>
       player.positionPreferenceRank.ranking.length));
-    const initialPlayerCount = playerIdsInRound.length;
 
     // Rounds - within the rounds the players (in random order) are placed based on preference.
-    while (!this.allGamePositionsFilled() && round < Math.floor(this.startingPositionsPerPlayer + 1)) {
-      for (let i = 0; i < initialPlayerCount; i++) {
-        if (playerIdsInRound.length > 0) {
-          let playerPlaced = false;
-          const player = players[this.getRandomPlayerIndex(playerIdsInRound)];
-          for (let currentPrefRankIndex = 0; currentPrefRankIndex < preferenceRankMax; currentPrefRankIndex++) {
-            if (!playerPlaced && typeof (player) !== 'undefined') {
-              const positionName: string = this.playerService.getPositionNameByPreferenceRank(player, currentPrefRankIndex);
-              if (typeof positionName !== 'undefined' && positionName) {
-                const OpenMatchingPositions: Position[] = this.getOpenPositionsByName(positionName);
-                if (typeof (OpenMatchingPositions) === 'undefined' || OpenMatchingPositions.length === 0) {
-                  // We've tried to put this player in each position.
-                  if (currentPrefRankIndex + 1 === preferenceRankMax) {
-                    const benchPlayers: Player[] = [player];
-                    if (this.tryBenchPlayers(benchPlayers)) {
-                      const index = playerIdsInRound.indexOf(player.id, 0);
-                      if (index > -1) {
-                        delete playerIdsInRound[index];
-                      } else {
-                        console.log(`Player ${player.firstName} not removed from round after attempted bench.`);
-                        break;
-                      }
-                    }
-                  } else {
-                    console.log(`No match for ${positionName} but we can try the next ranked position for ${player.firstName}`);
-                  }
-                } else {
-                  if (player.startingPositionIds.length < this.startingPositionsPerPlayer) {
-                  playerPlaced = this.tryPlacePlayer(player, OpenMatchingPositions);
-                  const index = playerIdsInRound.indexOf(player.id, 0);
-                  if (index > -1) {
-                    delete playerIdsInRound[index];
-                    break;
-                  }
+    while (!this.allGamePositionsFilled() && round < Math.floor(this.startingPositionsPerPlayer)) {
+      // Loop through the player list - trying to find each a position that best fits their preference.
+      let playerIdsInRandomOrder = _shuffle(playerIdsInRound);
+      for (const playerId of playerIdsInRandomOrder) {
+        const player: Player = this.playerService.getPlayerById(playerId);
+
+        for (let currentPrefRankIndex = 0; currentPrefRankIndex < preferenceRankMax; currentPrefRankIndex++) {
+          const positionName: string = this.playerService.getPositionNameByPreferenceRank(player, currentPrefRankIndex);
+          console.log(`Looking for open ${positionName} for player ${player.firstName} ${player.id} in round ${round}`);
+          if (typeof positionName !== 'undefined' && positionName) {
+            const OpenMatchingPositions: Position[] = this.getOpenPositionsByName(positionName);
+            if (typeof (OpenMatchingPositions) === 'undefined' || OpenMatchingPositions.length === 0) {
+              // We've tried to put this player in each position.
+              if (currentPrefRankIndex + 1 === preferenceRankMax) {
+                const benchPlayers: Player[] = [player];
+                if (this.tryBenchPlayers(benchPlayers)) {
+                  break;
                 }
-                  for (const position of OpenMatchingPositions) {
-                    if (position.startingPlayer !== player) {
-                      // tslint:disable-next-line:max-line-length
-                      console.log(`${player.firstName} not placed in open position ${position.name} of period ${position.periodId} in round ${round}`);
-                      break;
-                    }
-                  }
+              } else {
+                console.log(`No match for ${positionName} but we can try the next ranked position for ${player.firstName}`);
+              }
+            } else {
+              if (player.startingPositionIds.length < this.startingPositionsPerPlayer) {
+                if (this.tryPlacePlayer(player, OpenMatchingPositions)) {
+                  break;
                 }
               }
             }
           }
         }
       }
-
       round++;
-      playerIdsInRound = cloneDeep(players.map(player => player.id));
     }
     if (!this.allStartingPositionsFilled()) {
       const unplacedPlayers = cloneDeep(players
@@ -102,13 +83,13 @@ export class GameService {
         this.tryPlacePlayer(player, this.flattenGamePositions()
           .filter(position => typeof (position.startingPlayer) === 'undefined'));
       }
-    } else {
-      this.tryBenchPlayers(players
-        .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
     }
+    this.tryBenchPlayers(players
+      .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
+
     setTimeout(() => {
-    subject.next(this.periods);
-    subject.complete();
+      subject.next(this.periods);
+      subject.complete();
     }, 10);
     return subject;
   }
@@ -140,9 +121,9 @@ export class GameService {
     for (const OpenMatchingPosition of OpenMatchingPositions) {
       const periodWithFirstOpenMatch = this.periods.filter(period => period.periodNumber === OpenMatchingPosition.periodId)[0];
       if (periodWithFirstOpenMatch && typeof (periodWithFirstOpenMatch) !== 'undefined') {
-        const playerStartingThisPeriod = this.periodService.isPlayerStartingThisPeriod(periodWithFirstOpenMatch, player);
+        const playerStartingThisPeriod = this.periodService.playerIsStartingThisPeriod(periodWithFirstOpenMatch, player);
         if (!playerStartingThisPeriod && OpenMatchingPosition.startingPlayer == null) {
-          OpenMatchingPosition.startingPlayer = player;
+          this.periodService.setStartingPlayer(periodWithFirstOpenMatch.id, OpenMatchingPosition.id, player);
           player.startingPositionIds.push(OpenMatchingPosition.id);
           const rank = player.positionPreferenceRank.ranking.indexOf(OpenMatchingPosition.name.toLowerCase());
           player.placementScore += player.positionPreferenceRank.ranking.length - rank;
@@ -165,21 +146,24 @@ export class GameService {
     const openBenches: Position[] = this.getOpenBenches().filter(bench =>
       benchPlayers.some(player => player.startingPositionIds
         .some(positionId =>
-        this.periodService.getPositionById(positionId).periodId !== bench.periodId)));
-    for (const player of benchPlayers) {
-      for (const openBench of openBenches) {
-        const currentPeriod: Period = this.periods.filter(period => period.periodNumber === openBench.periodId)[0];
-        if (!currentPeriod || this.periodService.isPlayerBenchedThisPeriod(currentPeriod, player)) {
-          console.log(`Player ${player.firstName} already benched in period ${currentPeriod.periodNumber}`);
-          continue;
-        }
-        if (!this.periodService.isPlayerStartingThisPeriod(currentPeriod, player)) {
-          openBench.startingPlayer = player;
-          player.benchIds.push(openBench.id);
-          console.log(`player ${player.firstName} placed in bench ${openBench.id} in period ${currentPeriod.periodNumber}`);
-          player.placementScore = player.placementScore - 1;
-          playerPlaced = true;
-          break;
+          this.periodService.getPositionById(positionId).periodId !== bench.periodId)));
+    if (openBenches && typeof (openBenches) !== 'undefined') {
+      for (const player of benchPlayers) {
+        for (const openBench of openBenches) {
+          const currentPeriod: Period = this.periods.filter(period => period.id === openBench.periodId)[0];
+          if (!currentPeriod || this.periodService.playerIsBenchedThisPeriod(currentPeriod, player)) {
+            console.log(`Player ${player.firstName} already benched in period ${currentPeriod.id}`);
+            continue;
+          }
+          if (!this.periodService.playerIsStartingThisPeriod(currentPeriod, player)) {
+            this.periodService.setStartingPlayer(currentPeriod.id, openBench.id, player);
+
+            player.benchIds.push(openBench.id);
+            console.log(`player ${player.firstName} placed in bench ${openBench.id} in period ${currentPeriod.periodNumber}`);
+            player.placementScore = player.placementScore - 1;
+            playerPlaced = true;
+            break;
+          }
         }
       }
     }

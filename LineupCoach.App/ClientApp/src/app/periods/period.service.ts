@@ -8,17 +8,17 @@ import { PeriodsModule } from './periods.module';
   providedIn: 'root'
 })
 export class PeriodService {
-periods;
+private periods: Period[];
   constructor( ) { }
 
-  isPlayerBenchedThisPeriod(currentPeriod: Period, player: Player): boolean {
+  playerIsBenchedThisPeriod(currentPeriod: Period, player: Player): boolean {
     if (!player.benchIds || player.benchIds.length === 0) {
       return false;
     }
     return player.benchIds.some(benchId => this.getPositionById(benchId).periodId === currentPeriod.periodNumber);
   }
 
-  isPlayerStartingThisPeriod(periodWithFirstOpenMatch: Period, player: Player): boolean {
+  playerIsStartingThisPeriod(periodWithFirstOpenMatch: Period, player: Player): boolean {
     if (typeof(player.startingPositionIds) === 'undefined' || player.startingPositionIds.length === 0) {
       return false;
     }
@@ -98,6 +98,11 @@ getPositionById(id: number): Position {
     this.periods.push(period4);
     }
     return this.periods;
+  }
+  setStartingPlayer(periodId: number, positionId: number, player: Player) {
+    this.periods.filter(period => period.id === periodId)[0]
+    .positions.filter(position => position.id === positionId)[0]
+    .startingPlayer = player;
   }
 
 }

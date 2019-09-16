@@ -6,6 +6,7 @@ import { Subject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PlayerService {
+
   public players: Player[];
 
   constructor() {
@@ -14,6 +15,10 @@ export class PlayerService {
 
   savePlayers(players: Player[]) {
     this.players = players;
+  }
+
+  getPlayerById(playerId: number) {
+    return this.players.filter(player => player.id === playerId)[0];
   }
 
   getPlayers(): Observable<Player[]> {
@@ -27,7 +32,7 @@ export class PlayerService {
 
   getPresentPlayers() {
     return this.players
-    .filter(player => player.isPresent);
+      .filter(player => player.isPresent);
   }
 
   getPositionNameByPreferenceRank(
@@ -35,7 +40,7 @@ export class PlayerService {
     currentPrefRank: number
   ): string {
     let result: string;
-    if ( currentPrefRank >= 0 &&
+    if (currentPrefRank >= 0 &&
       (typeof player.positionPreferenceRank !== 'undefined') &&
       currentPrefRank + 1 <= player.positionPreferenceRank.ranking.length
     ) {
@@ -47,7 +52,17 @@ export class PlayerService {
     const player: Player = this.players.filter(plyer =>
       plyer.id === playerId)[0];
     return (player.benchIds.length + player.startingPositionIds.length) === periodCount;
-    }
+  }
+
+  removeBenchPositions() {
+    this.players.forEach(player => player.benchIds = []);
+    this.savePlayers(this.players);
+  }
+
+  removeStartingPositions() {
+    this.players.forEach(player => player.startingPositionIds = []);
+    this.savePlayers(this.players);
+  }
 }
 
 const PLAYERS: Player[] = [
