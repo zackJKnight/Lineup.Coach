@@ -26,7 +26,7 @@ export class PlayerService {
     setTimeout(() => {
       subject.next(this.players);
       subject.complete();
-    }, 100);
+    }, 1);
     return subject;
   }
 
