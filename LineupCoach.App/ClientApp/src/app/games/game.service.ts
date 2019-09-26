@@ -8,6 +8,7 @@ import { PeriodService } from '../periods/period.service';
 import * as cloneDeep from 'lodash/cloneDeep';
 import * as _shuffle from 'lodash/shuffle';
 import { Observable, of, Subject } from 'rxjs';
+import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Injectable({
   providedIn: 'root'
@@ -93,8 +94,15 @@ export class GameService {
 
     // ToDo filter for players that have not been benched the max bench (so, make a maxBench variable)
     this.tryBenchPlayers(players);
+    for (const needsABenchPlayer of _shuffle(players)) {
+    this.tryBenchPlayers([needsABenchPlayer]);
+    }
+    for (const position of this.flattenGamePositions()) {
+      console.log(`period ${position.periodId} position ${position.name} player ${position.startingPlayer && position.startingPlayer.firstName || 'none'}`);
+    }
       // .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
 
+    // window.alert('Periods has players in all the benches. They are NOT showing in the UI.');
     setTimeout(() => {
       subject.next(this.periodService.getPeriods());
       subject.complete();
@@ -102,6 +110,20 @@ export class GameService {
     return subject;
   }
 
+  placementScoreIsWithinRange(newScore: number): boolean {
+    // TODO do calculations after all players are placed. find lowest score player, get list of position trades that would even score for swapped players.
+    // pick the trade that would bring them both closest to mean??
+    const periodCount = this.periodService.getPeriods().length;
+    const placedPlayers = this.playerService.getPresentPlayers();
+    const highestScore = Math.max.apply(Math, placedPlayers.map(player => player.placementScore));
+    const lowestScore = Math.min.apply(Math, placedPlayers.map(player => player.placementScore));
+    const meanScore = Math.floor((highestScore + lowestScore) / 2);
+    const maxNumberOfPreferredPositions = Math.max.apply(Math, placedPlayers.map(player => player.positionPreferenceRank.ranking.length));
+    // const minNumberOfPreferredPositions = Math.min.apply(Math, placedPlayers.map(player => player.positionPreferenceRank.ranking.length));
+    // How do I determine if newscore is too far to one side of mean?
+    // newScore will sometimes be less than mean.
+    return newScore < (periodCount * (maxNumberOfPreferredPositions - 1));
+  }
   getOpenPositionsByName(positionName: string): Position[] {
     let openMatches: Position[];
     try {
@@ -131,12 +153,18 @@ export class GameService {
       .filter(period => period.periodNumber === OpenMatchingPosition.periodId)[0];
       if (periodWithFirstOpenMatch && typeof (periodWithFirstOpenMatch) !== 'undefined') {
         const playerStartingThisPeriod = this.periodService.playerIsStartingThisPeriod(periodWithFirstOpenMatch, player);
-        if (!playerStartingThisPeriod && OpenMatchingPosition.startingPlayer == null) {
+        if (!playerStartingThisPeriod &&
+          OpenMatchingPosition.startingPlayer == null
+          ) {
           this.periodService.setStartingPlayer(periodWithFirstOpenMatch.id, OpenMatchingPosition.id, player);
-          player.startingPositionIds.push(OpenMatchingPosition.id);
           const rank = player.positionPreferenceRank.ranking.indexOf(OpenMatchingPosition.name.toLowerCase());
-          player.placementScore += player.positionPreferenceRank.ranking.length - rank;
-
+          const newScore = player.placementScore + player.positionPreferenceRank.ranking.length - rank;
+          if (!this.placementScoreIsWithinRange(newScore)) {
+            console.log(`Placement score ${newScore} not in range for Player ${player.firstName} and position ${OpenMatchingPosition.name}`);
+            break;
+          }
+          player.placementScore = newScore;
+          player.startingPositionIds.push(OpenMatchingPosition.id);
           playerPlaced = true;
           break;
         }
@@ -152,16 +180,21 @@ export class GameService {
 
   tryBenchPlayers(benchPlayers: Player[]): boolean {
     let playerPlaced = false;
-    const openBenches: Position[] = this.getOpenBenches().filter(bench =>
-      benchPlayers.some(player => player.startingPositionIds
-        .some(positionId =>
-          this.periodService.getPositionById(positionId).periodId !== bench.periodId)));
+    const openBenches: Position[] = this.getOpenBenches();
+    // .filter(bench =>
+    //   benchPlayers.some(player => player.startingPositionIds
+    //     .some(positionId =>
+    //       this.periodService.getPositionById(positionId).periodId !== bench.periodId)));
     if (openBenches && typeof (openBenches) !== 'undefined') {
       for (const player of benchPlayers) {
         for (const openBench of openBenches) {
           const currentPeriod: Period = this.periodService.getPeriods()
           .filter(period => period.id === openBench.periodId)[0];
-          if (!currentPeriod || this.periodService.playerIsBenchedThisPeriod(currentPeriod, player)) {
+          if (!currentPeriod || typeof(currentPeriod) === 'undefined') {
+            console.log(`Period not found for bench id: ${openBench.id}`);
+            continue;
+          }
+          if (this.periodService.playerIsBenchedThisPeriod(currentPeriod, player)) {
             console.log(`Player ${player.firstName} already benched in period ${currentPeriod.id}`);
             continue;
           }
@@ -172,6 +205,9 @@ export class GameService {
             console.log(`player ${player.firstName} placed in bench ${openBench.id} in period ${currentPeriod.periodNumber}`);
             player.placementScore = player.placementScore - 1;
             playerPlaced = true;
+            break;
+          } else {
+            console.log(`Player ${player.firstName} already starting in period ${openBench.periodId}`);
           }
         }
       }
