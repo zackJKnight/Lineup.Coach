@@ -111,19 +111,31 @@ export class GameService {
   }
 
   placementScoreIsWithinRange(newScore: number): boolean {
-    // TODO do calculations after all players are placed. find lowest score player, get list of position trades that would even score for swapped players.
-    // pick the trade that would bring them both closest to mean??
     const periodCount = this.periodService.getPeriods().length;
     const placedPlayers = this.playerService.getPresentPlayers();
     const highestScore = Math.max.apply(Math, placedPlayers.map(player => player.placementScore));
     const lowestScore = Math.min.apply(Math, placedPlayers.map(player => player.placementScore));
     const meanScore = Math.floor((highestScore + lowestScore) / 2);
-    const maxNumberOfPreferredPositions = Math.max.apply(Math, placedPlayers.map(player => player.positionPreferenceRank.ranking.length));
-    // const minNumberOfPreferredPositions = Math.min.apply(Math, placedPlayers.map(player => player.positionPreferenceRank.ranking.length));
-    // How do I determine if newscore is too far to one side of mean?
-    // newScore will sometimes be less than mean.
-    return newScore < (periodCount * (maxNumberOfPreferredPositions - 1));
+    const maxNumberOfPreferredPositions = Math.max
+    .apply(Math, placedPlayers.map(player => player.positionPreferenceRank.ranking.length));
+    // Prevent player from getting a position that gives him far better placement than most.
+    return newScore < (periodCount * (maxNumberOfPreferredPositions - 1)) ||
+    ((newScore > meanScore) && (newScore < (highestScore - meanScore / 2)));
   }
+
+  // TODO do calculations after all players are placed.
+  // find lowest score player, get list of position trades that would even score for swapped players.
+  // pick the trade that would bring them both closest to mean??
+
+  // TODO - smart rebalance - Sam's idea.
+  rebalancePositions() {
+    // pass in list of players
+    // look at positions that make their placement score at the high end. not sure yet.
+    // remove them from positions.
+    // send them back through the rounds?
+    // this is smelly. how do we prevent ourselves from reaching this point? I'm going back now to look.
+  }
+
   getOpenPositionsByName(positionName: string): Position[] {
     let openMatches: Position[];
     try {
