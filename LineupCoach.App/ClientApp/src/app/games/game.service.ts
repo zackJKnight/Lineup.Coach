@@ -41,7 +41,7 @@ export class GameService {
       player.positionPreferenceRank.ranking.length));
     const roundedPositionsPerPlayer = Math.floor(this.startingPositionsPerPlayer);
     const benchCount = this.flattenGamePositions()
-    .filter(position => position.name === 'bench').length;
+      .filter(position => position.name === 'bench').length;
     // .length / this.availablePlayerCount;
     // Rounds - within the rounds the players (in random order) are placed based on preference.
     while (!this.allGamePositionsFilled() &&
@@ -95,12 +95,12 @@ export class GameService {
     // ToDo filter for players that have not been benched the max bench (so, make a maxBench variable)
     this.tryBenchPlayers(players);
     for (const needsABenchPlayer of _shuffle(players)) {
-    this.tryBenchPlayers([needsABenchPlayer]);
+      this.tryBenchPlayers([needsABenchPlayer]);
     }
     for (const position of this.flattenGamePositions()) {
       console.log(`period ${position.periodId} position ${position.name} player ${position.startingPlayer && position.startingPlayer.firstName || 'none'}`);
     }
-      // .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
+    // .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
 
     // window.alert('Periods has players in all the benches. They are NOT showing in the UI.');
     setTimeout(() => {
@@ -117,10 +117,10 @@ export class GameService {
     const lowestScore = Math.min.apply(Math, placedPlayers.map(player => player.placementScore));
     const meanScore = Math.floor((highestScore + lowestScore) / 2);
     const maxNumberOfPreferredPositions = Math.max
-    .apply(Math, placedPlayers.map(player => player.positionPreferenceRank.ranking.length));
+      .apply(Math, placedPlayers.map(player => player.positionPreferenceRank.ranking.length));
     // Prevent player from getting a position that gives him far better placement than most.
     return newScore < (periodCount * (maxNumberOfPreferredPositions - 1)) ||
-    ((newScore > meanScore) && (newScore < (highestScore - meanScore / 2)));
+      ((newScore > meanScore) && (newScore < (highestScore - meanScore / 2)));
   }
 
   // TODO do calculations after all players are placed.
@@ -161,18 +161,19 @@ export class GameService {
   tryPlacePlayer(player: Player, OpenMatchingPositions: Position[]): boolean {
     let playerPlaced = false;
     for (const OpenMatchingPosition of OpenMatchingPositions) {
-      const periodWithFirstOpenMatch = this.periodService.getPeriods()
-      .filter(period => period.periodNumber === OpenMatchingPosition.periodId)[0];
-      if (periodWithFirstOpenMatch && typeof (periodWithFirstOpenMatch) !== 'undefined') {
-        const playerStartingThisPeriod = this.periodService.playerIsStartingThisPeriod(periodWithFirstOpenMatch, player);
+      const periodIdWithFirstOpenMatch = this.periodService.getPeriods()
+        .filter(period => period.periodNumber === OpenMatchingPosition.periodId)[0].id;
+      if (periodIdWithFirstOpenMatch && typeof (periodIdWithFirstOpenMatch) !== 'undefined') {
+        const playerStartingThisPeriod = this.periodService.playerIsStartingThisPeriod(periodIdWithFirstOpenMatch, player);
         if (!playerStartingThisPeriod &&
           OpenMatchingPosition.startingPlayer == null
-          ) {
-          this.periodService.setStartingPlayer(periodWithFirstOpenMatch.id, OpenMatchingPosition.id, player);
+        ) {
+          this.periodService.setStartingPlayer(periodIdWithFirstOpenMatch, OpenMatchingPosition.id, player);
           const rank = player.positionPreferenceRank.ranking.indexOf(OpenMatchingPosition.name.toLowerCase());
           const newScore = player.placementScore + player.positionPreferenceRank.ranking.length - rank;
           if (!this.placementScoreIsWithinRange(newScore)) {
-            console.log(`Placement score ${newScore} not in range for Player ${player.firstName} and position ${OpenMatchingPosition.name}`);
+            console
+              .log(`Placement score ${newScore} not in range for Player ${player.firstName} and position ${OpenMatchingPosition.name}`);
             break;
           }
           player.placementScore = newScore;
@@ -200,21 +201,21 @@ export class GameService {
     if (openBenches && typeof (openBenches) !== 'undefined') {
       for (const player of benchPlayers) {
         for (const openBench of openBenches) {
-          const currentPeriod: Period = this.periodService.getPeriods()
-          .filter(period => period.id === openBench.periodId)[0];
-          if (!currentPeriod || typeof(currentPeriod) === 'undefined') {
+
+          const currentPeriodId = openBench.periodId;
+          if (!currentPeriodId || typeof (currentPeriodId) === 'undefined') {
             console.log(`Period not found for bench id: ${openBench.id}`);
             continue;
           }
-          if (this.periodService.playerIsBenchedThisPeriod(currentPeriod, player)) {
-            console.log(`Player ${player.firstName} already benched in period ${currentPeriod.id}`);
+          if (this.periodService.playerIsBenchedThisPeriod(currentPeriodId, player)) {
+            console.log(`Player ${player.firstName} already benched in period ${currentPeriodId}`);
             continue;
           }
-          if (!this.periodService.playerIsStartingThisPeriod(currentPeriod, player)) {
-            this.periodService.setStartingPlayer(currentPeriod.id, openBench.id, player);
+          if (!this.periodService.playerIsStartingThisPeriod(currentPeriodId, player)) {
+            this.periodService.setStartingPlayer(currentPeriodId, openBench.id, player);
 
             player.benchIds.push(openBench.id);
-            console.log(`player ${player.firstName} placed in bench ${openBench.id} in period ${currentPeriod.periodNumber}`);
+            console.log(`player ${player.firstName} placed in bench ${openBench.id} in period ${currentPeriodId}`);
             player.placementScore = player.placementScore - 1;
             playerPlaced = true;
             break;

@@ -11,20 +11,20 @@ export class PeriodService {
   private periods: Period[];
   constructor() { }
 
-  playerIsBenchedThisPeriod(currentPeriod: Period, player: Player): boolean {
+  playerIsBenchedThisPeriod(currentPeriodId: number, player: Player): boolean {
     if (!player.benchIds || player.benchIds.length === 0) {
       return false;
     }
-    return player.benchIds.some(benchId => this.getPositionById(benchId).periodId === currentPeriod.periodNumber);
+    return player.benchIds.some(benchId => this.getPositionById(benchId).periodId === currentPeriodId);
   }
 
-  playerIsStartingThisPeriod(periodWithFirstOpenMatch: Period, player: Player): boolean {
+  playerIsStartingThisPeriod(periodId: number, player: Player): boolean {
     if (typeof (player.startingPositionIds) === 'undefined' || player.startingPositionIds.length === 0) {
       return false;
     }
     return player.startingPositionIds
       .some(positionId =>
-        this.getPositionById(positionId).periodId === periodWithFirstOpenMatch.id);
+        this.getPositionById(positionId).periodId === periodId);
   }
 
   getPositionById(id: number): Position {
