@@ -4,6 +4,7 @@ import { GameService } from '../../games/game.service';
 import { PlayerService } from '../../players/player.service';
 import { Player } from 'src/app/players/player';
 import { Period } from '../period';
+import { Position } from '../../positions/position';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -12,9 +13,10 @@ import { Observable } from 'rxjs';
   styleUrls: ['./period-lineup.component.less']
 })
 export class PeriodLineupComponent implements OnInit {
-  displayedColumns = ['name', 'player', 'score'];
+  displayedColumns = [];
   public periods: Period[];
-  players: Player[];
+  public positions: Position[];
+  public players: Player[];
   public backButtonPressed: boolean;
 
   constructor(
@@ -26,7 +28,14 @@ export class PeriodLineupComponent implements OnInit {
 
   ngOnInit() {
     this.periods = this.route.snapshot.data.periods;
+    this.positions = this.periods.sort(period => period.periodNumber)
+    .reduce((pos, period) => [...pos, ...period.positions], []);
+    for (const period of this.periods) {
+    this.displayedColumns.push(`${period.id}name`);
+    this.displayedColumns.push(`${period.id}player`);
+    this.displayedColumns.push(`${period.id}score`);
   }
+}
 
   @HostListener('window:popstate', ['$event'])
   onPopState(event) {
