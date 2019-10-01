@@ -1,6 +1,7 @@
 <section *ngIf="!backButtonPressed" class="mat-typography">
-  <mat-table [dataSource]="positions" class="mat-elevation-z8">
-    <ng-container *ngFor="let period of periods; let i=index" matColumnDef="{{period.id}}name">
+  <mat-table *ngFor="let period of periods" [dataSource]="period.positions" class="mat-elevation-z8">
+    <caption>Period {{period.id}}</caption>
+    <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Position</th>
       <td mat-cell *matCellDef="let element">
         <mat-chip-list>
@@ -8,7 +9,7 @@
         </mat-chip-list>
       </td>
     </ng-container>
-    <ng-container *ngFor="let period of periods; let i=index" matColumnDef="{{period.id}}player">
+    <ng-container  matColumnDef="player">
       <th mat-header-cell *matHeaderCellDef>Player</th>
       <td mat-cell *matCellDef="let element">
         <mat-chip-list>
@@ -18,11 +19,11 @@
         </mat-chip-list>
       </td>
     </ng-container>
-    <ng-container *ngFor="let period of periods; let i=index" matColumnDef="{{period.id}}score">
+    <ng-container matColumnDef="score">
       <th mat-header-cell *matHeaderCellDef>Fairness</th>
       <td mat-cell *matCellDef="let element">
         <mat-chip-list>
-          <mat-chip>
+          <mat-chip *ngIf="element.startingPlayer">
             {{element.startingPlayer?.placementScore}}
           </mat-chip>
         </mat-chip-list>

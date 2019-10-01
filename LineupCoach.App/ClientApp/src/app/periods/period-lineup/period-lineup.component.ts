@@ -30,11 +30,9 @@ export class PeriodLineupComponent implements OnInit {
     this.periods = this.route.snapshot.data.periods;
     this.positions = this.periods.sort(period => period.periodNumber)
     .reduce((pos, period) => [...pos, ...period.positions], []);
-    for (const period of this.periods) {
-    this.displayedColumns.push(`${period.id}name`);
-    this.displayedColumns.push(`${period.id}player`);
-    this.displayedColumns.push(`${period.id}score`);
-  }
+    this.displayedColumns.push(`name`);
+    this.displayedColumns.push(`player`);
+    this.displayedColumns.push(`score`);
 }
 
   @HostListener('window:popstate', ['$event'])
