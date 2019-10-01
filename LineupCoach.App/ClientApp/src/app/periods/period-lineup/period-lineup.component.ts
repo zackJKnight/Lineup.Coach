@@ -32,7 +32,6 @@ export class PeriodLineupComponent implements OnInit {
     .reduce((pos, period) => [...pos, ...period.positions], []);
     this.displayedColumns.push(`name`);
     this.displayedColumns.push(`player`);
-    this.displayedColumns.push(`score`);
 }
 
   @HostListener('window:popstate', ['$event'])
