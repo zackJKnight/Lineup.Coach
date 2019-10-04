@@ -5,8 +5,10 @@ import { ListPlayersComponent } from '../players/list-players/list-players.compo
 import { TeamAttendanceComponent } from './team-attendance/team-attendance.component';
 import { TeamDetailComponent } from './team-detail/team-detail.component';
 import { FormsModule } from '@angular/forms';
+import { EditPlayerPreferencesComponent } from '../players/edit-player-preferences/edit-player-preferences.component';
 import {
   MatCommonModule,
+  MatDialogModule,
   MatFormFieldModule,
   MatInputModule,
   MatCheckboxModule,
@@ -18,6 +20,7 @@ import {
 
 @NgModule({
   declarations: [
+    EditPlayerPreferencesComponent,
     ListPlayersComponent,
     TeamAttendanceComponent,
     TeamDetailComponent
@@ -26,6 +29,7 @@ import {
     CommonModule,
     FormsModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

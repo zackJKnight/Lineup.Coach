@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PlayerService } from '../player.service';
 import { Player } from '../player';
 import { ActivatedRoute } from '@angular/router';
+import { EditPlayerPreferencesComponent } from '../edit-player-preferences/edit-player-preferences.component';
 
 @Component({
   selector: 'app-list-players',

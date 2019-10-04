@@ -1,7 +1,16 @@
 <mat-list>
   <mat-list-item *ngFor="let player of players">
-      <mat-checkbox (change)="onCheckboxChecked($event, player)"
-      [(ngModel)]="player.isPresent" >
-        {{player.firstName}}</mat-checkbox>
+      <mat-accordion>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                  <mat-checkbox (change)="onCheckboxChecked($event, player)"
+                  [(ngModel)]="player.isPresent">
+                  {{player.firstName}}</mat-checkbox>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <app-edit-player-preferences [player]="player"></app-edit-player-preferences>
+          </mat-expansion-panel>
+      </mat-accordion>
   </mat-list-item>
  </mat-list>
