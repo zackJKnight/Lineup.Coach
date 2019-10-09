@@ -36,13 +36,13 @@ export class ListPlayersComponent implements OnInit{
 
   openDialog(player: Player): void {
     const dialogRef = this.dialog.open(EditPlayerPreferencesComponent, {
-      width: '250px',
+      width: '450px',
       data: {player: this.players.map(p => p.id === player.id)[0]}
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      this.players = result;
+      console.log(`The dialog was closed with result: ${result}`);
+      // this.players = result;
     });
   }
 }

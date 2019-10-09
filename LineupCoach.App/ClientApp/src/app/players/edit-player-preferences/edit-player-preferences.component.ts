@@ -15,6 +15,7 @@ export class EditPlayerPreferencesComponent implements OnInit {
   @Input() player: Player;
 
   constructor(
+    public dialogRef: MatDialogRef<EditPlayerPreferencesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ['goalie', 'defense', 'mid', 'forward']
   ) { }
 
@@ -43,7 +44,7 @@ ngOnInit() {
 }
 
 onNoClick(): void {
-  // this.dialogRef.close();
+  this.dialogRef.close();
 }
 
 }
