@@ -37,7 +37,7 @@ export class ListPlayersComponent implements OnInit{
   openDialog(player: Player): void {
     const dialogRef = this.dialog.open(EditPlayerPreferencesComponent, {
       width: '450px',
-      data: {player: this.players.map(p => p.id === player.id)[0]}
+      data: {player}
     });
 
     dialogRef.afterClosed().subscribe(result => {

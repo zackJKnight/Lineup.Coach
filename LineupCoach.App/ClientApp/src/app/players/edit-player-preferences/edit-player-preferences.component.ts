@@ -12,11 +12,10 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 
 export class EditPlayerPreferencesComponent implements OnInit {
   public positions = ['goalie', 'defense', 'mid', 'forward'];
-  @Input() player: Player;
 
   constructor(
     public dialogRef: MatDialogRef<EditPlayerPreferencesComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ['goalie', 'defense', 'mid', 'forward']
+    @Inject(MAT_DIALOG_DATA) public player: Player
   ) { }
 
 ngOnInit() {
