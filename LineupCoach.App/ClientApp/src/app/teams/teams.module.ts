@@ -15,15 +15,17 @@ import {
   MatButtonModule,
   MatListModule,
   MatExpansionModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MAT_DIALOG_DATA,
+  MatDialogRef
 } from '@angular/material';
 
 @NgModule({
   declarations: [
-    EditPlayerPreferencesComponent,
     ListPlayersComponent,
     TeamAttendanceComponent,
-    TeamDetailComponent
+    TeamDetailComponent,
+    EditPlayerPreferencesComponent
   ],
   imports: [
     CommonModule,
@@ -38,6 +40,13 @@ import {
     MatCommonModule,
     MatToolbarModule,
     TeamsRoutingModule
+  ],
+  entryComponents: [
+    EditPlayerPreferencesComponent
+  ],
+  providers: [
+    { provide: MAT_DIALOG_DATA, useValue: {} },
+     { provide: MatDialogRef, useValue: {} }
   ]
 })
 export class TeamsModule { }

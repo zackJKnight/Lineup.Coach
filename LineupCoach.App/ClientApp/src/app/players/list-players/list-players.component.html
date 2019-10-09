@@ -1,7 +1,7 @@
 <mat-list>
   <mat-list-item *ngFor="let player of players">
       <mat-accordion>
-          <mat-expansion-panel>
+          <mat-expansion-panel (click)="openDialog(player)">
             <mat-expansion-panel-header>
               <mat-panel-title>
                   <mat-checkbox (change)="onCheckboxChecked($event, player)"

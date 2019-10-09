@@ -9,10 +9,14 @@ import { TeamsClient } from './lineup-coach-api';
 import { GameService } from './games/game.service';
 import { PlayerService } from './players/player.service';
 import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
-MatExpansionModule,
-MatCommonModule,
-MatToolbarModule} from '@angular/material';
+import { MatDialogModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatButtonModule,
+  MatListModule,
+  MatExpansionModule,
+  MatCommonModule,
+  MatToolbarModule} from '@angular/material';
 import { PeriodsModule } from './periods/periods.module';
 import { TeamsModule } from './teams/teams.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -29,6 +33,7 @@ import { PeriodLineupResolver } from './periods/period-lineup-resolver.service';
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

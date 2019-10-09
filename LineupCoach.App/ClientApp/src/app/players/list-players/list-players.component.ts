@@ -3,6 +3,7 @@ import { PlayerService } from '../player.service';
 import { Player } from '../player';
 import { ActivatedRoute } from '@angular/router';
 import { EditPlayerPreferencesComponent } from '../edit-player-preferences/edit-player-preferences.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-list-players',
@@ -15,7 +16,8 @@ export class ListPlayersComponent implements OnInit{
 
   constructor(
     private playerService: PlayerService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public dialog: MatDialog
   ) {
   }
   ngOnInit(
@@ -30,5 +32,17 @@ export class ListPlayersComponent implements OnInit{
 
     console.log(JSON.stringify(this.players));
     this.playerService.savePlayers(this.players);
+  }
+
+  openDialog(player: Player): void {
+    const dialogRef = this.dialog.open(EditPlayerPreferencesComponent, {
+      width: '250px',
+      data: {player: this.players.map(p => p.id === player.id)[0]}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.players = result;
+    });
   }
 }
