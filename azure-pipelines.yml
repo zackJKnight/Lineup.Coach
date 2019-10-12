@@ -6,7 +6,6 @@ pool:
   
 variables:
   buildConfiguration: 'Release'
-  Build.ArtifactsStagingDirectory: '$(Build.ArtifactsStagingDirectory)'
 
 steps:
 - script: |
