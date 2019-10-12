@@ -11,11 +11,11 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 })
 
 export class EditPlayerPreferencesComponent implements OnInit {
-  public positions = ['goalie', 'defense', 'mid', 'forward'];
+  // public positions = ['goalie', 'defense', 'mid', 'forward'];
 
   constructor(
     public dialogRef: MatDialogRef<EditPlayerPreferencesComponent>,
-    @Inject(MAT_DIALOG_DATA) public player: Player
+    @Inject(MAT_DIALOG_DATA) public player: Player, public positions: Position[]
   ) { }
 
 ngOnInit() {
@@ -23,7 +23,7 @@ ngOnInit() {
 
   public drop(event: CdkDragDrop<Position[]>) {
   moveItemInArray(this.positions, event.previousIndex, event.currentIndex);
-  this.player.positionPreferenceRank.ranking = this.positions;
+  this.player.positionPreferenceRank.ranking = this.positions.map(position => position.name);
   }
 
   public addFirst(first: string) {

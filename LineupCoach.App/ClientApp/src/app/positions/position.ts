@@ -11,13 +11,13 @@ enum PositionType {
 }
 
 export class Position {
-  id: number;
+  id?: number;
   name: string;
   startingPlayer?: Player;
-  periodId: number;
+  periodId?: number;
   positionType?: PositionType;
 
-  constructor(name: string, id: number, periodId: number) {
+  constructor(name: string, id?: number, periodId?: number) {
     this.id = id;
     this.name = name;
     this.positionType = PositionType[name];

@@ -22,6 +22,7 @@ import { TeamsModule } from './teams/teams.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { PeriodLineupResolver } from './periods/period-lineup-resolver.service';
+import { TeamService } from './teams/team.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,10 +46,12 @@ import { PeriodLineupResolver } from './periods/period-lineup-resolver.service';
     TeamsModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
-  providers: [TeamsClient,
+  providers: [
+    TeamsClient,
     GameService,
-  PlayerService,
-  PeriodLineupResolver
+    PlayerService,
+    PeriodLineupResolver,
+    TeamService
 ],
   bootstrap: [AppComponent]
 })

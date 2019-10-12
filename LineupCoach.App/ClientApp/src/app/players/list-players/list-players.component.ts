@@ -4,6 +4,8 @@ import { Player } from '../player';
 import { ActivatedRoute } from '@angular/router';
 import { EditPlayerPreferencesComponent } from '../edit-player-preferences/edit-player-preferences.component';
 import { MatDialog } from '@angular/material';
+import { TeamService } from 'src/app/teams/team.service';
+import { Position } from 'src/app/positions/position';
 
 @Component({
   selector: 'app-list-players',
@@ -11,11 +13,12 @@ import { MatDialog } from '@angular/material';
   styleUrls: ['./list-players.component.less']
 })
 
-export class ListPlayersComponent implements OnInit{
+export class ListPlayersComponent implements OnInit {
   public players: Player[];
-
+  public positions: Position[];
   constructor(
     private playerService: PlayerService,
+    private teamService: TeamService,
     private route: ActivatedRoute,
     public dialog: MatDialog
   ) {
@@ -26,6 +29,7 @@ export class ListPlayersComponent implements OnInit{
     .subscribe(players => {
       this.players = players;
     });
+    this.positions = this.teamService.getPositions();
   }
 
   onCheckboxChecked(event, element) {
@@ -34,10 +38,10 @@ export class ListPlayersComponent implements OnInit{
     this.playerService.savePlayers(this.players);
   }
 
-  openDialog(player: Player): void {
+  openDialog(player: Player, positions: Position[]): void {
     const dialogRef = this.dialog.open(EditPlayerPreferencesComponent, {
-      width: '450px',
-      data: {player}
+      width: '200px',
+      data: {player, positions}
     });
 
     dialogRef.afterClosed().subscribe(result => {
