@@ -10,7 +10,7 @@ variables:
 steps:
 - script: |
     dotnet build --configuration $(buildConfiguration)
-    dotnet test Lineup.Coach.Application.Tests/Lineup.Coach.Application.Tests
+    dotnet test ./Lineup.Coach.Application.Tests
     dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactsStagingDirectory)
 
 - task: PublishTestResults@2
