@@ -10,8 +10,8 @@ variables:
 steps:
 - script: |
     dotnet build --configuration $(buildConfiguration)
-    dotnet test ./Lineup.Coach.Application.Tests
-    dotnet publish ./LineupCoach.App --configuration $(buildConfiguration) --output $(Build.ArtifactsStagingDirectory)
+    dotnet test ./Lineup.Coach.Application.Tests --logger trx
+    dotnet publish ./LineupCoach.App/LineupCoach.App.csproj --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
 
 - task: PublishTestResults@2
   condition: succeeded()
