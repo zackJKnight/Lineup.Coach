@@ -14,7 +14,7 @@ steps:
     dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactsStagingDirectory)
 
 - task: PublishTestResults@2
-  condition: suceeded()
+  condition: succeeded()
   continueOnError: true
   inputs:
     testRunner: VSTest
