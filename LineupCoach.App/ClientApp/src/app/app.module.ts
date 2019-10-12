@@ -6,15 +6,24 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddTeamComponent } from './teams/add-team/add-team.component';
 import { TeamsClient } from './lineup-coach-api';
+import { GameService } from './games/game.service';
+import { PlayerService } from './players/player.service';
 import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatInputModule, MatButtonModule, MatListModule,
-MatExpansionModule,
-MatCheckboxModule,
-MatCommonModule,
-MatToolbarModule} from '@angular/material';
+import { MatDialogModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatButtonModule,
+  MatListModule,
+  MatExpansionModule,
+  MatCommonModule,
+  MatToolbarModule} from '@angular/material';
 import { PeriodsModule } from './periods/periods.module';
 import { TeamsModule } from './teams/teams.module';
-
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import { PeriodLineupResolver } from './periods/period-lineup-resolver.service';
+import { TeamService } from './teams/team.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,20 +33,28 @@ import { TeamsModule } from './teams/teams.module';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    DragDropModule,
     HttpClientModule,
     FormsModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatListModule,
     MatExpansionModule,
-    MatCheckboxModule,
     MatCommonModule,
     MatToolbarModule,
     PeriodsModule,
-    TeamsModule
+    TeamsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
-  providers: [TeamsClient],
+  providers: [
+    TeamsClient,
+    GameService,
+    PlayerService,
+    PeriodLineupResolver,
+    TeamService
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

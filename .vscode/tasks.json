@@ -7,9 +7,15 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/YouthSoccerLineup.csproj"
+                "${workspaceFolder}/LineupCoach.App/LineupCoach.App.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "npm",
+            "script": "ng",
+            "path": "LineupCoach.App/ClientApp/",
+            "problemMatcher": []
         }
     ]
 }

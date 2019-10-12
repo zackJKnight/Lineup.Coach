@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { ListPlayersComponent} from '../../players/list-players/list-players.component';
+import { Team } from '../team';
 
 @Component({
   selector: 'app-team-attendance',
@@ -8,13 +8,16 @@ import { ListPlayersComponent} from '../../players/list-players/list-players.com
   styleUrls: ['./team-attendance.component.less']
 })
 export class TeamAttendanceComponent implements OnInit {
-
+public team: Team;
   constructor(
     private route: ActivatedRoute,
     public router: Router
-  ) { }
+  ) {}
 
   ngOnInit() {
+    this.team = new Team();
+    this.team.name = 'Raptors';
+
   }
 
   goToLineup() {

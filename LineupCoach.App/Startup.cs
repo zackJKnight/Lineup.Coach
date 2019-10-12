@@ -51,6 +51,7 @@ namespace LineupCoach.App
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddSwaggerDocument();
+            services.AddResponseCompression();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,6 +77,7 @@ namespace LineupCoach.App
                 settings.Path = "/api";
                 settings.DocumentPath = "/api/specification.json";
             });
+            app.UseResponseCompression();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -95,6 +97,7 @@ namespace LineupCoach.App
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
+
         }
     }
 }
