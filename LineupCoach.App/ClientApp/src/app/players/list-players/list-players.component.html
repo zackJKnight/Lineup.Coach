@@ -1,16 +1,6 @@
-<mat-list>
-  <mat-list-item *ngFor="let player of players">
-      <mat-accordion>
-          <mat-expansion-panel (click)="openDialog(player)">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
+
+          <mat-card *ngFor="let player of players" (click)="openDialog(player, positions)">
                   <mat-checkbox (change)="onCheckboxChecked($event, player)"
                   [(ngModel)]="player.isPresent">
                   {{player.firstName}}</mat-checkbox>
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-            <p>Editing Player...</p>
-          </mat-expansion-panel>
-      </mat-accordion>
-  </mat-list-item>
- </mat-list>
+          </mat-card>

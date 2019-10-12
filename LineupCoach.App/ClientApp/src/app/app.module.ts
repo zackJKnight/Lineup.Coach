@@ -23,6 +23,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { PeriodLineupResolver } from './periods/period-lineup-resolver.service';
 import { TeamService } from './teams/team.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,6 +33,7 @@ import { TeamService } from './teams/team.service';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    DragDropModule,
     HttpClientModule,
     FormsModule,
     MatDialogModule,

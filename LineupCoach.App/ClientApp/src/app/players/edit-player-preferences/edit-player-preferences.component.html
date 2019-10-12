@@ -1,32 +1,32 @@
-<h3 mat-dialog-title>Drag to Order: Favorite at Top</h3>
 <mat-dialog-content>
-  <mat-form-field appearance="standard">
-    <mat-label>First Name</mat-label>
-    <input
-      matInput
-      #first
-      placeholder="{{ player.firstName }}"
-      (keyup.enter)="addFirst(first.value)"
-      (blur)="addFirst(first.value)"
-    />
+<mat-form-field appearance="standard">
+      <mat-label>{{ player.firstName }}</mat-label>
+      <input
+        matInput
+        #first
+        placeholder="First Name"
+        (keyup.enter)="addFirst(first.value)"
+        (blur)="addFirst(first.value)"
+      />
   </mat-form-field>
-  <mat-form-field appearance="standard">
-    <mat-label>Last Name</mat-label>
-    <input
-      matInput
-      #last
-      placeholder="{{ player.lastName }}"
-      (keyup.enter)="addLast(last.value)"
-      (blur)="addLast(last.value)"
-    />
+    <mat-form-field appearance="standard">
+      <mat-label>{{ player.lastName }}</mat-label>
+      <input
+        matInput
+        #last
+        placeholder="Last Name"
+        (keyup.enter)="addLast(last.value)"
+        (blur)="addLast(last.value)"
+      />
   </mat-form-field>
+  <h3 mat-dialog-title>Drag to Order: Favorite at Top</h3>
   <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
     <div class="example-box" *ngFor="let position of positions" cdkDrag>
       {{ position }}
     </div>
   </div>
-</mat-dialog-content>
+  </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button cdkFocusInitial>Ok</button>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button cdkFocusInitial (click)="onOKClick()">OK</button>
 </mat-dialog-actions>

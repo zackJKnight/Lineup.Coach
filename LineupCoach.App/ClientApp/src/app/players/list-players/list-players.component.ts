@@ -40,13 +40,16 @@ export class ListPlayersComponent implements OnInit {
 
   openDialog(player: Player, positions: Position[]): void {
     const dialogRef = this.dialog.open(EditPlayerPreferencesComponent, {
-      width: '200px',
-      data: {player, positions}
+      data: {
+        player,
+        positions
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`The dialog was closed with result: ${result}`);
-      // this.players = result;
+      this.players[result.player] = result.player;
+      this.playerService.savePlayers(this.players);
     });
   }
 }

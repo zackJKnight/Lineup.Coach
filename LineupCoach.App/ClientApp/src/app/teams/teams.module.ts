@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { EditPlayerPreferencesComponent } from '../players/edit-player-preferences/edit-player-preferences.component';
 import {
   MatCommonModule,
+  MatCardModule,
   MatDialogModule,
   MatFormFieldModule,
   MatInputModule,
@@ -19,6 +20,7 @@ import {
   MAT_DIALOG_DATA,
   MatDialogRef
 } from '@angular/material';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import {
   ],
   imports: [
     CommonModule,
+    DragDropModule,
     FormsModule,
+    MatCardModule,
     MatCheckboxModule,
     MatDialogModule,
     MatFormFieldModule,
