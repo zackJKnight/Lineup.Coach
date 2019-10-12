@@ -19,10 +19,10 @@
         (blur)="addLast(last.value)"
       />
   </mat-form-field>
-  <h3 mat-dialog-title>Drag to Order: Favorite at Top</h3>
+  <h3 mat-dialog-title>Drag/Drop in Favorite Order</h3>
   <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-    <div class="example-box" *ngFor="let position of positions" cdkDrag>
-      {{ position }}
+    <div class="example-box" *ngFor="let position of positions; let i = index" cdkDrag>
+      &#35;{{i+1}} - {{ position }}
     </div>
   </div>
   </mat-dialog-content>
