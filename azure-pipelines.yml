@@ -25,7 +25,7 @@ steps:
     rootFolderOrFile: $BUILD_ARTIFACTSTAGINGDIRECTORY
     includeRootFolder: true
     archiveType: 'zip'
-    archiveFile: $($BUILD_ARTIFACTSTAGINGDIRECTORY)/$($BUILD_BUILDID).zip'
+    archiveFile: ../a/*.zip'
     replaceExistingArchive: true
     
 - task: PublishBuildArtifacts@1
