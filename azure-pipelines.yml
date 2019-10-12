@@ -22,14 +22,14 @@ steps:
 
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.ArtifiactsStagingDirectory)'
+    rootFolderOrFile: $BUILD_ARTIFACTSTAGINGDIRECTORY
     includeRootFolder: true
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    archiveFile: $($BUILD_ARTIFACTSTAGINGDIRECTORY)/$($BUILD_BUILDID).zip'
     replaceExistingArchive: true
     
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: $BUILD_ARTIFACTSTAGINGDIRECTORY
     ArtifactName: 'drop'
     publishLocation: 'Container'
