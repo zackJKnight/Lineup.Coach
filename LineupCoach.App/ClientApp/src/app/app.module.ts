@@ -16,7 +16,8 @@ import { MatDialogModule,
   MatListModule,
   MatExpansionModule,
   MatCommonModule,
-  MatToolbarModule} from '@angular/material';
+  MatToolbarModule,
+  MatIconModule} from '@angular/material';
 import { PeriodsModule } from './periods/periods.module';
 import { TeamsModule } from './teams/teams.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -38,6 +39,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     FormsModule,
     MatDialogModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatButtonModule,
     MatListModule,

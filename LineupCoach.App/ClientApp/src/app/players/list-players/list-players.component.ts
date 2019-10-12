@@ -3,9 +3,10 @@ import { PlayerService } from '../player.service';
 import { Player } from '../player';
 import { ActivatedRoute } from '@angular/router';
 import { EditPlayerPreferencesComponent } from '../edit-player-preferences/edit-player-preferences.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatIconRegistry } from '@angular/material';
 import { TeamService } from 'src/app/teams/team.service';
 import { Position } from 'src/app/positions/position';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-list-players',
@@ -20,7 +21,8 @@ export class ListPlayersComponent implements OnInit {
     private playerService: PlayerService,
     private teamService: TeamService,
     private route: ActivatedRoute,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    iconRegistry: MatIconRegistry, sanitizer: DomSanitizer
   ) {
   }
   ngOnInit(
