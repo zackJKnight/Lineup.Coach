@@ -9,6 +9,7 @@ using Lineup.Coach.Service;
 
 namespace Lineup.Coach.Application.Tests.Model
 {
+    [Ignore]
     [TestClass]
     public class GameTests
     {

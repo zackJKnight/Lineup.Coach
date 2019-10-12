@@ -8,6 +8,7 @@ using Lineup.Coach.Application;
 
 namespace Lineup.Coach.Application.Tests
 {
+    [Ignore]
     [TestClass]
     public class LineupFillerTests
     {

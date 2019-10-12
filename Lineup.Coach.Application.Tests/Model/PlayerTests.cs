@@ -5,6 +5,7 @@ using Lineup.Coach.Domain;
 
 namespace Lineup.Coach.Application.Tests.Model
 {
+    [Ignore]
     [TestClass]
     public class PlayerTests
     {
