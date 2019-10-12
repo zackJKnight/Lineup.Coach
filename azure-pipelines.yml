@@ -6,12 +6,13 @@ pool:
   
 variables:
   buildConfiguration: 'Release'
+  Build.ArtifactsStagingDirectory: '$(Build.ArtifactsStagingDirectory)'
 
 steps:
 - script: |
-    dotnet build --configuration $buildConfiguration
+    dotnet build --configuration $(buildConfiguration)
     dotnet test ./Lineup.Coach.Application.Tests
-    dotnet publish --configuration $buildConfiguration --output $Build.ArtifactsStagingDirectory
+    dotnet publish ./LineupCoach.App --configuration $(buildConfiguration) --output $(Build.ArtifactsStagingDirectory)
 
 - task: PublishTestResults@2
   condition: succeeded()
