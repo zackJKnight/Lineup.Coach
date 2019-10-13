@@ -22,14 +22,14 @@ steps:
 
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: /home/vsts/work/1/a
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
     includeRootFolder: true
     archiveType: 'zip'
-    archiveFile: /home/vsts/work/1/a/*.zip
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
-    
+
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: /home/vsts/work/1/a
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
