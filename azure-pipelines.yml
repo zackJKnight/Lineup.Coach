@@ -22,14 +22,14 @@ steps:
 
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: $BUILD_ARTIFACTSTAGINGDIRECTORY
+    rootFolderOrFile: /home/vsts/work/1/a
     includeRootFolder: true
     archiveType: 'zip'
-    archiveFile: ../a/*.zip'
+    archiveFile: /home/vsts/work/1/a/*.zip
     replaceExistingArchive: true
     
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: $BUILD_ARTIFACTSTAGINGDIRECTORY
+    PathtoPublish: /home/vsts/work/1/a
     ArtifactName: 'drop'
     publishLocation: 'Container'
