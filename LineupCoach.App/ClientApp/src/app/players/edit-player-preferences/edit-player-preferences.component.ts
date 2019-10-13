@@ -19,6 +19,9 @@ export class EditPlayerPreferencesComponent implements OnInit {
   ) {
     this.player = this.data.player;
     this.positions = [...new Set(this.data.positions.map(pos => pos.name))];
+    if (this.player.positionPreferenceRank.ranking.length === this.positions.length) {
+      this.positions = this.player.positionPreferenceRank.ranking;
+    }
   }
 
   ngOnInit() {
