@@ -14,6 +14,7 @@ using System.Reflection;
 using Lineup.Coach.Application.Interfaces;
 using Lineup.Coach.Application.Teams.Commands;
 using LineupCoach.Infrastructure;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace LineupCoach.App
 {
@@ -57,6 +58,8 @@ namespace LineupCoach.App
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();
+                provider.Mappings[".webmanifest"] = "application/manifest+json";
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
