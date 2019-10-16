@@ -1,15 +1,15 @@
 <section class="mat-typography">
-  <div *ngIf="router.url == '/team'">
-    <div class='padded-page'>
+  <div class='padded-page' *ngIf="router.url == '/team'">
+
       <h1>{{team.name}}</h1>
       <app-list-players></app-list-players>
-    </div>
+
     <button
       mat-flat-button
       color="primary"
       class="action-button"
       (click)="goToLineup()">
-      <h2>Generate Game Lineup</h2>
+      <span class=action-button-text>Generate Game Lineup</span>
     </button>
   </div>
 </section>
