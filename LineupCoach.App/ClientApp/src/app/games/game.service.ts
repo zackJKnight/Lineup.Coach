@@ -5,8 +5,8 @@ import { Game } from './game.model';
 import { PlayerService } from '../players/player.service';
 import { Period } from '../periods/period';
 import { PeriodService } from '../periods/period.service';
-import * as cloneDeep from 'lodash/cloneDeep';
-import * as _shuffle from 'lodash/shuffle';
+import { cloneDeep } from 'lodash/cloneDeep';
+import { _shuffle } from 'lodash/shuffle';
 import { Observable, of, Subject } from 'rxjs';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
