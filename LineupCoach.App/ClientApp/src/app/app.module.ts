@@ -4,7 +4,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AddTeamComponent } from './teams/add-team/add-team.component';
 import { TeamsClient } from './lineup-coach-api';
 import { GameService } from './games/game.service';
 import { PlayerService } from './players/player.service';
@@ -27,8 +26,7 @@ import { TeamService } from './teams/team.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 @NgModule({
   declarations: [
-    AppComponent,
-    AddTeamComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
