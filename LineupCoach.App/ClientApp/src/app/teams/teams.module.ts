@@ -22,11 +22,13 @@ import {
   MatDialogRef
 } from '@angular/material';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { AddTeamComponent } from './add-team/add-team.component';
 
 @NgModule({
   declarations: [
     ListPlayersComponent,
     TeamAttendanceComponent,
+    AddTeamComponent,
     TeamDetailComponent,
     EditPlayerPreferencesComponent
   ],
@@ -52,7 +54,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
   ],
   providers: [
     { provide: MAT_DIALOG_DATA, useValue: {} },
-     { provide: MatDialogRef, useValue: {} }
+    { provide: MatDialogRef, useValue: {} }
   ]
 })
 export class TeamsModule { }

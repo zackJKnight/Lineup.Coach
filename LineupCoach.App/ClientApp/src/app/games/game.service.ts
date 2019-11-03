@@ -5,8 +5,8 @@ import { Game } from './game.model';
 import { PlayerService } from '../players/player.service';
 import { Period } from '../periods/period';
 import { PeriodService } from '../periods/period.service';
-import { cloneDeep } from 'lodash/cloneDeep';
-import { _shuffle } from 'lodash/shuffle';
+import * as cloneDeep from 'lodash/cloneDeep';
+import * as _shuffle from 'lodash/shuffle';
 import { Observable, of, Subject } from 'rxjs';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
@@ -47,7 +47,7 @@ export class GameService {
     while (!this.allGamePositionsFilled() &&
       round < (roundedPositionsPerPlayer + (benchCount / this.availablePlayerCount) + 4)) {
       // Loop through the player list - trying to find each a position that best fits their preference.
-      let playerIdsInRandomOrder = _shuffle(playerIdsInRound);
+      const playerIdsInRandomOrder = _shuffle(playerIdsInRound);
       for (const playerId of playerIdsInRandomOrder) {
         const player: Player = this.playerService.getPlayerById(playerId);
         if (!player) { continue; }

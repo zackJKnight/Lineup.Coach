@@ -5,8 +5,10 @@ import { PeriodLineupResolver } from './period-lineup-resolver.service';
 
 
 const routes: Routes = [
-  {path: 'lineup', component: PeriodLineupComponent, resolve:
-{ periods: PeriodLineupResolver}}
+  {
+    path: '',
+    component: PeriodLineupComponent
+  }
 ];
 
 @NgModule({

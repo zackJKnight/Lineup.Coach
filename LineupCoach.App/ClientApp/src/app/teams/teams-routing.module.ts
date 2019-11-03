@@ -4,7 +4,9 @@ import { TeamAttendanceComponent } from './team-attendance/team-attendance.compo
 
 
 const routes: Routes = [
-  {path: 'team', component: TeamAttendanceComponent}
+  {
+    path: '', component: TeamAttendanceComponent
+  }
 ];
 
 @NgModule({

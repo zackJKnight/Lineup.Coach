@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,8 +9,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class AppComponent {
   title = 'Lineup';
   constructor(
-    private route: ActivatedRoute,
     public router: Router
   ) {}
-
 }
