@@ -8,12 +8,10 @@ import { PeriodService } from '../periods/period.service';
 import * as cloneDeep from 'lodash/cloneDeep';
 import * as _shuffle from 'lodash/shuffle';
 import { Observable, of, Subject } from 'rxjs';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class GameService {
   startingPositionsPerPlayer: number;
   availablePlayerCount: number;
@@ -25,57 +23,89 @@ export class GameService {
   ) {
     this.availablePlayerCount = this.playerService.getPresentPlayers().length;
     this.startingPositionsPerPlayer = this.setStartingPositionsPerPlayerCount();
-
   }
 
   generateLineup(): Observable<Period[]> {
     const players: Player[] = this.playerService.getPresentPlayers();
     const subject = new Subject<Period[]>();
     let round = 0;
-    const playerIdsInRound = cloneDeep(players
-      .filter(player => player.isPresent)
-      .map(player => player.id));
+    const playerIdsInRound = cloneDeep(players.map(player => player.id));
 
     // ToDo if the players don't have ranking, need default or throw here.
-    const preferenceRankMax: number = Math.max.apply(Math, players.map(player =>
-      player.positionPreferenceRank.ranking.length));
-    const roundedPositionsPerPlayer = Math.floor(this.startingPositionsPerPlayer);
-    const benchCount = this.flattenGamePositions()
-      .filter(position => position.name === 'bench').length;
+    const preferenceRankMax: number = Math.max.apply(
+      Math,
+      players.map(player => player.positionPreferenceRank.ranking.length)
+    );
+    const roundedPositionsPerPlayer = Math.floor(
+      this.startingPositionsPerPlayer
+    );
+    const benchCount = this.flattenGamePositions().filter(
+      position => position.name === 'bench'
+    ).length;
     // .length / this.availablePlayerCount;
     // Rounds - within the rounds the players (in random order) are placed based on preference.
-    while (!this.allGamePositionsFilled() &&
-      round < (roundedPositionsPerPlayer + (benchCount / this.availablePlayerCount) + 4)) {
+    while (
+      !this.allGamePositionsFilled() &&
+      round <
+        roundedPositionsPerPlayer + benchCount / this.availablePlayerCount + 4
+    ) {
       // Loop through the player list - trying to find each a position that best fits their preference.
       const playerIdsInRandomOrder = _shuffle(playerIdsInRound);
       for (const playerId of playerIdsInRandomOrder) {
         const player: Player = this.playerService.getPlayerById(playerId);
-        if (!player) { continue; }
-        for (let currentPrefRankIndex = 0; currentPrefRankIndex < preferenceRankMax; currentPrefRankIndex++) {
-          const positionName: string = this.playerService.getPositionNameByPreferenceRank(player, currentPrefRankIndex);
+        if (!player || !player.isPresent) {
+          console.log(`player ${player.firstName} not present`);
+          continue;
+        }
+        for (
+          let currentPrefRankIndex = 0;
+          currentPrefRankIndex < preferenceRankMax;
+          currentPrefRankIndex++
+        ) {
+          const positionName: string = this.playerService.getPositionNameByPreferenceRank(
+            player,
+            currentPrefRankIndex
+          );
           // console.log(`Looking for open ${positionName} for player ${player.firstName} ${player.id} in round ${round}`);
           if (typeof positionName !== 'undefined' && positionName) {
-            const OpenMatchingPositions: Position[] = this.getOpenPositionsByName(positionName);
-            if (typeof (OpenMatchingPositions) === 'undefined' || OpenMatchingPositions.length === 0) {
-              console.log(`No position ${positionName} ranked ${currentPrefRankIndex + 1} for ${player.firstName} in round ${round}`);
+            const OpenMatchingPositions: Position[] = this.getOpenPositionsByName(
+              positionName
+            );
+            if (
+              typeof OpenMatchingPositions === 'undefined' ||
+              OpenMatchingPositions.length === 0
+            ) {
+              console.log(
+                `No position ${positionName} ranked ${currentPrefRankIndex +
+                  1} for ${player.firstName} in round ${round}`
+              );
               continue;
             } else {
-              if (player.startingPositionIds.length < this.startingPositionsPerPlayer) {
-                if (this.tryPlacePlayer(player, OpenMatchingPositions)) {
-                  console.log(`Player ${player.firstName} placed in round ${round}`);
+              if (
+                player.isPresent &&
+                player.startingPositionIds.length <
+                  this.startingPositionsPerPlayer
+              ) {
+                if (player.isPresent && this.tryPlacePlayer(player, OpenMatchingPositions)) {
+                  console.log(
+                    `Player ${player.firstName} placed in round ${round}`
+                  );
                   break;
                 }
-                console.log(`Could not place player ${player.firstName} in round ${round}`);
+                console.log(
+                  `Could not place player ${player.firstName} in round ${round}`
+                );
               }
               // We've tried to put this player in each position.
               // if (currentPrefRankIndex + 1 === preferenceRankMax) {
-              if (this.tryBenchPlayers([player])) {
-                console.log(`Player ${player.firstName} benched in round ${round}`);
+              if (player.isPresent && this.tryBenchPlayers([player])) {
+                console.log(
+                  `Player ${player.firstName} benched in round ${round}`
+                );
                 break;
               } else {
                 console.log(`Player ${player} not benched in round ${round}.`);
               }
-              // }
             }
           }
         }
@@ -83,26 +113,43 @@ export class GameService {
       round++;
     }
     if (!this.allStartingPositionsFilled()) {
-      const unplacedPlayers = cloneDeep(players
-        .filter(player =>
-          this.playerService.playerPlacementIsComplete(player.id, this.periodService.getPeriods().length)));
+      const unplacedPlayers = cloneDeep(
+        players.filter(
+          player =>
+            player.isPresent
+            && !this.playerService.playerPlacementIsComplete(
+              player.id,
+              this.periodService.getPeriods().length
+            )
+        )
+      );
       for (const player of unplacedPlayers) {
-        this.tryPlacePlayer(player, this.flattenGamePositions()
-          .filter(position => typeof (position.startingPlayer) === 'undefined'));
+        if (player.isPresent) {
+          this.tryPlacePlayer(
+            player,
+            this.flattenGamePositions().filter(
+              position => typeof position.startingPlayer === 'undefined'
+            )
+          );
+        }
       }
     }
 
     // ToDo filter for players that have not been benched the max bench (so, make a maxBench variable)
-    this.tryBenchPlayers(players);
-    for (const needsABenchPlayer of _shuffle(players)) {
+    this.tryBenchPlayers(players.filter(player => player.isPresent));
+    for (const needsABenchPlayer of _shuffle(players.filter(player => player.isPresent))) {
       this.tryBenchPlayers([needsABenchPlayer]);
     }
     for (const position of this.flattenGamePositions()) {
-      console.log(`period ${position.periodId} position ${position.name} player ${position.startingPlayer && position.startingPlayer.firstName || 'none'}`);
+      console.log(
+        `period ${position.periodId} position ${
+          position.name
+        } player ${(position.startingPlayer &&
+          position.startingPlayer.firstName) ||
+          'none'}`
+      );
     }
-    // .filter(player => this.playerService.playerPlacementIsComplete(player.id, this.periods.length)));
 
-    // window.alert('Periods has players in all the benches. They are NOT showing in the UI.');
     setTimeout(() => {
       subject.next(this.periodService.getPeriods());
       subject.complete();
@@ -113,14 +160,24 @@ export class GameService {
   placementScoreIsWithinRange(newScore: number): boolean {
     const periodCount = this.periodService.getPeriods().length;
     const placedPlayers = this.playerService.getPresentPlayers();
-    const highestScore = Math.max.apply(Math, placedPlayers.map(player => player.placementScore));
-    const lowestScore = Math.min.apply(Math, placedPlayers.map(player => player.placementScore));
+    const highestScore = Math.max.apply(
+      Math,
+      placedPlayers.map(player => player.placementScore)
+    );
+    const lowestScore = Math.min.apply(
+      Math,
+      placedPlayers.map(player => player.placementScore)
+    );
     const meanScore = Math.floor((highestScore + lowestScore) / 2);
-    const maxNumberOfPreferredPositions = Math.max
-      .apply(Math, placedPlayers.map(player => player.positionPreferenceRank.ranking.length));
+    const maxNumberOfPreferredPositions = Math.max.apply(
+      Math,
+      placedPlayers.map(player => player.positionPreferenceRank.ranking.length)
+    );
     // Prevent player from getting a position that gives him far better placement than most.
-    return newScore < (periodCount * (maxNumberOfPreferredPositions - 1)) ||
-      ((newScore > meanScore) && (newScore < (highestScore - meanScore / 2)));
+    return (
+      newScore < periodCount * (maxNumberOfPreferredPositions - 1) ||
+      (newScore > meanScore && newScore < highestScore - meanScore / 2)
+    );
   }
 
   // TODO do calculations after all players are placed.
@@ -141,10 +198,15 @@ export class GameService {
     try {
       const flattenedGamePositions = this.flattenGamePositions();
 
-      const nonBenchPositions = flattenedGamePositions.filter(position => position.positionType !== 'bench');
+      const nonBenchPositions = flattenedGamePositions.filter(
+        position => position.positionType !== 'bench'
+      );
 
-      openMatches = nonBenchPositions
-        .filter(position => position.name.toLowerCase() === positionName && typeof (position.startingPlayer) === 'undefined');
+      openMatches = nonBenchPositions.filter(
+        position =>
+          position.name.toLowerCase() === positionName &&
+          typeof position.startingPlayer === 'undefined'
+      );
     } catch (e) {
       throw new Error(e);
     }
@@ -153,27 +215,55 @@ export class GameService {
   }
 
   flattenGamePositions(): Position[] {
-    return this.periodService.getPeriods()
+    return this.periodService
+      .getPeriods()
       .sort(period => period.periodNumber)
       .reduce((pos, period) => [...pos, ...period.positions], []);
   }
 
   tryPlacePlayer(player: Player, OpenMatchingPositions: Position[]): boolean {
     let playerPlaced = false;
+    if (!player.isPresent) {
+      return playerPlaced;
+    }
     for (const OpenMatchingPosition of OpenMatchingPositions) {
-      const periodIdWithFirstOpenMatch = this.periodService.getPeriods()
-        .filter(period => period.periodNumber === OpenMatchingPosition.periodId)[0].id;
-      if (periodIdWithFirstOpenMatch && typeof (periodIdWithFirstOpenMatch) !== 'undefined') {
-        const playerStartingThisPeriod = this.periodService.playerIsStartingThisPeriod(periodIdWithFirstOpenMatch, player);
-        if (!playerStartingThisPeriod &&
-          OpenMatchingPosition.startingPlayer == null
+      const periodIdWithFirstOpenMatch = this.periodService
+        .getPeriods()
+        .filter(
+          period => period.periodNumber === OpenMatchingPosition.periodId
+        )[0].id;
+      if (
+        periodIdWithFirstOpenMatch &&
+        typeof periodIdWithFirstOpenMatch !== 'undefined'
+      ) {
+        const playerStartingThisPeriod = this.periodService.playerIsStartingThisPeriod(
+          periodIdWithFirstOpenMatch,
+          player
+        );
+        if (
+          player.isPresent &&
+          !playerStartingThisPeriod &&
+          (typeof OpenMatchingPosition.startingPlayer === 'undefined' || OpenMatchingPosition.startingPlayer === null)
         ) {
-          this.periodService.setStartingPlayer(periodIdWithFirstOpenMatch, OpenMatchingPosition.id, player);
-          const rank = player.positionPreferenceRank.ranking.indexOf(OpenMatchingPosition.name.toLowerCase());
-          const newScore = player.placementScore + player.positionPreferenceRank.ranking.length - rank;
-          if (!this.placementScoreIsWithinRange(newScore)) {
-            console
-              .log(`Placement score ${newScore} not in range for Player ${player.firstName} and position ${OpenMatchingPosition.name}`);
+          this.periodService.setStartingPlayer(
+            periodIdWithFirstOpenMatch,
+            OpenMatchingPosition.id,
+            player
+          );
+          const rank = player.positionPreferenceRank.ranking.indexOf(
+            OpenMatchingPosition.name.toLowerCase()
+          );
+          const newScore =
+            player.placementScore +
+            player.positionPreferenceRank.ranking.length -
+            rank;
+          if (
+            !player.isPresent ||
+            !this.placementScoreIsWithinRange(newScore)
+          ) {
+            console.log(
+              `Placement score ${newScore} not in range for Player ${player.firstName} and position ${OpenMatchingPosition.name}`
+            );
             break;
           }
           player.placementScore = newScore;
@@ -198,29 +288,52 @@ export class GameService {
     //   benchPlayers.some(player => player.startingPositionIds
     //     .some(positionId =>
     //       this.periodService.getPositionById(positionId).periodId !== bench.periodId)));
-    if (openBenches && typeof (openBenches) !== 'undefined') {
+    if (openBenches && typeof openBenches !== 'undefined') {
       for (const player of benchPlayers) {
+        if (!player.isPresent) {
+          continue;
+        }
         for (const openBench of openBenches) {
-
           const currentPeriodId = openBench.periodId;
-          if (!currentPeriodId || typeof (currentPeriodId) === 'undefined') {
+          if (!currentPeriodId || typeof currentPeriodId === 'undefined') {
             console.log(`Period not found for bench id: ${openBench.id}`);
             continue;
           }
-          if (this.periodService.playerIsBenchedThisPeriod(currentPeriodId, player)) {
-            console.log(`Player ${player.firstName} already benched in period ${currentPeriodId}`);
+          if (
+            this.periodService.playerIsBenchedThisPeriod(
+              currentPeriodId,
+              player
+            )
+          ) {
+            console.log(
+              `Player ${player.firstName} already benched in period ${currentPeriodId}`
+            );
             continue;
           }
-          if (!this.periodService.playerIsStartingThisPeriod(currentPeriodId, player)) {
-            this.periodService.setStartingPlayer(currentPeriodId, openBench.id, player);
+          if (
+            player.isPresent &&
+            !this.periodService.playerIsStartingThisPeriod(
+              currentPeriodId,
+              player
+            )
+          ) {
+            this.periodService.setStartingPlayer(
+              currentPeriodId,
+              openBench.id,
+              player
+            );
 
             player.benchIds.push(openBench.id);
-            console.log(`player ${player.firstName} placed in bench ${openBench.id} in period ${currentPeriodId}`);
+            console.log(
+              `player ${player.firstName} placed in bench ${openBench.id} in period ${currentPeriodId}`
+            );
             player.placementScore = player.placementScore - 1;
             playerPlaced = true;
             break;
           } else {
-            console.log(`Player ${player.firstName} already starting in period ${openBench.periodId}`);
+            console.log(
+              `Player ${player.firstName} already starting in period ${openBench.periodId}`
+            );
           }
         }
       }
@@ -234,10 +347,13 @@ export class GameService {
     try {
       const flattenedGamePositions = this.flattenGamePositions();
 
-      const benchPositions = flattenedGamePositions.filter(position => position.positionType === 'bench');
+      const benchPositions = flattenedGamePositions.filter(
+        position => position.positionType === 'bench'
+      );
 
-      openBenches = benchPositions
-        .filter(position => typeof (position.startingPlayer) === 'undefined');
+      openBenches = benchPositions.filter(
+        position => typeof position.startingPlayer === 'undefined'
+      );
     } catch (e) {
       throw new Error(e);
     }
@@ -247,21 +363,27 @@ export class GameService {
   allGamePositionsFilled(): boolean {
     // flatten the positions in all periods
     const allPositions = this.flattenGamePositions();
-    const allFilled = !allPositions.some(position => typeof (position.startingPlayer) === 'undefined');
+    const allFilled = !allPositions.some(
+      position => typeof position.startingPlayer === 'undefined'
+    );
     return allFilled;
   }
 
   allStartingPositionsFilled(): boolean {
     // flatten the positions in all periods
-    const allPositions = this.flattenGamePositions()
-      .filter(position => position.name !== 'bench');
-    const allFilled = !allPositions.some(position => typeof (position.startingPlayer) === 'undefined');
+    const allPositions = this.flattenGamePositions().filter(
+      position => position.name !== 'bench'
+    );
+    const allFilled = !allPositions.some(
+      position => typeof position.startingPlayer === 'undefined'
+    );
     return allFilled;
   }
 
   setStartingPositionsPerPlayerCount(): number {
     return Math.round(
-      this.MAX_PLAYERS_ON_FIELD * this.periodService.getPeriods().length / this.availablePlayerCount);
+      (this.MAX_PLAYERS_ON_FIELD * this.periodService.getPeriods().length) /
+        this.availablePlayerCount
+    );
   }
 }
-

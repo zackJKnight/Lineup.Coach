@@ -17,8 +17,12 @@ export class PlayerService {
     this.players = players;
   }
 
-  getPlayerById(playerId: number) {
-    return this.players.filter(player => player.id === playerId)[0];
+  getPlayerById(playerId: number): Player {
+    const playerById = this.players.filter(player => player.id === playerId);
+    if (!playerById[0].firstName) {
+      throw new Error(`Incorrect match for Player with id: ${playerId}`);
+    }
+    return playerById[0];
   }
 
   getPlayers(): Observable<Player[]> {
@@ -61,6 +65,11 @@ export class PlayerService {
 
   removeStartingPositions() {
     this.players.forEach(player => player.startingPositionIds = []);
+    this.savePlayers(this.players);
+  }
+
+  resetPlayerAttendance() {
+    this.players = PLAYERS;
     this.savePlayers(this.players);
   }
 }

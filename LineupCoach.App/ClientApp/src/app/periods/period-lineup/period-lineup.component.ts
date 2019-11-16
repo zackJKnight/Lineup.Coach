@@ -6,6 +6,7 @@ import { Player } from 'src/app/players/player';
 import { Period } from '../period';
 import { Position } from '../../positions/position';
 import { Observable } from 'rxjs';
+import { PeriodService } from '../period.service';
 
 @Component({
   selector: 'app-period-lineup',
@@ -21,6 +22,7 @@ export class PeriodLineupComponent implements OnInit {
 
   constructor(
     private playerService: PlayerService,
+    private periodService: PeriodService,
     private route: ActivatedRoute,
     public router: Router,
   ) {
@@ -39,8 +41,10 @@ export class PeriodLineupComponent implements OnInit {
     console.log('Back button pressed');
     this.periods = [];
     this.players = [];
+    this.periodService.resetPositions();
     this.playerService.removeStartingPositions();
     this.playerService.removeBenchPositions();
+    this.playerService.resetPlayerAttendance();
     this.route = new ActivatedRoute();
     this.backButtonPressed = true;
   }

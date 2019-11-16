@@ -36,7 +36,7 @@ export class ListPlayersComponent implements OnInit {
 
   onCheckboxChecked(event, element) {
 
-    // console.log(JSON.stringify(this.players));
+    // console.log(`${JSON.stringify(element)}`);
     this.playerService.savePlayers(this.players);
   }
 

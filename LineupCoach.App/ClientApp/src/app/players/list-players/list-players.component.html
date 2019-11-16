@@ -1,11 +1,11 @@
 <p>Present?</p>
 <mat-card [class.mat-elevation-z8] *ngFor="let player of players">
   <mat-card-content>
-  <mat-checkbox (change)="onCheckboxChecked($event, player);$event.stopPropagation()" [(ngModel)]="player.isPresent">
+  <mat-checkbox (change)="onCheckboxChecked($event, player)" [(ngModel)]="player.isPresent">
   </mat-checkbox>
 
   <span class="card-element">{{player.firstName}}</span>
   <mat-icon color="accent" class="material-icons; card-element-right" aria-hidden="false" aria-label="Edit Player Icon"
-    (click)="openDialog(player, positions);$event.stopPropagation()">edit</mat-icon>
+    (click)="openDialog(player, positions)">edit</mat-icon>
   </mat-card-content>
 </mat-card>

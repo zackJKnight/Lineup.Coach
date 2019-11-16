@@ -1,30 +1,36 @@
-import { Injectable } from '@angular/core';
-import { Period } from './period';
-import { Player } from '../players/player';
-import { Position } from '../positions/position';
-import { PeriodsModule } from './periods.module';
+import { Injectable } from "@angular/core";
+import { Period } from "./period";
+import { Player } from "../players/player";
+import { Position } from "../positions/position";
+import { PeriodsModule } from "./periods.module";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class PeriodService {
   private periods: Period[];
-  constructor() { }
+  constructor() {}
 
   playerIsBenchedThisPeriod(currentPeriodId: number, player: Player): boolean {
     if (!player.benchIds || player.benchIds.length === 0) {
       return false;
     }
-    return player.benchIds.some(benchId => this.getPositionById(benchId).periodId === currentPeriodId);
+    return player.benchIds.some(
+      benchId => this.getPositionById(benchId).periodId === currentPeriodId
+    );
   }
 
   playerIsStartingThisPeriod(periodId: number, player: Player): boolean {
-    if (typeof (player.startingPositionIds) === 'undefined' || player.startingPositionIds.length === 0) {
+    if (
+      typeof player.startingPositionIds === 'undefined' ||
+      player.startingPositionIds.length === 0
+    ) {
       return false;
     }
-    return player.startingPositionIds
-      .some(positionId =>
-        this.getPositionById(positionId).periodId === periodId);
+    const matchingPosition = player.startingPositionIds.some(
+      positionId => this.getPositionById(positionId).periodId === periodId
+    );
+    return matchingPosition;
   }
 
   getPositionById(id: number): Position {
@@ -33,7 +39,7 @@ export class PeriodService {
       .filter(position => position.id === id)[0];
   }
   getPeriods(): Period[] {
-    if (typeof (this.periods) === 'undefined' || this.periods.length === 0) {
+    if (typeof this.periods === 'undefined' || this.periods.length === 0) {
       this.periods = new Array<Period>();
       const period1 = new Period(1);
       period1.positions = new Array<Position>();
@@ -99,14 +105,20 @@ export class PeriodService {
     }
     return this.periods;
   }
+
+  resetPositions() {
+    this.periods = [];
+    this.periods = this.getPeriods();
+  }
+
   setStartingPlayer(periodId: number, positionId: number, player: Player) {
-    this.periods.filter(period => period.id === periodId)[0]
-      .positions.filter(position => position.id === positionId)[0]
-      .startingPlayer = player;
+    const givenPosition = this.getPositionById(positionId);
+    if (givenPosition) {
+      givenPosition.startingPlayer = player;
+    }
   }
 
   savePeriods(periods: Period[]) {
     this.periods = periods;
   }
-
 }
