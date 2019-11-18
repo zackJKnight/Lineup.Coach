@@ -1,11 +1,11 @@
-import { Injectable } from "@angular/core";
-import { Period } from "./period";
-import { Player } from "../players/player";
-import { Position } from "../positions/position";
-import { PeriodsModule } from "./periods.module";
+import { Injectable } from '@angular/core';
+import { Period } from './period';
+import { Player } from '../players/player';
+import { Position } from '../positions/position';
+import { PeriodsModule } from './periods.module';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class PeriodService {
   private periods: Period[];
@@ -15,9 +15,10 @@ export class PeriodService {
     if (!player.benchIds || player.benchIds.length === 0) {
       return false;
     }
-    return player.benchIds.some(
-      benchId => this.getPositionById(benchId).periodId === currentPeriodId
+    const benchedInPeriods = player.benchIds.map(
+      benchId => this.getPositionById(benchId).periodId
     );
+    return benchedInPeriods[0] === currentPeriodId;
   }
 
   playerIsStartingThisPeriod(periodId: number, player: Player): boolean {

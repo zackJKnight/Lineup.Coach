@@ -29,7 +29,7 @@ export class GameService {
     const players: Player[] = this.playerService.getPresentPlayers();
     const subject = new Subject<Period[]>();
     let round = 0;
-    const playerIdsInRound = cloneDeep(players.map(player => player.id));
+    const playerIdsInRound = players.map(player => player.id);
 
     // ToDo if the players don't have ranking, need default or throw here.
     const preferenceRankMax: number = Math.max.apply(
