@@ -18,7 +18,7 @@ export class PeriodService {
     const benchedInPeriods = player.benchIds.map(
       benchId => this.getPositionById(benchId).periodId
     );
-    return benchedInPeriods[0] === currentPeriodId;
+    return benchedInPeriods.some(periodId => periodId === currentPeriodId);
   }
 
   playerIsStartingThisPeriod(periodId: number, player: Player): boolean {
