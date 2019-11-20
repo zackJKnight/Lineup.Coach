@@ -16,7 +16,7 @@ public team: Team;
 
   ngOnInit() {
     this.team = new Team();
-    this.team.name = 'Raptors';
+    this.team.name = 'My Team';
 
   }
 
