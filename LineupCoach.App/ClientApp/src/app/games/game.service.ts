@@ -16,6 +16,7 @@ export class GameService {
   startingPositionsPerPlayer: number;
   availablePlayerCount: number;
   MAX_PLAYERS_ON_FIELD = 8;
+  PLACEMENT_ROUND_DIVISOR = this.availablePlayerCount + 4;
 
   constructor(
     private playerService: PlayerService,
@@ -42,12 +43,11 @@ export class GameService {
     const benchCount = this.flattenGamePositions().filter(
       position => position.name === 'bench'
     ).length;
-    // .length / this.availablePlayerCount;
+
     // Rounds - within the rounds the players (in random order) are placed based on preference.
     while (
       !this.allGamePositionsFilled() &&
-      round <
-        roundedPositionsPerPlayer + benchCount / this.availablePlayerCount + 4
+      round < roundedPositionsPerPlayer + benchCount / this.PLACEMENT_ROUND_DIVISOR
     ) {
       // Loop through the player list - trying to find each a position that best fits their preference.
       const playerIdsInRandomOrder = _shuffle(playerIdsInRound);

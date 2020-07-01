@@ -8,3 +8,4 @@ LineupCoach.db
 .vscode/settings.json
 LineupCoach.App/ClientApp/src/app/.deployment
 LineupCoach.App/ClientApp/src/.deployment
+LineupCoach.App/LineupCoach.App.csproj.user
