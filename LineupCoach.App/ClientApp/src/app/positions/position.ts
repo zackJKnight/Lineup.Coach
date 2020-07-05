@@ -16,6 +16,7 @@ export class Position {
   startingPlayer?: Player;
   periodId?: number;
   positionType?: PositionType;
+  candidates?: Map<number, number>; //key-value playerIds and fitScores
 
   constructor(name: string, id?: number, periodId?: number) {
     this.id = id;

@@ -9,5 +9,6 @@ export interface Player {
   };
   startingPositionIds: number[];
   placementScore: number;
+  fitScore?: number;
   benchIds: number[];
 }
