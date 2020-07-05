@@ -16,7 +16,7 @@ export class GameService {
   startingPositionsPerPlayer: number;
   availablePlayerCount: number;
   MAX_PLAYERS_ON_FIELD = 8;
-  PLACEMENT_ROUND_DIVISOR = this.availablePlayerCount + 4;
+  PLACEMENT_ROUND_DIVISOR = 4;
 
   constructor(
     private playerService: PlayerService,
@@ -26,13 +26,13 @@ export class GameService {
     this.startingPositionsPerPlayer = this.setStartingPositionsPerPlayerCount();
   }
 
+  // Abandon this approach in favor of an algorithm.
   generateLineup(): Observable<Period[]> {
     const players: Player[] = this.playerService.getPresentPlayers();
     const subject = new Subject<Period[]>();
     let round = 0;
     const playerIdsInRound = players.map(player => player.id);
 
-    // ToDo if the players don't have ranking, need default or throw here.
     const preferenceRankMax: number = Math.max.apply(
       Math,
       players.map(player => player.positionPreferenceRank.ranking.length)
@@ -47,7 +47,7 @@ export class GameService {
     // Rounds - within the rounds the players (in random order) are placed based on preference.
     while (
       !this.allGamePositionsFilled() &&
-      round < roundedPositionsPerPlayer + benchCount / this.PLACEMENT_ROUND_DIVISOR
+      round < roundedPositionsPerPlayer + benchCount / (this.PLACEMENT_ROUND_DIVISOR + this.availablePlayerCount)
     ) {
       // Loop through the player list - trying to find each a position that best fits their preference.
       const playerIdsInRandomOrder = _shuffle(playerIdsInRound);
@@ -81,6 +81,7 @@ export class GameService {
               );
               continue;
             } else {
+              // Each player will get a number of starts per game. If player is here today, try to place them.
               if (
                 player.isPresent &&
                 player.startingPositionIds.length <
@@ -149,6 +150,19 @@ export class GameService {
           'none'}`
       );
     }
+
+    setTimeout(() => {
+      subject.next(this.periodService.getPeriods());
+      subject.complete();
+    }, 1);
+    return subject;
+  }
+
+  optimizePlacement(): Observable<Period[]>{
+    const players: Player[] = this.playerService.getPresentPlayers();
+    const subject = new Subject<Period[]>();
+
+
 
     setTimeout(() => {
       subject.next(this.periodService.getPeriods());
