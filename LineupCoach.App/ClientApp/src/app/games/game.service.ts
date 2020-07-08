@@ -158,12 +158,35 @@ export class GameService {
     return subject;
   }
 
-  optimizePlacement(): Observable<Period[]>{
+  optimizePlacement(): Observable<Period[]> {
     const players: Player[] = this.playerService.getPresentPlayers();
     const subject = new Subject<Period[]>();
 
+/////////////////////////////////////// Rework placement algorithm, in progress. See README.md
+    for (const period of this.periodService
+      .getPeriods()) {
+        for ( const position of period.positions) {
 
+          for ( const player of players) {
+            player.fitScore = 0;
+            // if player starting already, reduce fitness score
+            player.fitScore += this.periodService.playerIsStartingThisPeriod(period.id, player) ? -1 : 0;
+            // increase fitness score by player's preference for the position
+            const rank = player.positionPreferenceRank.ranking.indexOf(
+              position.name.toLowerCase()
+            );
+            player.fitScore += player.positionPreferenceRank.ranking.length - rank;
+            // apply curve to fitness score
 
+          }
+          const scores = position.candidates.values;
+          const bestFitScore = Math.max.apply(Math, scores);
+          // pick the player with the highest fitness score
+          position.startingPlayer = this.playerService.getPlayerById(position.candidates[bestFitScore]);
+          // check for violations and remove players in violation after placement?
+        }
+      }
+/////////////////////////////////////////////////////
     setTimeout(() => {
       subject.next(this.periodService.getPeriods());
       subject.complete();
