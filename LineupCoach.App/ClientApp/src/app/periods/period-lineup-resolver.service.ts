@@ -10,7 +10,7 @@ export class PeriodLineupResolver implements Resolve<any> {
       ) {}
 
   resolve() {
-return this.gameService.generateLineup()
+return this.gameService.optimizePlacement()
         .pipe(map(periods => periods));
   }
 }

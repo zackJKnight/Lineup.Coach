@@ -16,12 +16,14 @@ export class Position {
   startingPlayer?: Player;
   periodId?: number;
   positionType?: PositionType;
-  candidates?: Map<number, number>; // key-value playerIds and fitScores
+  /// key-value playerIds and fitScores
+  candidates?: Map<number, number>;
 
   constructor(name: string, id?: number, periodId?: number) {
     this.id = id;
     this.name = name;
     this.positionType = PositionType[name];
     this.periodId = periodId;
+    this.candidates = new Map<number, number>();
   }
 }
