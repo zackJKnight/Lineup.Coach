@@ -171,16 +171,18 @@ export class GameService {
           // to sort by fitness score, you have to set the fitness score
           player.fitScore = 0;
           // if player starting already, reduce fitness score
-          player.fitScore += this.periodService.playerIsStartingThisPeriod(period.id, player) ? -1 : 0;
+          player.fitScore += this.periodService.playerIsStartingThisPeriod(period.id, player) ? -1 : 1;
           // increase fitness score by player's preference for the position
           const rank = player.positionPreferenceRank.ranking.indexOf(
             position.name.toLowerCase()
           );
           player.fitScore += player.positionPreferenceRank.ranking.length - rank;
+          player.fitScore += -(this.getRelativePlacementOffset((player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
           position.candidates.set(player.id, player.fitScore);
         }
       }
       // apply curve to fitness score - they've all been scored
+      // getRelativePlacementOffset();
       // // what happens if your curve is across all game positions?
       // // what happens if your curve is within the period?
       // // im uncertain about making a curve or adding the curve into the fitscore.
@@ -191,11 +193,16 @@ export class GameService {
 
         const scores = [...position.candidates?.values()];
         const bestFitScore = Math.max.apply(Math, scores);
-        // *poor assumption- there could be multiple identical best scores... pick the player with the highest fitness score
-        const bestFitPlayerId = [...position.candidates.entries()]
+
+        const bestFitPlayerIds = [...position.candidates.entries()]
         .filter(({ 1: v }) => v === bestFitScore)
-        .map(([k]) => k)[0] || null;
-        position.startingPlayer = this.playerService.getPlayerById(bestFitPlayerId);
+        .map(([k]) => k);
+        // could be multiple identical best scores... pick random player with the highest fitness score
+        const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
+        const bestFitPlayer = this.playerService.getPlayerById(bestFitPlayerId);
+        position.startingPlayer = bestFitPlayer;
+        bestFitPlayer.placementScore += bestFitScore;
+
         // check for violations and remove players in violation after placement?
       }
     }
@@ -205,6 +212,31 @@ export class GameService {
       subject.complete();
     }, 1);
     return subject;
+  }
+
+  getRelativePlacementOffset(newScore: number) {
+    const periodCount = this.periodService.getPeriods().length;
+    const placedPlayers = this.playerService.getPresentPlayers();
+    const highestScore = Math.max.apply(
+      Math,
+      placedPlayers.map(player => player.placementScore)
+    );
+    const lowestScore = Math.min.apply(
+      Math,
+      placedPlayers.map(player => player.placementScore)
+    );
+    if (lowestScore <= 0) {
+      return 0;
+    }
+    const meanScore = Math.floor((highestScore + lowestScore) / 2);
+    const maxNumberOfPreferredPositions = Math.max.apply(
+      Math,
+      placedPlayers.map(player => player.positionPreferenceRank.ranking.length)
+    );
+    const totalGamePositionsCount = periodCount * (maxNumberOfPreferredPositions - 1);
+    const maxRangeScore = highestScore - meanScore / 2;
+    // Prevent player from getting a position that gives him far better placement than most.
+    return maxRangeScore - newScore;
   }
 
   placementScoreIsWithinRange(newScore: number): boolean {
