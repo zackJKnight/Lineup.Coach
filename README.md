@@ -10,7 +10,7 @@ Placement Score - a number of points that represents the player's current starti
 
 Fit score = Suitability score. The player's suitability for a given position. Composed of (values are spitball at this point):
 
-     - Placed this period? false = 1; true = -1
+     - Placed this period? false = 1; true = -1 ***update - also just preventing placement of an already placed player is required. it must be done. You can never place a player that's alredy placed; if you find yourself in that situation, it's time to recurse back to a time when the player was not placed. maybe just pop that player off of the position's starters stack instead of the entire game placement... not sure.
      - Player's preference rank of position: range 0-n (where n equals number of positions) (might bench be the lowest rank in each player's pref ranking, or should it have some negative value?)
      - Distance from ideal placement count. e.g. if each player gets 3 starts in the game and this position makes the player's 2nd start. Score accordingly.
      - Placement score in relation to all other placement scores (if a player gets his preference all game and another doesn't get a single preffered position, this point will balance)
@@ -20,6 +20,10 @@ Fit score = Suitability score. The player's suitability for a given position. Co
 Looping through players and trying to place ends up with cases where you would want to remove players already placed. Going through this taught me that you need a way to check all previous placements for fit each time you make a placement.. maybe.
 
 This point may have come about on a false premise (but it's true if you loop through players and try to place): After trying to loop through periods, and positions within; it's better to zoom out and attempt placement across all game positions.
+
+### Recursive Backtracking Algorithm
+
+After some failure and some research, I'm trying backtracking. I think flattening positions and pushing them on to a stack when filled could work; however, I'd have to pop all the way back to the first position in some cases.
 
 To try; score each position's fitness for the player. The score changes the moment a player is placed. Each position has an array of player's Fit score.
      - Sort this array ascending for each position in period 1.

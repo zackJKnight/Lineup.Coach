@@ -161,52 +161,56 @@ export class GameService {
   optimizePlacement(): Observable<Period[]> {
     const players: Player[] = this.playerService.getPresentPlayers();
     const subject = new Subject<Period[]>();
-
+    const placementStack = new Array<Position>();
     /////////////////////////////////////// Rework placement algorithm, in progress. See README.md
-    for (const period of this.periodService
-      .getPeriods()) {
-      for (const position of period.positions) {
+    //while (placementStack.length < this.flattenGamePositions().length) {
+      for (const position of this.flattenGamePositions()) {
 
         for (const player of players) {
           // to sort by fitness score, you have to set the fitness score
           player.fitScore = 0;
-          // if player starting already, reduce fitness score
-          player.fitScore += this.periodService.playerIsStartingThisPeriod(period.id, player) ? -1 : 1;
+
           // increase fitness score by player's preference for the position
           const rank = player.positionPreferenceRank.ranking.indexOf(
             position.name.toLowerCase()
           );
+          // TODO make benches back into first rate positions.
+          player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
           player.fitScore += player.positionPreferenceRank.ranking.length - rank;
           player.fitScore += -(this.getRelativePlacementOffset((player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
+          player.fitScore = this.periodService.playerIsStartingThisPeriod(position.periodId, player)
+            || this.periodService.playerIsBenchedThisPeriod(position.periodId, player) ? 0 : player.fitScore;
+
           position.candidates.set(player.id, player.fitScore);
         }
-      }
-      // apply curve to fitness score - they've all been scored
-      // getRelativePlacementOffset();
-      // // what happens if your curve is across all game positions?
-      // // what happens if your curve is within the period?
-      // // im uncertain about making a curve or adding the curve into the fitscore.
-      // // if incorporated in fitscore, would we have already accounted for disparity in fairness?
-
-      // go through positions again and place best fit players
-      for (const position of period.positions) {
-
         const scores = [...position.candidates?.values()];
         const bestFitScore = Math.max.apply(Math, scores);
 
         const bestFitPlayerIds = [...position.candidates.entries()]
-        .filter(({ 1: v }) => v === bestFitScore)
-        .map(([k]) => k);
+          .filter(({ 1: v }) => v === bestFitScore)
+          .map(([k]) => k);
         // could be multiple identical best scores... pick random player with the highest fitness score
         const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
         const bestFitPlayer = this.playerService.getPlayerById(bestFitPlayerId);
         position.startingPlayer = bestFitPlayer;
+        bestFitPlayer.startingPositionIds.push(position.id);
         bestFitPlayer.placementScore += bestFitScore;
 
         // check for violations and remove players in violation after placement?
+        if (!this.periodService.playerIsStartingThisPeriod(position.periodId, bestFitPlayer)
+          && !this.periodService.playerIsBenchedThisPeriod(position.periodId, bestFitPlayer)) {
+          placementStack.push(cloneDeep(position));
+        } else {
+          console.log(`{bestFitPlayer.name}`);
+          // something's wrong. there's nothing to pop. I wonder if there are multiple stacks required to solve this prob.
+        }
       }
-    }
+   //}
     /////////////////////////////////////////////////////
+    for (const setPosition of placementStack) {
+      this.periodService.setStartingPlayer(setPosition.periodId, setPosition.id, setPosition.startingPlayer);
+    }
+
     setTimeout(() => {
       subject.next(this.periodService.getPeriods());
       subject.complete();
