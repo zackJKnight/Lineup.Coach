@@ -164,48 +164,62 @@ export class GameService {
     const placementStack = new Array<Position>();
     /////////////////////////////////////// Rework placement algorithm, in progress. See README.md
     //while (placementStack.length < this.flattenGamePositions().length) {
-      for (const position of this.flattenGamePositions()) {
+    for (const position of this.flattenGamePositions()) {
 
-        for (const player of players) {
-          // to sort by fitness score, you have to set the fitness score
-          player.fitScore = 0;
+      for (const player of players) {
+        // to sort by fitness score, you have to set the fitness score
+        player.fitScore = 0;
 
-          // increase fitness score by player's preference for the position
-          const rank = player.positionPreferenceRank.ranking.indexOf(
-            position.name.toLowerCase()
-          );
-          // TODO make benches back into first rate positions.
-          player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
-          player.fitScore += player.positionPreferenceRank.ranking.length - rank;
-          player.fitScore += -(this.getRelativePlacementOffset((player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
-          player.fitScore = this.periodService.playerIsStartingThisPeriod(position.periodId, player)
-            || this.periodService.playerIsBenchedThisPeriod(position.periodId, player) ? 0 : player.fitScore;
+        // increase fitness score by player's preference for the position
+        const rank = player.positionPreferenceRank.ranking.indexOf(
+          position.name.toLowerCase()
+        );
+        // TODO make benches back into first rate positions.
+        player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
+        player.fitScore += player.positionPreferenceRank.ranking.length - rank;
+        player.fitScore += -(this.getRelativePlacementOffset((player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
+        player.fitScore = this.periodService.playerIsStartingThisPeriod(position.periodId, player)
+          || this.periodService.playerIsBenchedThisPeriod(position.periodId, player) ? 0 : player.fitScore;
 
-          position.candidates.set(player.id, player.fitScore);
-        }
-        const scores = [...position.candidates?.values()];
-        const bestFitScore = Math.max.apply(Math, scores);
+        position.candidates.set(player.id, player.fitScore);
+      }
+      const scores = [...position.candidates?.values()];
+      const bestFitScore = Math.max.apply(Math, scores);
 
-        const bestFitPlayerIds = [...position.candidates.entries()]
-          .filter(({ 1: v }) => v === bestFitScore)
-          .map(([k]) => k);
-        // could be multiple identical best scores... pick random player with the highest fitness score
+      const bestFitPlayerIds = [...position.candidates.entries()]
+        .filter(({ 1: v }) => v === bestFitScore)
+        .map(([k]) => k);
+      let positionfilled = false;
+      // TODO we likely need to backtrack and lower the standards to the NEXT Best player ids.
+      for (const i of bestFitPlayerIds) {
         const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
+// remove that playerid? yes, TODO that
         const bestFitPlayer = this.playerService.getPlayerById(bestFitPlayerId);
         position.startingPlayer = bestFitPlayer;
         bestFitPlayer.startingPositionIds.push(position.id);
         bestFitPlayer.placementScore += bestFitScore;
 
-        // check for violations and remove players in violation after placement?
+        // check for violations and remove players in violation after placement -yes!!
         if (!this.periodService.playerIsStartingThisPeriod(position.periodId, bestFitPlayer)
           && !this.periodService.playerIsBenchedThisPeriod(position.periodId, bestFitPlayer)) {
           placementStack.push(cloneDeep(position));
+          positionfilled = true;
+          break;
         } else {
-          console.log(`{bestFitPlayer.name}`);
+          // remove the player and try another player in this position.
+          position.startingPlayer = undefined;
+          continue;
           // something's wrong. there's nothing to pop. I wonder if there are multiple stacks required to solve this prob.
         }
       }
-   //}
+    }
+    // =============================== this is the way
+    // push player: is position fulfulled? No? pop player, repeat.
+    // push position: is period fulfilled? No? pop position, repeat.
+    // push period: is game fulfilled? No? pop period, repeat.
+
+    // Out here somewhere you'll need to check that if the period is not satisfied, you pop positions off until you can  back to it??? or
+    //}
     /////////////////////////////////////////////////////
     for (const setPosition of placementStack) {
       this.periodService.setStartingPlayer(setPosition.periodId, setPosition.id, setPosition.startingPlayer);
