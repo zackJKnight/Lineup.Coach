@@ -205,6 +205,8 @@ export class GameService {
 
               const scores = this.sort_desc_unique([...position.candidates?.values()]);
               for (const bestFitScore of scores) {
+                // TODO you know that if you dont get a match on the lowest score,
+                // you need to pop the player off of the previous position
                 if (positionfilled) {
                   break;
                 }
@@ -237,6 +239,8 @@ export class GameService {
             }
           }
         }
+        // if we are in the second or later period and exhausted
+        // and have popped all players back off of all positions (it's not yet poppping backward like this)
         if (period.positions.filter(pos =>
           pos.startingPlayer !== undefined).length === period.positions.length) {
           fulfilledPeriods.push(cloneDeep(period));
