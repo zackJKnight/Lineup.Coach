@@ -21,6 +21,20 @@ export class PeriodService {
     return benchedInPeriods.some(periodId => periodId === currentPeriodId);
   }
 
+  playerIsStartingAnotherPositionThisPeriod(periodId: number, currentPositionId: number, player: Player): boolean {
+    if (
+      typeof player.startingPositionIds === 'undefined' ||
+      player.startingPositionIds.length === 0
+    ) {
+      return false;
+    }
+    const otherPostions = player.startingPositionIds.filter(pos => pos !== currentPositionId);
+    const matchingPosition = otherPostions.some(
+      positionId => this.getPositionById(positionId).periodId === periodId
+    );
+    return matchingPosition;
+  }
+
   playerIsStartingThisPeriod(periodId: number, player: Player): boolean {
     if (
       typeof player.startingPositionIds === 'undefined' ||
