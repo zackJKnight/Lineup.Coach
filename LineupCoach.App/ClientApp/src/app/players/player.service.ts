@@ -73,7 +73,7 @@ export class PlayerService {
     this.savePlayers(this.players);
   }
 }
-
+// TODO dynamically add an empty player (probably bad idea) or better handle empties in placement
 const PLAYERS: Player[] = [
   {
     id: 1,

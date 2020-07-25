@@ -11,6 +11,10 @@ export class PeriodService {
   private periods: Period[];
   constructor() {}
 
+  allPeriodPositionsFull(period: Period): boolean {
+    return period.positions.filter(pos => pos.startingPlayer === undefined).length === 0;
+  }
+
   playerIsBenchedThisPeriod(currentPeriodId: number, player: Player): boolean {
     if (!player.benchIds || player.benchIds.length === 0) {
       return false;
@@ -66,6 +70,7 @@ export class PeriodService {
       period1.positions.push(new Position('mid', 5, 1));
       period1.positions.push(new Position('mid', 6, 1));
       period1.positions.push(new Position('mid', 7, 1));
+      // TODO Dynamically add benches for present players.
       period1.positions.push(new Position('bench', 8, 1));
       period1.positions.push(new Position('bench', 9, 1));
       period1.positions.push(new Position('bench', 10, 1));
