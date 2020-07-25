@@ -4,6 +4,14 @@
 
 Code in progress to aid my thinking about filling a lineup for a game of youth soccer.
 
+## TODO
+
+- [ ] ensure player starting? functions use positions on stack in progress and not default
+- [ ] make benches back into first rate positions
+- [ ] add to check that player hasn't exceeded max bench count
+- [ ] handle players not present - generate number of benches dynamically.
+- [ ] handle not enough players to fill the game - consider the idea of a blank placeholder
+
 ## Terminology
 
 Placement Score - a number of points that represents the player's current starting positions in relation to placement decision factors, e.g., player's preference.
@@ -44,7 +52,7 @@ Placing by player preference alone leaves out the fact that the Game has needs t
 
 - [ ] How about counting the number of preferred positions and determining which will get filled first/neglected?
 
-- [x] Rounds: looping the player list in random order the first round. 
+- [x] Rounds: looping the player list in random order the first round.
 
      -- A note from the future; when we know placements will be unbalanced, we don't need to randomize
 
@@ -70,4 +78,4 @@ If inside the round we find that no more preferred positions are available... wh
 
 ## Old Notes
 
-Can we know how many times a player will sit the bench? numbers we'd need: roster player count. game period count. period starting players
+Can we know how many times a player will sit the bench? numbers we'd need: roster player count. game period count. period starting player

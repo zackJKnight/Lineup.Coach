@@ -211,81 +211,90 @@ export class GameService {
   }
 
   tryFillPeriod(period: Period): boolean {
-    // while (fulfilledPositions.length
-    //   < this.flattenGamePositions().length
-    //   && positionTries !== 0) {
-    //   positionTries--;
-    const fulfilledPositions = new Array<Position>();
-    const players: Player[] = this.playerService.getPresentPlayers();
 
-    let playerTries = 100;
-    for (const position of period.positions) {
-      let positionfilled = false;
-      while (!positionfilled && period.positions.filter(pos =>
-        pos.startingPlayer !== undefined).length < period.positions.length
-        && playerTries !== 0) {
-        playerTries--;
-        for (const player of players) {
-          if (positionfilled) {
-            break;
-          }
-          // to sort by fitness for given position, you have to set the fitness score
-          player.fitScore = 0;
+    const fulfilledPeriod = new Array<Position>();
 
-          // increase fitness score by player's preference for the position
-          const rank = player.positionPreferenceRank.ranking.indexOf(
-            position.name.toLowerCase()
-          );
-          // TODO make benches back into first rate positions.
-          player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
-          player.fitScore += player.positionPreferenceRank.ranking.length - rank;
-          player.fitScore += -(this.getRelativePlacementOffset(
-            (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
-          // declare the player unfit if already starting this period.
-          player.fitScore = this.periodService.playerIsStartingThisPeriod(position.periodId, player)
-            || this.periodService.playerIsBenchedThisPeriod(position.periodId, player) ? 0 : player.fitScore;
+    let playerTries = 1000;
+    let positionIndex = 0;
 
-          position.candidates.set(player.id, player.fitScore);
-        }
+    while (positionIndex + 1 !== period.positions.length && playerTries !== 0) {
+      playerTries --;
+      if (positionIndex + 1 === period.positions.length) {
+        playerTries = 0;
+        continue;
+      }
+      const currentPosition = period.positions[positionIndex];
+      this.tryFillPosition(currentPosition);
+      fulfilledPeriod.push(currentPosition);
+      if (currentPosition.startingPlayer === undefined ||
+        this.periodService.playerIsStartingAnotherPositionThisPeriod(currentPosition.periodId,
+        currentPosition.id,
+        currentPosition.startingPlayer)) {
+        currentPosition.startingPlayer.placementScore -= currentPosition.startingPlayer.fitScore;
+        currentPosition.startingPlayer = undefined;
+        fulfilledPeriod.pop();
+        continue;
+      } else {
+        const nextPosition = period.positions[positionIndex + 1];
 
-        const scores = this.sort_desc_unique([...position.candidates?.values()]);
-        let scoreCount = 1;
-        for (const bestFitScore of scores) {
-          scoreCount++;
-          // TODO if you dont get a match on the lowest score,
-          // you need to pop the player off of the previous position
-          if (positionfilled) {
-            break;
-          }
-          const bestFitPlayerIds = [...position.candidates.entries()]
-            .filter(({ 1: v }) => v === bestFitScore)
-            .map(([k]) => k);
-
-          for (const i of bestFitPlayerIds) {
-            const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
-            // remove that playerid? yes, TODO that
-            const bestFitPlayer = this.playerService.getPlayerById(bestFitPlayerId);
-            position.startingPlayer = bestFitPlayer;
-            bestFitPlayer.startingPositionIds.push(position.id);
-            bestFitPlayer.placementScore += bestFitScore;
-
-            // check for violations and remove players in violation after placement -yes!!
-            if (!this.periodService.playerIsStartingAnotherPositionThisPeriod(position.periodId, position.id, bestFitPlayer)) {
-              fulfilledPositions.push(cloneDeep(position));
-              positionfilled = true;
-              break;
-            } else {
-              // remove the player and try another player in this position.
-              bestFitPlayer.startingPositionIds.pop();
-              bestFitPlayer.placementScore -= bestFitScore;
-              position.startingPlayer = undefined;
-              continue;
-            }
-          }
+        if (nextPosition === undefined || !this.tryFillPosition(nextPosition)) {
+          positionIndex++;
+          continue;
+        } else {
+          fulfilledPeriod.pop();
+          continue;
         }
       }
     }
+    // TODO look at period.positions - empty at start, but how to they get passed to the observable?
+    //period.positions = cloneDeep(fulfilledPeriod);
     return this.periodService.allPeriodPositionsFull(period);
+  }
+
+  tryFillPosition(position: Position): boolean {
+
+    for (const player of this.playerService.getPresentPlayers()) {
+
+      // to sort by fitness for given position, you have to set the fitness score
+      player.fitScore = 0;
+
+      // increase fitness score by player's preference for the position
+      const rank = player.positionPreferenceRank.ranking.indexOf(
+        position.name.toLowerCase()
+      );
+      // TODO make benches back into first rate positions.
+      player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
+      player.fitScore += player.positionPreferenceRank.ranking.length - rank;
+      player.fitScore += -(this.getRelativePlacementOffset(
+        (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
+      // declare the player unfit if already starting this period.
+      player.fitScore = this.periodService.playerIsStartingThisPeriod(position.periodId, player)
+        || this.periodService.playerIsBenchedThisPeriod(position.periodId, player) ? 0 : player.fitScore;
+
+      position.candidates.set(player.id, player.fitScore);
+    }
+
+    const scores = this.sort_desc_unique([...position.candidates?.values()]);
+    let scoreCount = 1;
+    for (const bestFitScore of scores) {
+      scoreCount++;
+      // TODO if you dont get a match on the lowest score,
+      // you need to pop the player off of the previous position
+      const bestFitPlayerIds = [...position.candidates.entries()]
+        .filter(({ 1: v }) => v === bestFitScore)
+        .map(([k]) => k);
+
+      for (const i of bestFitPlayerIds) {
+        const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
+
+        const bestFitPlayer = this.playerService.getPlayerById(bestFitPlayerId);
+        position.startingPlayer = bestFitPlayer;
+        bestFitPlayer.startingPositionIds.push(position.id);
+        bestFitPlayer.placementScore += bestFitScore;
+        return true;
+      }
+    }
+    return false;
   }
 
   getRelativePlacementOffset(newScore: number) {
