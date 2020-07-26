@@ -17,6 +17,7 @@ export class GameService {
   availablePlayerCount: number;
   MAX_PLAYERS_ON_FIELD = 8;
   PLACEMENT_ROUND_DIVISOR = 4;
+  WHILE_LOOP_BREAKER = 150;
 
   constructor(
     private playerService: PlayerService,
@@ -171,11 +172,11 @@ export class GameService {
       this.startingPositionsPerPlayer
     );
 
-    let periodTries = 1000;
+    let periodTries = this.WHILE_LOOP_BREAKER;
     let periodIndex = 0;
 
     while (periodIndex + 1 !== this.periodService.getPeriods().length && periodTries !== 0) {
-      periodTries --;
+      periodTries--;
       if (periodIndex + 1 === this.periodService.getPeriods().length) {
         periodTries = 0;
         continue;
@@ -203,6 +204,8 @@ export class GameService {
       this.periodService.setStartingPlayer(setPosition.periodId, setPosition.id, setPosition.startingPlayer);
     }
 
+    this.periodService.savePeriods(fulfilledGame);
+
     setTimeout(() => {
       subject.next(this.periodService.getPeriods());
       subject.complete();
@@ -214,44 +217,71 @@ export class GameService {
 
     const fulfilledPeriod = new Array<Position>();
 
-    let playerTries = 1000;
+    let positionTries = this.WHILE_LOOP_BREAKER;
     let positionIndex = 0;
+    // TODO counts here (might) need to take into consideration when all players
+    // TODO have been tried in all positions and we need to rethink previous period
+    let playerTries = 1;
 
-    while (positionIndex + 1 !== period.positions.length && playerTries !== 0) {
-      playerTries --;
-      if (positionIndex + 1 === period.positions.length) {
-        playerTries = 0;
+    while (positionIndex !== period.positions.length && positionTries !== 0) {
+      positionTries--;
+      if (positionIndex === period.positions.length) {
+        positionTries = 0;
         continue;
       }
       const currentPosition = period.positions[positionIndex];
-      this.tryFillPosition(currentPosition);
       fulfilledPeriod.push(currentPosition);
-      if (currentPosition.startingPlayer === undefined ||
+      const postitionFilled = this.tryFillPosition(currentPosition, period);
+      if (!postitionFilled ||
+        currentPosition.startingPlayer === undefined) {
+        fulfilledPeriod.pop();
+        playerTries++;
+        if (this.playerService.getPresentPlayers().length >= playerTries && positionIndex > 0) {
+          positionIndex--;
+        }
+        continue;
+      }
+      if (
         this.periodService.playerIsStartingAnotherPositionThisPeriod(currentPosition.periodId,
-        currentPosition.id,
-        currentPosition.startingPlayer)) {
-        currentPosition.startingPlayer.placementScore -= currentPosition.startingPlayer.fitScore;
+          currentPosition.id,
+          currentPosition.startingPlayer,
+          period)) {
         currentPosition.startingPlayer = undefined;
         fulfilledPeriod.pop();
+        playerTries++;
+        if (this.playerService.getPresentPlayers().length >= playerTries && positionIndex > 0) {
+          positionIndex--;
+        }
         continue;
       } else {
         const nextPosition = period.positions[positionIndex + 1];
 
-        if (nextPosition === undefined || !this.tryFillPosition(nextPosition)) {
+        if (nextPosition === undefined || this.tryFillPosition(nextPosition, period)) {
           positionIndex++;
+          playerTries = 1;
+          if (nextPosition !== undefined) {
+            nextPosition.startingPlayer = undefined;
+          }
+          currentPosition.startingPlayer.placementScore += currentPosition.startingPlayer.fitScore;
+          currentPosition.startingPlayer.startingPositionIds.push(currentPosition.id);
           continue;
         } else {
+          currentPosition.startingPlayer = undefined;
           fulfilledPeriod.pop();
+          playerTries++;
+          if (this.playerService.getPresentPlayers().length === playerTries && positionIndex > 0) {
+            positionIndex--;
+          }
           continue;
         }
       }
     }
     // TODO look at period.positions - empty at start, but how to they get passed to the observable?
-    //period.positions = cloneDeep(fulfilledPeriod);
+    // period.positions = cloneDeep(fulfilledPeriod);
     return this.periodService.allPeriodPositionsFull(period);
   }
 
-  tryFillPosition(position: Position): boolean {
+  tryFillPosition(position: Position, period: Period): boolean {
 
     for (const player of this.playerService.getPresentPlayers()) {
 
@@ -268,8 +298,8 @@ export class GameService {
       player.fitScore += -(this.getRelativePlacementOffset(
         (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
       // declare the player unfit if already starting this period.
-      player.fitScore = this.periodService.playerIsStartingThisPeriod(position.periodId, player)
-        || this.periodService.playerIsBenchedThisPeriod(position.periodId, player) ? 0 : player.fitScore;
+      // player.fitScore = this.periodService.playerIsStartingThisPeriod(position.periodId, player)
+      //   || this.periodService.playerIsBenchedThisPeriod(position.periodId, player) ? 0 : player.fitScore;
 
       position.candidates.set(player.id, player.fitScore);
     }
@@ -283,14 +313,18 @@ export class GameService {
       const bestFitPlayerIds = [...position.candidates.entries()]
         .filter(({ 1: v }) => v === bestFitScore)
         .map(([k]) => k);
-
-      for (const i of bestFitPlayerIds) {
+      let i = bestFitPlayerIds.length;
+      while (i --) {
         const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
-
+        bestFitPlayerIds.splice(bestFitPlayerIds.indexOf(bestFitPlayerId), 1);
         const bestFitPlayer = this.playerService.getPlayerById(bestFitPlayerId);
+        if (this.periodService.playerIsStartingAnotherPositionThisPeriod(position.periodId,
+          position.id,
+          bestFitPlayer,
+          period)) {
+          continue;
+        }
         position.startingPlayer = bestFitPlayer;
-        bestFitPlayer.startingPositionIds.push(position.id);
-        bestFitPlayer.placementScore += bestFitScore;
         return true;
       }
     }

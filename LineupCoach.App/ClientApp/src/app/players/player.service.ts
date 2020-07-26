@@ -85,7 +85,8 @@ const PLAYERS: Player[] = [
         'goalie',
         'defense',
         'forward',
-        'mid'
+        'mid',
+        'bench'
       ]
 
     },
@@ -103,7 +104,8 @@ const PLAYERS: Player[] = [
         'goalie',
         'forward',
         'defense',
-        'mid'
+        'mid',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -120,7 +122,8 @@ const PLAYERS: Player[] = [
         'mid',
         'forward',
         'goalie',
-        'defense'
+        'defense',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -137,7 +140,8 @@ const PLAYERS: Player[] = [
         'forward',
         'defense',
         'goalie',
-        'mid'
+        'mid',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -154,7 +158,8 @@ const PLAYERS: Player[] = [
         'defense',
         'forward',
         'mid',
-        'goalie'
+        'goalie',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -171,7 +176,8 @@ const PLAYERS: Player[] = [
         'mid',
         'defense',
         'goalie',
-        'forward'
+        'forward',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -188,7 +194,8 @@ const PLAYERS: Player[] = [
         'mid',
         'forward',
         'defense',
-        'goalie'
+        'goalie',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -205,7 +212,8 @@ const PLAYERS: Player[] = [
         'goalie',
         'mid',
         'forward',
-        'defense'
+        'defense',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -222,7 +230,8 @@ const PLAYERS: Player[] = [
         'forward',
         'mid',
         'defense',
-        'goalie'
+        'goalie',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -239,7 +248,8 @@ const PLAYERS: Player[] = [
         'goalie',
         'mid',
         'forward',
-        'defense'
+        'defense',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -256,7 +266,8 @@ const PLAYERS: Player[] = [
         'goalie',
         'mid',
         'defense',
-        'forward'
+        'forward',
+        'bench'
       ]
     },
     startingPositionIds: [],
@@ -273,7 +284,8 @@ const PLAYERS: Player[] = [
         'forward',
         'goalie',
         'mid',
-        'defense'
+        'defense',
+        'bench'
       ]
     },
     startingPositionIds: [],

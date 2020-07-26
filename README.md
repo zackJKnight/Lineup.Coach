@@ -6,8 +6,10 @@ Code in progress to aid my thinking about filling a lineup for a game of youth s
 
 ## TODO
 
-- [ ] ensure player starting? functions use positions on stack in progress and not default
-- [ ] make benches back into first rate positions
+- [ ] not filling last period
+- [x] players are being placed and not removed. the stack doesn't go backward if it can't place. need to undo the previous decision when all tries are exhasted.
+- [x] ensure player starting? functions use positions on stack in progress and not default
+- [x] make benches back into first rate positions
 - [ ] add to check that player hasn't exceeded max bench count
 - [ ] handle players not present - generate number of benches dynamically.
 - [ ] handle not enough players to fill the game - consider the idea of a blank placeholder

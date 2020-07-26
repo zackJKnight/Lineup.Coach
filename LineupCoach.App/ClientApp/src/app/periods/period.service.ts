@@ -9,7 +9,7 @@ import { PeriodsModule } from './periods.module';
 })
 export class PeriodService {
   private periods: Period[];
-  constructor() {}
+  constructor() { }
 
   allPeriodPositionsFull(period: Period): boolean {
     return period.positions.filter(pos => pos.startingPlayer === undefined).length === 0;
@@ -25,7 +25,7 @@ export class PeriodService {
     return benchedInPeriods.some(periodId => periodId === currentPeriodId);
   }
 
-  playerIsStartingAnotherPositionThisPeriod(periodId: number, currentPositionId: number, player: Player): boolean {
+  playerIsStartingAnotherPositionThisPeriod(periodId: number, currentPositionId: number, player: Player, period?: Period): boolean {
     if (
       typeof player.startingPositionIds === 'undefined' ||
       player.startingPositionIds.length === 0
@@ -33,19 +33,33 @@ export class PeriodService {
       return false;
     }
     const otherPostions = player.startingPositionIds.filter(pos => pos !== currentPositionId);
+    if (otherPostions.length === 0) {
+      return false;
+    }
+    if (typeof period !== 'undefined') {
+      return period.positions.map(pos => pos.id).filter(posId => posId !== currentPositionId)
+      .some(notCurrentPosId => otherPostions.filter(startingPosId => startingPosId === notCurrentPosId)
+      .length !== 0);
+    }
+
     const matchingPosition = otherPostions.some(
       positionId => this.getPositionById(positionId).periodId === periodId
     );
     return matchingPosition;
   }
 
-  playerIsStartingThisPeriod(periodId: number, player: Player): boolean {
+  playerIsStartingThisPeriod(periodId: number, player: Player, period?: Period): boolean {
     if (
       typeof player.startingPositionIds === 'undefined' ||
       player.startingPositionIds.length === 0
     ) {
       return false;
     }
+
+    if (typeof period !== 'undefined') {
+      return period.positions.map(pos => pos.id).some(id => player.startingPositionIds.filter(startPos => startPos === id));
+    }
+
     const matchingPosition = player.startingPositionIds.some(
       positionId => this.getPositionById(positionId).periodId === periodId
     );
