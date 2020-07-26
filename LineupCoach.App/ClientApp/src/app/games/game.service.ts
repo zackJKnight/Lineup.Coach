@@ -230,7 +230,7 @@ export class GameService {
   }
 
   benchDistributionMet(currentPlayer: Player) {
-// TODO debug this function. the lineup still has players on the bench all game.
+// TODO counting startingPositionIds doesn't work. Need bench count and start count for this and counterpart function.
     const placedPlayers = this.flattenGamePositions(this.fulfilledGame)
       .filter(position => typeof position.startingPlayer !== 'undefined')
       .map(position => position.startingPlayer);
