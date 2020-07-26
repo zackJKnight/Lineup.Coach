@@ -175,9 +175,9 @@ export class GameService {
     let periodTries = this.WHILE_LOOP_BREAKER;
     let periodIndex = 0;
 
-    while (periodIndex + 1 !== this.periodService.getPeriods().length && periodTries !== 0) {
+    while (periodIndex !== this.periodService.getPeriods().length && periodTries !== 0) {
       periodTries--;
-      if (periodIndex + 1 === this.periodService.getPeriods().length) {
+      if (periodIndex === this.periodService.getPeriods().length) {
         periodTries = 0;
         continue;
       }
