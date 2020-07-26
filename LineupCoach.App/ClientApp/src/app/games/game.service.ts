@@ -18,13 +18,14 @@ export class GameService {
   MAX_PLAYERS_ON_FIELD = 8;
   PLACEMENT_ROUND_DIVISOR = 4;
   WHILE_LOOP_BREAKER = 150;
+  fulfilledGame = new Array<Period>();
 
   constructor(
     private playerService: PlayerService,
     private periodService: PeriodService
   ) {
     this.availablePlayerCount = this.playerService.getPresentPlayers().length;
-    this.startingPositionsPerPlayer = this.setStartingPositionsPerPlayerCount();
+    this.startingPositionsPerPlayer = this.getMinStartingPositionsPerPlayerCount();
   }
 
   // Abandon this approach in favor of an algorithm.
@@ -166,8 +167,8 @@ export class GameService {
   /////////////////////////////////////////////////////
   optimizePlacement(): Observable<Period[]> {
     // "backtracking is not for optimization problems..."
+    // hold my beer
     const subject = new Subject<Period[]>();
-    const fulfilledGame = new Array<Period>();
     const roundedPositionsPerPlayer = Math.floor(
       this.startingPositionsPerPlayer
     );
@@ -183,9 +184,9 @@ export class GameService {
       }
       const currentPeriod = this.periodService.getPeriods()[periodIndex];
       this.tryFillPeriod(currentPeriod);
-      fulfilledGame.push(currentPeriod);
+      this.fulfilledGame.push(currentPeriod);
       if (!this.periodService.allPeriodPositionsFull(currentPeriod)) {
-        fulfilledGame.pop();
+        this.fulfilledGame.pop();
         continue;
       } else {
         const nextPeriod = this.periodService.getPeriods()[periodIndex + 1];
@@ -193,18 +194,18 @@ export class GameService {
           periodIndex++;
           continue;
         } else {
-          fulfilledGame.pop();
+          this.fulfilledGame.pop();
           continue;
         }
       }
     }
-    const gamePositions = fulfilledGame
+    const gamePositions = this.fulfilledGame
       .reduce((pos, period) => [...pos, ...period.positions], []);
     for (const setPosition of gamePositions) {
       this.periodService.setStartingPlayer(setPosition.periodId, setPosition.id, setPosition.startingPlayer);
     }
 
-    this.periodService.savePeriods(fulfilledGame);
+    this.periodService.savePeriods(this.fulfilledGame);
 
     setTimeout(() => {
       subject.next(this.periodService.getPeriods());
@@ -245,7 +246,11 @@ export class GameService {
         this.periodService.playerIsStartingAnotherPositionThisPeriod(currentPosition.periodId,
           currentPosition.id,
           currentPosition.startingPlayer,
-          period)) {
+          period) ||
+          // TODO find out why we have dupe starting position ids at this point
+          // TODO also, if starting position id hasn't been added, these next two checks don't include current position.
+        this.benchDistributionMet(currentPosition.startingPlayer) ||
+        this.positionDistributionMet(currentPosition.startingPlayer)) {
         currentPosition.startingPlayer = undefined;
         fulfilledPeriod.pop();
         playerTries++;
@@ -276,8 +281,7 @@ export class GameService {
         }
       }
     }
-    // TODO look at period.positions - empty at start, but how to they get passed to the observable?
-    // period.positions = cloneDeep(fulfilledPeriod);
+
     return this.periodService.allPeriodPositionsFull(period);
   }
 
@@ -292,14 +296,10 @@ export class GameService {
       const rank = player.positionPreferenceRank.ranking.indexOf(
         position.name.toLowerCase()
       );
-      // TODO make benches back into first rate positions.
       player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
       player.fitScore += player.positionPreferenceRank.ranking.length - rank;
       player.fitScore += -(this.getRelativePlacementOffset(
         (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
-      // declare the player unfit if already starting this period.
-      // player.fitScore = this.periodService.playerIsStartingThisPeriod(position.periodId, player)
-      //   || this.periodService.playerIsBenchedThisPeriod(position.periodId, player) ? 0 : player.fitScore;
 
       position.candidates.set(player.id, player.fitScore);
     }
@@ -308,13 +308,11 @@ export class GameService {
     let scoreCount = 1;
     for (const bestFitScore of scores) {
       scoreCount++;
-      // TODO if you dont get a match on the lowest score,
-      // you need to pop the player off of the previous position
       const bestFitPlayerIds = [...position.candidates.entries()]
         .filter(({ 1: v }) => v === bestFitScore)
         .map(([k]) => k);
       let i = bestFitPlayerIds.length;
-      while (i --) {
+      while (i--) {
         const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
         bestFitPlayerIds.splice(bestFitPlayerIds.indexOf(bestFitPlayerId), 1);
         const bestFitPlayer = this.playerService.getPlayerById(bestFitPlayerId);
@@ -329,6 +327,90 @@ export class GameService {
       }
     }
     return false;
+  }
+
+  positionDistributionMet(currentPlayer: Player) {
+    // determine number of players that haven't met number of min starting positions
+    // if they all have, determine players that have met max starting positions
+    // if there is room left and the player could be one that gets the extra position
+    const placedPlayers = this.flattenGamePositions(this.fulfilledGame)
+      .filter(position => typeof position.startingPlayer !== 'undefined')
+      .map(position => position.startingPlayer);
+    if (!placedPlayers || placedPlayers.length === 0) {
+      return false;
+    }
+    const minSatisfiedPlayers = placedPlayers
+      .filter(player => player.startingPositionIds.length >= this.getMinStartingPositionsPerPlayerCount());
+    if (!minSatisfiedPlayers || minSatisfiedPlayers.length === 0) {
+      return false;
+    }
+    const playerNotBeenMinSatisfiedCount = this.availablePlayerCount - minSatisfiedPlayers.length;
+    if (!playerNotBeenMinSatisfiedCount || playerNotBeenMinSatisfiedCount === 0) {
+      return false;
+    }
+
+    const nonBenchPositions = this.flattenGamePositions().filter(position => position.name !== 'bench');
+    const playerGetsExtraStartCount = (nonBenchPositions.length -
+      (Math.floor(nonBenchPositions.length / this.availablePlayerCount) * this.availablePlayerCount));
+
+    const maxSatisfiedPlayers = this.sort_desc_unique(placedPlayers
+      .filter(player => player.startingPositionIds.length >= (this.getMinStartingPositionsPerPlayerCount() + 1)));
+
+    if (maxSatisfiedPlayers.length < playerGetsExtraStartCount) {
+      return maxSatisfiedPlayers.filter(player => player.id === currentPlayer.id).length > 0;
+    }
+  }
+
+  benchDistributionMet(currentPlayer: Player) {
+// TODO debug this function. the lineup still has players on the bench all game.
+    const placedPlayers = this.flattenGamePositions(this.fulfilledGame)
+      .filter(position => typeof position.startingPlayer !== 'undefined')
+      .map(position => position.startingPlayer);
+    if (!placedPlayers || placedPlayers.length === 0) {
+      return false;
+    }
+    const minBenchedPlayers = this.sort_desc_unique(placedPlayers
+      .filter(player => player.startingPositionIds.length >= this.getMinBenchesPerPlayer()));
+    if (!minBenchedPlayers || minBenchedPlayers.length === 0) {
+      return false;
+    }
+    const playerNotBeenMinBenchedCount = this.availablePlayerCount - minBenchedPlayers.length;
+    if (!playerNotBeenMinBenchedCount || playerNotBeenMinBenchedCount === 0) {
+      return false;
+    }
+
+    const benchPositions = this.flattenGamePositions().filter(position => position.name === 'bench');
+    const playerGetsExtraBenchCount = (benchPositions.length -
+      (Math.floor(benchPositions.length / this.availablePlayerCount) * this.availablePlayerCount));
+
+    const maxBenchedPlayers = this.sort_desc_unique(placedPlayers
+      .filter(player => player.startingPositionIds.length >= (this.getMinBenchesPerPlayer() + 1)));
+
+    if (maxBenchedPlayers.length < playerGetsExtraBenchCount) {
+      return maxBenchedPlayers.filter(player => player.id === currentPlayer.id).length > 0;
+    }
+  }
+
+  playerIsPlacedToTheMax(player: Player) {
+    const startMax = this.getMinStartingPositionsPerPlayerCount();
+    let startCount = 0;
+    for (const id of player.startingPositionIds) {
+      if (this.periodService.getPositionById(id).name !== 'bench') {
+        startCount++;
+      }
+    }
+    return !(startCount <= startMax + 1);
+  }
+
+  playerIsBenchedToTheMax(player: Player) {
+    const benchMax = this.getMinBenchesPerPlayer();
+    let benchCount = 0;
+    for (const id of player.startingPositionIds) {
+      if (this.periodService.getPositionById(id).name === 'bench') {
+        benchCount++;
+      }
+    }
+    return !(benchCount <= benchMax + 1);
   }
 
   getRelativePlacementOffset(newScore: number) {
@@ -381,19 +463,6 @@ export class GameService {
     );
   }
 
-  // TODO do calculations after all players are placed.
-  // find lowest score player, get list of position trades that would even score for swapped players.
-  // pick the trade that would bring them both closest to mean??
-
-  // TODO - smart rebalance - Sam's idea.
-  rebalancePositions() {
-    // pass in list of players
-    // look at positions that make their placement score at the high end. not sure yet.
-    // remove them from positions.
-    // send them back through the rounds?
-    // this is smelly. how do we prevent ourselves from reaching this point? I'm going back now to look.
-  }
-
   getOpenPositionsByName(positionName: string): Position[] {
     let openMatches: Position[];
     try {
@@ -415,9 +484,10 @@ export class GameService {
     return openMatches;
   }
 
-  flattenGamePositions(): Position[] {
-    return this.periodService
-      .getPeriods()
+  flattenGamePositions(unsetPeriods?: Period[]): Position[] {
+    const periods = (typeof unsetPeriods === 'undefined' || unsetPeriods.length === 0) ? this.periodService
+      .getPeriods() : unsetPeriods;
+    return periods
       .sort(period => period.periodNumber)
       .reduce((pos, period) => [...pos, ...period.positions], []);
   }
@@ -581,11 +651,17 @@ export class GameService {
     return allFilled;
   }
 
-  setStartingPositionsPerPlayerCount(): number {
-    return Math.round(
+  getMinStartingPositionsPerPlayerCount(): number {
+    return Math.floor(
       (this.MAX_PLAYERS_ON_FIELD * this.periodService.getPeriods().length) /
       this.availablePlayerCount
     );
+  }
+
+  getMinBenchesPerPlayer(): number {
+    return Math.floor(Math.round(
+      this.availablePlayerCount / (this.availablePlayerCount - this.MAX_PLAYERS_ON_FIELD)
+    ));
   }
 
   sort_desc_unique(arr) {
