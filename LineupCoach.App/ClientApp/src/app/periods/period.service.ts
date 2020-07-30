@@ -25,14 +25,15 @@ export class PeriodService {
     return benchedInPeriods.some(periodId => periodId === currentPeriodId);
   }
 
-  playerIsStartingAnotherPositionThisPeriod(periodId: number, currentPositionId: number, player: Player, period?: Period): boolean {
+  playerIsPlacedAnotherPositionThisPeriod(periodId: number, currentPositionId: number, player: Player, period?: Period): boolean {
     if (
       typeof player.startingPositionIds === 'undefined' ||
-      player.startingPositionIds.length === 0
+      (player.startingPositionIds.length + player.benchIds.length) === 0
     ) {
       return false;
     }
     const otherPostions = player.startingPositionIds.filter(pos => pos !== currentPositionId);
+    otherPostions.concat(player.benchIds.filter(pos => pos !== currentPositionId));
     if (otherPostions.length === 0) {
       return false;
     }
@@ -43,6 +44,26 @@ export class PeriodService {
     }
 
     const matchingPosition = otherPostions.some(
+      positionId => this.getPositionById(positionId).periodId === periodId
+    );
+    return matchingPosition;
+  }
+  playerIsPlacedThisPeriod(periodId: number, player: Player, period?: Period): boolean {
+    if (
+      typeof player.startingPositionIds === 'undefined' ||
+      (player.startingPositionIds.length + player.benchIds.length) === 0
+    ) {
+      return false;
+    }
+
+    if (typeof period !== 'undefined') {
+      const placedIds = player.startingPositionIds.concat(player.benchIds);
+
+      const isPlaced = period.positions.map(pos => pos.id).some(id => placedIds.filter(placedId => placedId === id));
+      return isPlaced;
+    }
+
+    const matchingPosition = player.startingPositionIds.some(
       positionId => this.getPositionById(positionId).periodId === periodId
     );
     return matchingPosition;

@@ -17,7 +17,8 @@ export class GameService {
   availablePlayerCount: number;
   MAX_PLAYERS_ON_FIELD = 8;
   PLACEMENT_ROUND_DIVISOR = 4;
-  WHILE_LOOP_BREAKER = 150;
+  WHILE_LOOP_BREAKER_GAME = 350;
+  WHILE_LOOP_BREAKER_PERIOD = 200;
   fulfilledGame = new Array<Period>();
 
   constructor(
@@ -41,7 +42,7 @@ export class GameService {
       this.startingPositionsPerPlayer
     );
 
-    let periodTries = this.WHILE_LOOP_BREAKER;
+    let periodTries = this.WHILE_LOOP_BREAKER_GAME;
     let periodIndex = 0;
 
     while (periodIndex !== this.periodService.getPeriods().length && periodTries !== 0) {
@@ -86,7 +87,7 @@ export class GameService {
 
     const fulfilledPeriod = new Array<Position>();
 
-    let positionTries = this.WHILE_LOOP_BREAKER;
+    let positionTries = this.WHILE_LOOP_BREAKER_PERIOD;
     let positionIndex = 0;
     // TODO counts here (might) need to take into consideration when all players
     // TODO have been tried in all positions and we need to rethink previous period
@@ -111,12 +112,12 @@ export class GameService {
         continue;
       }
       if (
-        this.periodService.playerIsStartingAnotherPositionThisPeriod(currentPosition.periodId,
+        this.periodService.playerIsPlacedAnotherPositionThisPeriod(currentPosition.periodId,
           currentPosition.id,
           currentPosition.startingPlayer,
           period) ||
-          // TODO find out why we have dupe starting position ids at this point
-          // TODO also, if starting position id hasn't been added, these next two checks don't include current position.
+        // TODO find out why we have dupe starting position ids at this point
+        // TODO also, if starting position id hasn't been added, these next two checks don't include current position.
         this.benchDistributionMet(currentPosition.startingPlayer) ||
         this.positionDistributionMet(currentPosition.startingPlayer)) {
         currentPosition.startingPlayer = undefined;
@@ -131,12 +132,17 @@ export class GameService {
 
         if (nextPosition === undefined || this.tryFillPosition(nextPosition, period)) {
           positionIndex++;
+          // The player will place, so we start again, or all the positions are filled.
           playerTries = 1;
           if (nextPosition !== undefined) {
             nextPosition.startingPlayer = undefined;
           }
           currentPosition.startingPlayer.placementScore += currentPosition.startingPlayer.fitScore;
-          currentPosition.startingPlayer.startingPositionIds.push(currentPosition.id);
+          if (currentPosition.name === 'bench') {
+            currentPosition.startingPlayer.benchIds.push(currentPosition.id);
+          } else {
+            currentPosition.startingPlayer.startingPositionIds.push(currentPosition.id);
+          }
           continue;
         } else {
           currentPosition.startingPlayer = undefined;
@@ -169,6 +175,9 @@ export class GameService {
       player.fitScore += -(this.getRelativePlacementOffset(
         (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
 
+      if ((typeof player.fitScore) === 'undefined' || player.fitScore < 0) {
+        player.fitScore = 0;
+      }
       position.candidates.set(player.id, player.fitScore);
     }
 
@@ -184,7 +193,7 @@ export class GameService {
         const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
         bestFitPlayerIds.splice(bestFitPlayerIds.indexOf(bestFitPlayerId), 1);
         const bestFitPlayer = this.playerService.getPlayerById(bestFitPlayerId);
-        if (this.periodService.playerIsStartingAnotherPositionThisPeriod(position.periodId,
+        if (this.periodService.playerIsPlacedAnotherPositionThisPeriod(position.periodId,
           position.id,
           bestFitPlayer,
           period)) {
@@ -208,7 +217,8 @@ export class GameService {
       return false;
     }
     const minSatisfiedPlayers = placedPlayers
-      .filter(player => player.startingPositionIds.length >= this.getMinStartingPositionsPerPlayerCount());
+      .filter(player =>
+        ((player.startingPositionIds.length + 1) - player.benchIds.length) >= this.getMinStartingPositionsPerPlayerCount());
     if (!minSatisfiedPlayers || minSatisfiedPlayers.length === 0) {
       return false;
     }
@@ -222,7 +232,8 @@ export class GameService {
       (Math.floor(nonBenchPositions.length / this.availablePlayerCount) * this.availablePlayerCount));
 
     const maxSatisfiedPlayers = this.sort_desc_unique(placedPlayers
-      .filter(player => player.startingPositionIds.length >= (this.getMinStartingPositionsPerPlayerCount() + 1)));
+      .filter(player =>
+        ((player.startingPositionIds.length + 1) - player.benchIds.length) >= (this.getMinStartingPositionsPerPlayerCount() + 1)));
 
     if (maxSatisfiedPlayers.length < playerGetsExtraStartCount) {
       return maxSatisfiedPlayers.filter(player => player.id === currentPlayer.id).length > 0;
@@ -230,7 +241,6 @@ export class GameService {
   }
 
   benchDistributionMet(currentPlayer: Player) {
-// TODO counting startingPositionIds doesn't work. Need bench count and start count for this and counterpart function.
     const placedPlayers = this.flattenGamePositions(this.fulfilledGame)
       .filter(position => typeof position.startingPlayer !== 'undefined')
       .map(position => position.startingPlayer);
@@ -238,7 +248,8 @@ export class GameService {
       return false;
     }
     const minBenchedPlayers = this.sort_desc_unique(placedPlayers
-      .filter(player => player.startingPositionIds.length >= this.getMinBenchesPerPlayer()));
+      // +1 to account for the position we're evaluating - easier than adding it and removing it in mult places
+      .filter(player => (player.benchIds.length + 1) >= this.getMinBenchesPerPlayer()));
     if (!minBenchedPlayers || minBenchedPlayers.length === 0) {
       return false;
     }
@@ -252,7 +263,7 @@ export class GameService {
       (Math.floor(benchPositions.length / this.availablePlayerCount) * this.availablePlayerCount));
 
     const maxBenchedPlayers = this.sort_desc_unique(placedPlayers
-      .filter(player => player.startingPositionIds.length >= (this.getMinBenchesPerPlayer() + 1)));
+      .filter(player => (player.benchIds.length + 1) >= (this.getMinBenchesPerPlayer() + 1)));
 
     if (maxBenchedPlayers.length < playerGetsExtraBenchCount) {
       return maxBenchedPlayers.filter(player => player.id === currentPlayer.id).length > 0;
@@ -388,9 +399,9 @@ export class GameService {
   }
 
   getMinBenchesPerPlayer(): number {
-    return Math.floor(Math.round(
+    return Math.floor(
       this.availablePlayerCount / (this.availablePlayerCount - this.MAX_PLAYERS_ON_FIELD)
-    ));
+    );
   }
 
   sort_desc_unique(arr) {
