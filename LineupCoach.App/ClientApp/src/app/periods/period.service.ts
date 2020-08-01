@@ -32,18 +32,18 @@ export class PeriodService {
     ) {
       return false;
     }
-    const otherPostions = player.startingPositionIds.filter(pos => pos !== currentPositionId);
-    otherPostions.concat(player.benchIds.filter(pos => pos !== currentPositionId));
-    if (otherPostions.length === 0) {
+    let otherPositions = player.startingPositionIds.filter(pos => pos !== currentPositionId);
+    otherPositions = otherPositions.concat(player.benchIds.filter(pos => pos !== currentPositionId));
+    if (otherPositions.length === 0) {
       return false;
     }
     if (typeof period !== 'undefined') {
       return period.positions.map(pos => pos.id).filter(posId => posId !== currentPositionId)
-      .some(notCurrentPosId => otherPostions.filter(startingPosId => startingPosId === notCurrentPosId)
-      .length !== 0);
+      .filter(notCurrentPosId => otherPositions.filter(startingPosId => startingPosId === notCurrentPosId))
+      .length !== 0;
     }
 
-    const matchingPosition = otherPostions.some(
+    const matchingPosition = otherPositions.some(
       positionId => this.getPositionById(positionId).periodId === periodId
     );
     return matchingPosition;
@@ -59,7 +59,7 @@ export class PeriodService {
     if (typeof period !== 'undefined') {
       const placedIds = player.startingPositionIds.concat(player.benchIds);
 
-      const isPlaced = period.positions.map(pos => pos.id).some(id => placedIds.filter(placedId => placedId === id));
+      const isPlaced = period.positions.map(pos => pos.id).filter(id => placedIds.filter(placedId => placedId === id)).length > 0;
       return isPlaced;
     }
 

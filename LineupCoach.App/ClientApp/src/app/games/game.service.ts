@@ -17,8 +17,8 @@ export class GameService {
   availablePlayerCount: number;
   MAX_PLAYERS_ON_FIELD = 8;
   PLACEMENT_ROUND_DIVISOR = 4;
-  WHILE_LOOP_BREAKER_GAME = 350;
-  WHILE_LOOP_BREAKER_PERIOD = 200;
+  WHILE_LOOP_BREAKER_GAME = 500;
+  WHILE_LOOP_BREAKER_PERIOD = 1000;
   fulfilledGame = new Array<Period>();
 
   constructor(
@@ -51,14 +51,14 @@ export class GameService {
         periodTries = 0;
         continue;
       }
-      const currentPeriod = this.periodService.getPeriods()[periodIndex];
-      this.tryFillPeriod(currentPeriod);
+      const currentPeriod = cloneDeep(this.periodService.getPeriods()[periodIndex]);
       this.fulfilledGame.push(currentPeriod);
-      if (!this.periodService.allPeriodPositionsFull(currentPeriod)) {
+      if (!this.tryFillPeriod(currentPeriod) ||
+      !this.periodService.allPeriodPositionsFull(currentPeriod)) {
         this.fulfilledGame.pop();
         continue;
       } else {
-        const nextPeriod = this.periodService.getPeriods()[periodIndex + 1];
+        const nextPeriod = cloneDeep(this.periodService.getPeriods()[periodIndex + 1]);
         if (nextPeriod === undefined || this.tryFillPeriod(nextPeriod)) {
           periodIndex++;
           continue;
@@ -92,22 +92,27 @@ export class GameService {
     // TODO counts here (might) need to take into consideration when all players
     // TODO have been tried in all positions and we need to rethink previous period
     let playerTries = 1;
-
+    let placeablePlayers = this.playerService.getPresentPlayers();
     while (positionIndex !== period.positions.length && positionTries !== 0) {
       positionTries--;
       if (positionIndex === period.positions.length) {
         positionTries = 0;
         continue;
       }
-      const currentPosition = period.positions[positionIndex];
+
+      const currentPosition = cloneDeep(period.positions[positionIndex]);
       fulfilledPeriod.push(currentPosition);
-      const postitionFilled = this.tryFillPosition(currentPosition, period);
+
+      const postitionFilled = this.tryFillPosition(currentPosition, period, placeablePlayers);
       if (!postitionFilled ||
         currentPosition.startingPlayer === undefined) {
         fulfilledPeriod.pop();
         playerTries++;
-        if (this.playerService.getPresentPlayers().length >= playerTries && positionIndex > 0) {
+        if (positionIndex > 0) {
           positionIndex--;
+          placeablePlayers = this.playerService.getPresentPlayers();
+        } else {
+          return false;
         }
         continue;
       }
@@ -116,24 +121,28 @@ export class GameService {
           currentPosition.id,
           currentPosition.startingPlayer,
           period) ||
-        // TODO find out why we have dupe starting position ids at this point
-        // TODO also, if starting position id hasn't been added, these next two checks don't include current position.
         this.benchDistributionMet(currentPosition.startingPlayer) ||
         this.positionDistributionMet(currentPosition.startingPlayer)) {
+          // TODO shouldn't need to do this. Likely added this when some other logic was wrong:
+        this.removePlayerPosition(currentPosition.startingPlayer, currentPosition);
         currentPosition.startingPlayer = undefined;
         fulfilledPeriod.pop();
         playerTries++;
-        if (this.playerService.getPresentPlayers().length >= playerTries && positionIndex > 0) {
+        // TODO the idea is to retry this position index entirely if we've tried all players.
+        // TODO BUT, need to prove that we have tried all players. don't think count considers mult tries same player
+        if (positionIndex > 0) {
           positionIndex--;
+          placeablePlayers = this.playerService.getPresentPlayers();
+        } else {
+          return false;
         }
         continue;
       } else {
-        const nextPosition = period.positions[positionIndex + 1];
-
-        if (nextPosition === undefined || this.tryFillPosition(nextPosition, period)) {
-          positionIndex++;
+        const nextPosition = cloneDeep(period.positions[positionIndex + 1]);
+        if (!this.periodService.playerIsPlacedThisPeriod(period.id, currentPosition.startingPlayer, period) &&
+        (nextPosition === undefined || this.tryFillPosition(nextPosition, period, placeablePlayers))) {
           // The player will place, so we start again, or all the positions are filled.
-          playerTries = 1;
+
           if (nextPosition !== undefined) {
             nextPosition.startingPlayer = undefined;
           }
@@ -143,13 +152,21 @@ export class GameService {
           } else {
             currentPosition.startingPlayer.startingPositionIds.push(currentPosition.id);
           }
+          placeablePlayers.splice(placeablePlayers.indexOf(currentPosition.startingPlayer), 1);
+          playerTries = 1;
+          positionIndex++;
           continue;
         } else {
+          // TODO shouldn't need to do this. Likely added this when some other logic was wrong:
+          this.removePlayerPosition(currentPosition.startingPlayer, currentPosition);
           currentPosition.startingPlayer = undefined;
           fulfilledPeriod.pop();
           playerTries++;
-          if (this.playerService.getPresentPlayers().length === playerTries && positionIndex > 0) {
+          if (positionIndex > 0) {
             positionIndex--;
+            placeablePlayers = this.playerService.getPresentPlayers();
+          } else {
+            return false;
           }
           continue;
         }
@@ -159,9 +176,44 @@ export class GameService {
     return this.periodService.allPeriodPositionsFull(period);
   }
 
-  tryFillPosition(position: Position, period: Period): boolean {
+  removePlayerPosition(tempPlayer: Player, currentPosition: Position) {
+    if (currentPosition.name === 'bench') {
+      // TODO pop would work if we were correctly backtracking. now we're not popping back to prev period or position.
+      tempPlayer.benchIds.splice(tempPlayer.benchIds.indexOf(currentPosition.id), 1);
+    } else {
+      tempPlayer.startingPositionIds.splice(tempPlayer.startingPositionIds.indexOf(currentPosition.id), 1);
+    }
+  }
 
-    for (const player of this.playerService.getPresentPlayers()) {
+  tryFillPosition(position: Position, period: Period, players: Player[]): boolean {
+    this.setPlayerFitScores(position, players);
+    const scores = this.sort_desc_unique([...position.candidates?.values()]);
+    let scoreCount = 1;
+    for (const bestFitScore of scores) {
+      scoreCount++;
+      const bestFitPlayerIds = [...position.candidates.entries()]
+        .filter(({ 1: v }) => v === bestFitScore)
+        .map(([k]) => k);
+      let i = bestFitPlayerIds.length;
+      while (i--) {
+        const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
+        bestFitPlayerIds.splice(bestFitPlayerIds.indexOf(bestFitPlayerId), 1);
+        const bestFitPlayer = players.filter( player => player.id === bestFitPlayerId)[0];
+        if (this.periodService.playerIsPlacedAnotherPositionThisPeriod(position.periodId,
+          position.id,
+          bestFitPlayer,
+          period)) {
+          continue;
+        }
+        position.startingPlayer = bestFitPlayer;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  setPlayerFitScores(position: Position, players: Player[]) {
+    for (const player of players) {
 
       // to sort by fitness for given position, you have to set the fitness score
       player.fitScore = 0;
@@ -180,30 +232,6 @@ export class GameService {
       }
       position.candidates.set(player.id, player.fitScore);
     }
-
-    const scores = this.sort_desc_unique([...position.candidates?.values()]);
-    let scoreCount = 1;
-    for (const bestFitScore of scores) {
-      scoreCount++;
-      const bestFitPlayerIds = [...position.candidates.entries()]
-        .filter(({ 1: v }) => v === bestFitScore)
-        .map(([k]) => k);
-      let i = bestFitPlayerIds.length;
-      while (i--) {
-        const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
-        bestFitPlayerIds.splice(bestFitPlayerIds.indexOf(bestFitPlayerId), 1);
-        const bestFitPlayer = this.playerService.getPlayerById(bestFitPlayerId);
-        if (this.periodService.playerIsPlacedAnotherPositionThisPeriod(position.periodId,
-          position.id,
-          bestFitPlayer,
-          period)) {
-          continue;
-        }
-        position.startingPlayer = bestFitPlayer;
-        return true;
-      }
-    }
-    return false;
   }
 
   positionDistributionMet(currentPlayer: Player) {
