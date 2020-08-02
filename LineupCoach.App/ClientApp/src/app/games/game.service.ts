@@ -54,7 +54,7 @@ export class GameService {
       const currentPeriod = cloneDeep(this.periodService.getPeriods()[periodIndex]);
       this.fulfilledGame.push(currentPeriod);
       if (!this.tryFillPeriod(currentPeriod) ||
-      !this.periodService.allPeriodPositionsFull(currentPeriod)) {
+        !this.periodService.allPeriodPositionsFull(currentPeriod)) {
         this.fulfilledGame.pop();
         continue;
       } else {
@@ -70,6 +70,7 @@ export class GameService {
     }
     const gamePositions = this.fulfilledGame
       .reduce((pos, period) => [...pos, ...period.positions], []);
+    // TODO figure out why you did this or if it is needed
     for (const setPosition of gamePositions) {
       this.periodService.setStartingPlayer(setPosition.periodId, setPosition.id, setPosition.startingPlayer);
     }
@@ -86,6 +87,7 @@ export class GameService {
   tryFillPeriod(period: Period): boolean {
 
     const fulfilledPeriod = new Array<Position>();
+    const currentPlayerIdtoPlacementScoreMap = new Map<number, number>();
 
     let positionTries = this.WHILE_LOOP_BREAKER_PERIOD;
     let positionIndex = 0;
@@ -123,7 +125,7 @@ export class GameService {
           period) ||
         this.benchDistributionMet(currentPosition.startingPlayer) ||
         this.positionDistributionMet(currentPosition.startingPlayer)) {
-          // TODO shouldn't need to do this. Likely added this when some other logic was wrong:
+        // TODO shouldn't need to do this. Likely added this when some other logic was wrong:
         this.removePlayerPosition(currentPosition.startingPlayer, currentPosition);
         currentPosition.startingPlayer = undefined;
         fulfilledPeriod.pop();
@@ -139,13 +141,18 @@ export class GameService {
         continue;
       } else {
         const nextPosition = cloneDeep(period.positions[positionIndex + 1]);
-        if (!this.periodService.playerIsPlacedThisPeriod(period.id, currentPosition.startingPlayer, period) &&
-        (nextPosition === undefined || this.tryFillPosition(nextPosition, period, placeablePlayers))) {
+        if (!this.periodService.playerIsPlacedAnotherPositionThisPeriod(
+          period.id,
+          currentPosition.Id,
+          currentPosition.startingPlayer,
+          period) &&
+          (nextPosition === undefined || this.tryFillPosition(nextPosition, period, placeablePlayers))) {
           // The player will place, so we start again, or all the positions are filled.
 
           if (nextPosition !== undefined) {
             nextPosition.startingPlayer = undefined;
           }
+          currentPlayerIdtoPlacementScoreMap.set(currentPosition.startingPlayer.id, currentPosition.startingPlayer.fitScore);
           currentPosition.startingPlayer.placementScore += currentPosition.startingPlayer.fitScore;
           if (currentPosition.name === 'bench') {
             currentPosition.startingPlayer.benchIds.push(currentPosition.id);
@@ -172,8 +179,20 @@ export class GameService {
         }
       }
     }
+    const result = fulfilledPeriod.length === period.positions.length;
+    if (result) {
+      period.positions = fulfilledPeriod;
+    } else {
+      this.subtractCurrentPlacementScores(currentPlayerIdtoPlacementScoreMap);
+    }
+    return result;
+  }
 
-    return this.periodService.allPeriodPositionsFull(period);
+  subtractCurrentPlacementScores(scoreMap) {
+    for (const player of this.playerService.getPresentPlayers()) {
+      player.placementScore = player.placementScore - scoreMap.get(player.id);
+    }
+    scoreMap.clear();
   }
 
   removePlayerPosition(tempPlayer: Player, currentPosition: Position) {
@@ -198,7 +217,7 @@ export class GameService {
       while (i--) {
         const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
         bestFitPlayerIds.splice(bestFitPlayerIds.indexOf(bestFitPlayerId), 1);
-        const bestFitPlayer = players.filter( player => player.id === bestFitPlayerId)[0];
+        const bestFitPlayer = players.filter(player => player.id === bestFitPlayerId)[0];
         if (this.periodService.playerIsPlacedAnotherPositionThisPeriod(position.periodId,
           position.id,
           bestFitPlayer,
@@ -224,8 +243,8 @@ export class GameService {
       );
       player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
       player.fitScore += player.positionPreferenceRank.ranking.length - rank;
-      player.fitScore += -(this.getRelativePlacementOffset(
-        (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
+      // player.fitScore += -(this.getRelativePlacementOffset(
+      //   (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
 
       if ((typeof player.fitScore) === 'undefined' || player.fitScore < 0) {
         player.fitScore = 0;

@@ -6,7 +6,8 @@ Code in progress to aid my thinking about filling a lineup for a game of youth s
 
 ## TODO
 
-- [ ] never filling the first period
+- [ ] next period and next position failing to fill.
+- [ ] bench placement score is the same as a non favorite score
 - [x] not filling last period
 - [x] players are being placed and not removed. the stack doesn't go backward if it can't place. need to undo the previous decision when all tries are exhasted.
 - [x] ensure player starting? functions use positions on stack in progress and not default
