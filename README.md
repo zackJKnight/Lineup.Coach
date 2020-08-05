@@ -8,6 +8,7 @@ Code in progress to aid my thinking about filling a lineup for a game of youth s
 
 - [ ] distribution checks are failing. e.g. player is benched all game. or player gets 3 bench while another starts all game.
 - [ ] bench placement score is the same as a non favorite score?
+- [ ] hook up player choice drag and drop
 - [ ] absent players are still showing up
 - [ ] handle players not present - generate number of benches dynamically.
 - [ ] handle not enough players to fill the game - consider the idea of a blank placeholder
