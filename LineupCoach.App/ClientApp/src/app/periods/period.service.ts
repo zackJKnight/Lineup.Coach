@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Period } from './period';
 import { Player } from '../players/player';
 import { Position } from '../positions/position';
-import { PeriodsModule } from './periods.module';
 
 @Injectable({
   providedIn: 'root'
@@ -38,9 +37,9 @@ export class PeriodService {
       return false;
     }
     if (typeof period !== 'undefined') {
-      return period.positions.map(pos => pos.id).filter(posId => posId !== currentPositionId)
-      .filter(notCurrentPosId => otherPositions.filter(startingPosId => startingPosId === notCurrentPosId))
-      .length !== 0;
+      const otherPositionIdsThisPeriod = period.positions.map(pos => pos.id).filter(posId => posId !== currentPositionId);
+      const matches = otherPositionIdsThisPeriod.filter(id => otherPositions.includes(id));
+      return matches.length !== 0;
     }
 
     const matchingPosition = otherPositions.some(

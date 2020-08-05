@@ -85,7 +85,7 @@ export class GameService {
   }
 
   tryFillPeriod(period: Period): boolean {
-
+    let result = false;
     const fulfilledPeriod = new Array<Position>();
     const currentPlayerIdtoPlacementScoreMap = new Map<number, number>();
 
@@ -109,12 +109,13 @@ export class GameService {
       if (!postitionFilled ||
         currentPosition.startingPlayer === undefined) {
         fulfilledPeriod.pop();
-        playerTries++;
-        if (positionIndex > 0) {
+
+        if (placeablePlayers.length === 0 && positionIndex > 0) {
           positionIndex--;
           placeablePlayers = this.playerService.getPresentPlayers();
         } else {
-          return false;
+          result = false;
+          break;
         }
         continue;
       }
@@ -132,28 +133,30 @@ export class GameService {
         playerTries++;
         // TODO the idea is to retry this position index entirely if we've tried all players.
         // TODO BUT, need to prove that we have tried all players. don't think count considers mult tries same player
-        if (positionIndex > 0) {
+
+        if (placeablePlayers.length === 0 && positionIndex > 0) {
           positionIndex--;
           placeablePlayers = this.playerService.getPresentPlayers();
         } else {
-          return false;
+          result = false;
+          break;
         }
         continue;
       } else {
         const nextPosition = cloneDeep(period.positions[positionIndex + 1]);
-        if (!this.periodService.playerIsPlacedAnotherPositionThisPeriod(
-          period.id,
-          currentPosition.Id,
+        if (!this.periodService.playerIsPlacedAnotherPositionThisPeriod(currentPosition.periodId,
+          currentPosition.id,
           currentPosition.startingPlayer,
           period) &&
           (nextPosition === undefined || this.tryFillPosition(nextPosition, period, placeablePlayers))) {
-          // The player will place, so we start again, or all the positions are filled.
+          // The next player will place, so we start again, or all the positions are filled.
 
           if (nextPosition !== undefined) {
             nextPosition.startingPlayer = undefined;
           }
           currentPlayerIdtoPlacementScoreMap.set(currentPosition.startingPlayer.id, currentPosition.startingPlayer.fitScore);
-          currentPosition.startingPlayer.placementScore += currentPosition.startingPlayer.fitScore;
+          currentPosition.startingPlayer.placementScore +=
+             isNaN(currentPosition.startingPlayer.fitScore) ? 0 : currentPosition.startingPlayer.fitScore;
           if (currentPosition.name === 'bench') {
             currentPosition.startingPlayer.benchIds.push(currentPosition.id);
           } else {
@@ -169,20 +172,35 @@ export class GameService {
           currentPosition.startingPlayer = undefined;
           fulfilledPeriod.pop();
           playerTries++;
-          if (positionIndex > 0) {
+
+          if (placeablePlayers.length === 0 && positionIndex > 0) {
             positionIndex--;
             placeablePlayers = this.playerService.getPresentPlayers();
           } else {
-            return false;
+            result = false;
+            break;
           }
           continue;
         }
       }
     }
-    const result = fulfilledPeriod.length === period.positions.length;
+    result = fulfilledPeriod.length === period.positions.length;
     if (result) {
       period.positions = fulfilledPeriod;
     } else {
+      // Remove added to a player this round.
+      for (const positionId of period.positions.map(position => position.id)) {
+        for (const player of this.playerService.getPresentPlayers()) {
+          let index = player.benchIds?.indexOf(positionId);
+          if (index > -1) {
+            player.benchIds.splice(index, 1);
+          }
+          index = player.startingPositionIds?.indexOf(positionId);
+          if (index > -1) {
+            player.startingPositionIds.splice(index, 1);
+          }
+        }
+      }
       this.subtractCurrentPlacementScores(currentPlayerIdtoPlacementScoreMap);
     }
     return result;
@@ -190,7 +208,8 @@ export class GameService {
 
   subtractCurrentPlacementScores(scoreMap) {
     for (const player of this.playerService.getPresentPlayers()) {
-      player.placementScore = player.placementScore - scoreMap.get(player.id);
+      const score = player.placementScore - scoreMap.get(player.id);
+      player.placementScore = isNaN(score) ? player.placementScore : player.placementScore + score;
     }
     scoreMap.clear();
   }
@@ -241,7 +260,7 @@ export class GameService {
       const rank = player.positionPreferenceRank.ranking.indexOf(
         position.name.toLowerCase()
       );
-      player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
+      // player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
       player.fitScore += player.positionPreferenceRank.ranking.length - rank;
       // player.fitScore += -(this.getRelativePlacementOffset(
       //   (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));

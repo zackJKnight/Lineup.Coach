@@ -6,7 +6,9 @@ Code in progress to aid my thinking about filling a lineup for a game of youth s
 
 ## TODO
 
-- [ ] next period and next position failing to fill.
+- [ ] distribution checks are failing. e.g. player is benched all game. or player gets 3 bench while another starts all game.
+- [x] placement score is NaN
+- [x] players repeatedly placed in same position?
 - [ ] bench placement score is the same as a non favorite score
 - [x] not filling last period
 - [x] players are being placed and not removed. the stack doesn't go backward if it can't place. need to undo the previous decision when all tries are exhasted.
