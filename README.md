@@ -7,16 +7,17 @@ Code in progress to aid my thinking about filling a lineup for a game of youth s
 ## TODO
 
 - [ ] distribution checks are failing. e.g. player is benched all game. or player gets 3 bench while another starts all game.
+- [ ] bench placement score is the same as a non favorite score?
+- [ ] absent players are still showing up
+- [ ] handle players not present - generate number of benches dynamically.
+- [ ] handle not enough players to fill the game - consider the idea of a blank placeholder
 - [x] placement score is NaN
 - [x] players repeatedly placed in same position?
-- [ ] bench placement score is the same as a non favorite score
 - [x] not filling last period
 - [x] players are being placed and not removed. the stack doesn't go backward if it can't place. need to undo the previous decision when all tries are exhasted.
 - [x] ensure player starting? functions use positions on stack in progress and not default
 - [x] make benches back into first rate positions
 - [x] add to check that player hasn't exceeded max bench count
-- [ ] handle players not present - generate number of benches dynamically.
-- [ ] handle not enough players to fill the game - consider the idea of a blank placeholder
 
 ## Terminology
 

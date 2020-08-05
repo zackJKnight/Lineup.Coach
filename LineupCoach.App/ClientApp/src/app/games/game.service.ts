@@ -262,8 +262,8 @@ export class GameService {
       );
       // player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
       player.fitScore += player.positionPreferenceRank.ranking.length - rank;
-      // player.fitScore += -(this.getRelativePlacementOffset(
-      //   (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
+      player.fitScore += -(this.getRelativePlacementOffset(
+        (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
 
       if ((typeof player.fitScore) === 'undefined' || player.fitScore < 0) {
         player.fitScore = 0;
