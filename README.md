@@ -12,13 +12,6 @@ Code in progress to aid my thinking about filling a lineup for a game of youth s
 - [ ] absent players are still showing up
 - [ ] handle players not present - generate number of benches dynamically.
 - [ ] handle not enough players to fill the game - consider the idea of a blank placeholder
-- [x] placement score is NaN
-- [x] players repeatedly placed in same position?
-- [x] not filling last period
-- [x] players are being placed and not removed. the stack doesn't go backward if it can't place. need to undo the previous decision when all tries are exhasted.
-- [x] ensure player starting? functions use positions on stack in progress and not default
-- [x] make benches back into first rate positions
-- [x] add to check that player hasn't exceeded max bench count
 
 ## Terminology
 
@@ -30,12 +23,6 @@ Fit score = Suitability score. The player's suitability for a given position. Co
      - Player's preference rank of position: range 0-n (where n equals number of positions) (might bench be the lowest rank in each player's pref ranking, or should it have some negative value?)
      - Distance from ideal placement count. e.g. if each player gets 3 starts in the game and this position makes the player's 2nd start. Score accordingly.
      - Placement score in relation to all other placement scores (if a player gets his preference all game and another doesn't get a single preffered position, this point will balance)
-
-## What I've Learned So Far
-
-Looping through players and trying to place ends up with cases where you would want to remove players already placed. Going through this taught me that you need a way to check all previous placements for fit each time you make a placement.. maybe.
-
-This point may have come about on a false premise (but it's true if you loop through players and try to place): After trying to loop through periods, and positions within; it's better to zoom out and attempt placement across all game positions.
 
 ### Recursive Backtracking Algorithm
 
@@ -52,10 +39,6 @@ Bench is just another position, but its score reflects that it is a bench.
 
 Placing by player preference alone leaves out the fact that the Game has needs that aren't always met by the player's prefs.
 
-- [x] We know how many positions each player can start in.
-
-- [ ] Determine bench count per game. How many times will each player sit?
-
 - [x] When a player starts in the number of positions the game can afford, we can skip to a player that isn't fulfilled.
 
 - [ ] How about counting the number of preferred positions and determining which will get filled first/neglected?
@@ -63,16 +46,6 @@ Placing by player preference alone leaves out the fact that the Game has needs t
 - [x] Rounds: looping the player list in random order the first round.
 
      -- A note from the future; when we know placements will be unbalanced, we don't need to randomize
-
-- [x] Implement the player placement score: At some point the order may be that players that did not get their preference go to the top of the round.
-
-If inside the round we find that no more preferred positions are available... what do we do?
-
-- [x] Try to put the player in the next postion down the ranking
-
-- [x] Do we need to know how many times each player can start in its favorite position?
-
-- [x] We should look at the number of times each player can start in a game.
 
 - [ ] Count the number of favorited positions vs available in the game.
 
@@ -83,7 +56,3 @@ If inside the round we find that no more preferred positions are available... wh
 - Add ability to pick from list of positions and formations for multiple instances of the same position on the pitch or create your own.
 
 - Goalie is added by default for local U8, but need to consider broader use
-
-## Old Notes
-
-Can we know how many times a player will sit the bench? numbers we'd need: roster player count. game period count. period starting player

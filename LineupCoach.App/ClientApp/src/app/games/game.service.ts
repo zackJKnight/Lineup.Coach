@@ -124,6 +124,7 @@ export class GameService {
           currentPosition.id,
           currentPosition.startingPlayer,
           period) ||
+        !this.placementScoreIsWithinRange(currentPosition.startingPlayer.fitScore, placeablePlayers) ||
         this.benchDistributionMet(currentPosition.startingPlayer) ||
         this.positionDistributionMet(currentPosition.startingPlayer)) {
         // TODO shouldn't need to do this. Likely added this when some other logic was wrong:
@@ -156,7 +157,7 @@ export class GameService {
           }
           currentPlayerIdtoPlacementScoreMap.set(currentPosition.startingPlayer.id, currentPosition.startingPlayer.fitScore);
           currentPosition.startingPlayer.placementScore +=
-             isNaN(currentPosition.startingPlayer.fitScore) ? 0 : currentPosition.startingPlayer.fitScore;
+            isNaN(currentPosition.startingPlayer.fitScore) ? 0 : currentPosition.startingPlayer.fitScore;
           if (currentPosition.name === 'bench') {
             currentPosition.startingPlayer.benchIds.push(currentPosition.id);
           } else {
@@ -262,8 +263,6 @@ export class GameService {
       );
       // player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
       player.fitScore += player.positionPreferenceRank.ranking.length - rank;
-      player.fitScore += -(this.getRelativePlacementOffset(
-        (player.fitScore + (player.positionPreferenceRank.ranking.length - rank))));
 
       if ((typeof player.fitScore) === 'undefined' || player.fitScore < 0) {
         player.fitScore = 0;
@@ -297,7 +296,7 @@ export class GameService {
     const playerGetsExtraStartCount = (nonBenchPositions.length -
       (Math.floor(nonBenchPositions.length / this.availablePlayerCount) * this.availablePlayerCount));
 
-    const maxSatisfiedPlayers = this.sort_desc_unique(placedPlayers
+    const maxSatisfiedPlayers = this.sort_desc_unique_players(placedPlayers
       .filter(player =>
         ((player.startingPositionIds.length + 1) - player.benchIds.length) >= (this.getMinStartingPositionsPerPlayerCount() + 1)));
 
@@ -313,7 +312,7 @@ export class GameService {
     if (!placedPlayers || placedPlayers.length === 0) {
       return false;
     }
-    const minBenchedPlayers = this.sort_desc_unique(placedPlayers
+    const minBenchedPlayers = this.sort_desc_unique_players(placedPlayers
       // +1 to account for the position we're evaluating - easier than adding it and removing it in mult places
       .filter(player => (player.benchIds.length + 1) >= this.getMinBenchesPerPlayer()));
     if (!minBenchedPlayers || minBenchedPlayers.length === 0) {
@@ -328,7 +327,7 @@ export class GameService {
     const playerGetsExtraBenchCount = (benchPositions.length -
       (Math.floor(benchPositions.length / this.availablePlayerCount) * this.availablePlayerCount));
 
-    const maxBenchedPlayers = this.sort_desc_unique(placedPlayers
+    const maxBenchedPlayers = this.sort_desc_unique_players(placedPlayers
       .filter(player => (player.benchIds.length + 1) >= (this.getMinBenchesPerPlayer() + 1)));
 
     if (maxBenchedPlayers.length < playerGetsExtraBenchCount) {
@@ -357,13 +356,14 @@ export class GameService {
     );
     const totalGamePositionsCount = periodCount * (maxNumberOfPreferredPositions - 1);
     const maxRangeScore = highestScore - meanScore / 2;
-    // Prevent player from getting a position that gives him far better placement than most.
+
     return maxRangeScore - newScore;
   }
 
-  placementScoreIsWithinRange(newScore: number): boolean {
+  // Prevent player from getting a position that gives him far better placement than most.
+  placementScoreIsWithinRange(newScore: number, placedPlayers: Player[]): boolean {
     const periodCount = this.periodService.getPeriods().length;
-    const placedPlayers = this.playerService.getPresentPlayers();
+
     const highestScore = Math.max.apply(
       Math,
       placedPlayers.map(player => player.placementScore)
@@ -372,18 +372,21 @@ export class GameService {
       Math,
       placedPlayers.map(player => player.placementScore)
     );
+
     const meanScore = Math.floor((highestScore + lowestScore) / 2);
     const maxNumberOfPreferredPositions = Math.max.apply(
       Math,
       placedPlayers.map(player => player.positionPreferenceRank.ranking.length)
     );
-    const totalGamePositionsCount = periodCount * (maxNumberOfPreferredPositions - 1);
+    const maxSinglePlacementScore = maxNumberOfPreferredPositions;
+    const totalGamePlacementScoreMax = periodCount * (maxNumberOfPreferredPositions - 1);
     const maxRangeScore = highestScore - meanScore / 2;
-    // Prevent player from getting a position that gives him far better placement than most.
-    return (
-      newScore < totalGamePositionsCount ||
-      (newScore > meanScore && newScore < maxRangeScore)
-    );
+
+    const newScoreBelowGameMax = newScore < totalGamePlacementScoreMax;
+    const newScoreGreaterThanMean = newScore > meanScore;
+    const scoreForAllFavoritePlacementButOne = totalGamePlacementScoreMax - maxSinglePlacementScore;
+    // TODO determine whether the game needs one player to get all favorite positions all periods.
+    return newScore <= scoreForAllFavoritePlacementButOne;
   }
 
   getOpenPositionsByName(positionName: string): Position[] {
@@ -466,7 +469,7 @@ export class GameService {
 
   getMinBenchesPerPlayer(): number {
     return Math.floor(
-      this.availablePlayerCount / (this.availablePlayerCount - this.MAX_PLAYERS_ON_FIELD)
+       ((this.availablePlayerCount - this.MAX_PLAYERS_ON_FIELD) * this.periodService.getPeriods().length) / this.availablePlayerCount
     );
   }
 
@@ -483,5 +486,26 @@ export class GameService {
       }
     }
     return uniques;
+  }
+
+  sort_desc_unique_players(arr) {
+    if (arr.length === 0) {
+      return arr;
+    }
+    arr = arr.sort((a, b) => b.id * 1 - a.id * 1);
+    const uniques = [arr[0]];
+    // Start loop at 1: arr[0] can never be a duplicate
+    for (let i = 1; i < arr.length; i++) {
+      if (arr[i - 1] !== arr[i]) {
+        uniques.push(arr[i]);
+      }
+    }
+    return uniques;
+  }
+
+  median(arr) {
+    const mid = Math.floor(arr.length / 2);
+    const nums = [...arr].sort((a, b) => a - b);
+    return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
   }
 }
