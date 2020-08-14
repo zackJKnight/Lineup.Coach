@@ -59,7 +59,10 @@ export class GameService {
         continue;
       } else {
         const nextPeriod = cloneDeep(this.periodService.getPeriods()[periodIndex + 1]);
-        if (nextPeriod === undefined || this.tryFillPeriod(nextPeriod)) {
+        if (nextPeriod === undefined || periodIndex + 1 === this.periodService.getPeriods().length) {
+          break;
+        }
+        if (this.tryFillPeriod(nextPeriod)) {
           periodIndex++;
           continue;
         } else {
@@ -93,7 +96,7 @@ export class GameService {
     let positionIndex = 0;
     // TODO counts here (might) need to take into consideration when all players
     // TODO have been tried in all positions and we need to rethink previous period
-    let playerTries = 1;
+    let acceptLessThanFavoritePlacement = 0;
     let placeablePlayers = this.playerService.getPresentPlayers();
     while (positionIndex !== period.positions.length && positionTries !== 0) {
       positionTries--;
@@ -101,11 +104,13 @@ export class GameService {
         positionTries = 0;
         continue;
       }
-
+      if (positionTries < (this.WHILE_LOOP_BREAKER_PERIOD / 2)) {
+        acceptLessThanFavoritePlacement = 1;
+      }
       const currentPosition = cloneDeep(period.positions[positionIndex]);
       fulfilledPeriod.push(currentPosition);
 
-      const postitionFilled = this.tryFillPosition(currentPosition, period, placeablePlayers);
+      const postitionFilled = this.tryFillPosition(currentPosition, period, placeablePlayers, acceptLessThanFavoritePlacement);
       if (!postitionFilled ||
         currentPosition.startingPlayer === undefined) {
         fulfilledPeriod.pop();
@@ -124,14 +129,12 @@ export class GameService {
           currentPosition.id,
           currentPosition.startingPlayer,
           period) ||
+        (currentPosition.name === 'bench' && ((currentPosition.startingPlayer.benchIds.length) > this.getMinBenchesPerPlayer())) ||
         !this.placementScoreIsWithinRange(currentPosition.startingPlayer.fitScore, placeablePlayers) ||
-        this.benchDistributionMet(currentPosition.startingPlayer) ||
+        //this.benchDistributionMet(currentPosition.startingPlayer) ||
         this.positionDistributionMet(currentPosition.startingPlayer)) {
-        // TODO shouldn't need to do this. Likely added this when some other logic was wrong:
-        this.removePlayerPosition(currentPosition.startingPlayer, currentPosition);
         currentPosition.startingPlayer = undefined;
         fulfilledPeriod.pop();
-        playerTries++;
         // TODO the idea is to retry this position index entirely if we've tried all players.
         // TODO BUT, need to prove that we have tried all players. don't think count considers mult tries same player
 
@@ -145,11 +148,9 @@ export class GameService {
         continue;
       } else {
         const nextPosition = cloneDeep(period.positions[positionIndex + 1]);
-        if (!this.periodService.playerIsPlacedAnotherPositionThisPeriod(currentPosition.periodId,
-          currentPosition.id,
-          currentPosition.startingPlayer,
-          period) &&
-          (nextPosition === undefined || this.tryFillPosition(nextPosition, period, placeablePlayers))) {
+        if ((nextPosition === undefined ||
+          (this.tryFillPosition(nextPosition, period, placeablePlayers, acceptLessThanFavoritePlacement) &&
+            !(nextPosition.name === 'bench' && ((nextPosition.startingPlayer.benchIds.length) > this.getMinBenchesPerPlayer()))))) {
           // The next player will place, so we start again, or all the positions are filled.
 
           if (nextPosition !== undefined) {
@@ -157,23 +158,22 @@ export class GameService {
           }
           currentPlayerIdtoPlacementScoreMap.set(currentPosition.startingPlayer.id, currentPosition.startingPlayer.fitScore);
           currentPosition.startingPlayer.placementScore +=
-            isNaN(currentPosition.startingPlayer.fitScore) ? 0 : currentPosition.startingPlayer.fitScore;
+            isNaN(currentPosition.startingPlayer.fitScore) ? 0 : Math.floor(currentPosition.startingPlayer.fitScore);
           if (currentPosition.name === 'bench') {
             currentPosition.startingPlayer.benchIds.push(currentPosition.id);
           } else {
             currentPosition.startingPlayer.startingPositionIds.push(currentPosition.id);
           }
           placeablePlayers.splice(placeablePlayers.indexOf(currentPosition.startingPlayer), 1);
-          playerTries = 1;
           positionIndex++;
           continue;
         } else {
-          // TODO shouldn't need to do this. Likely added this when some other logic was wrong:
-          this.removePlayerPosition(currentPosition.startingPlayer, currentPosition);
           currentPosition.startingPlayer = undefined;
+          nextPosition.startingPlayer = undefined;
           fulfilledPeriod.pop();
-          playerTries++;
-
+if(placeablePlayers.length > 0) {
+  continue;
+}
           if (placeablePlayers.length === 0 && positionIndex > 0) {
             positionIndex--;
             placeablePlayers = this.playerService.getPresentPlayers();
@@ -207,29 +207,14 @@ export class GameService {
     return result;
   }
 
-  subtractCurrentPlacementScores(scoreMap) {
-    for (const player of this.playerService.getPresentPlayers()) {
-      const score = player.placementScore - scoreMap.get(player.id);
-      player.placementScore = isNaN(score) ? player.placementScore : player.placementScore + score;
-    }
-    scoreMap.clear();
-  }
-
-  removePlayerPosition(tempPlayer: Player, currentPosition: Position) {
-    if (currentPosition.name === 'bench') {
-      // TODO pop would work if we were correctly backtracking. now we're not popping back to prev period or position.
-      tempPlayer.benchIds.splice(tempPlayer.benchIds.indexOf(currentPosition.id), 1);
-    } else {
-      tempPlayer.startingPositionIds.splice(tempPlayer.startingPositionIds.indexOf(currentPosition.id), 1);
-    }
-  }
-
-  tryFillPosition(position: Position, period: Period, players: Player[]): boolean {
+  tryFillPosition(position: Position, period: Period, players: Player[], selectionRound?: number): boolean {
     this.setPlayerFitScores(position, players);
     const scores = this.sort_desc_unique([...position.candidates?.values()]);
-    let scoreCount = 1;
+    // an attempt to be able to say we need to skip the best fit to allow other placements to work later in the game.
+    if (selectionRound > 0) {
+      scores.splice(0, selectionRound);
+    }
     for (const bestFitScore of scores) {
-      scoreCount++;
       const bestFitPlayerIds = [...position.candidates.entries()]
         .filter(({ 1: v }) => v === bestFitScore)
         .map(([k]) => k);
@@ -251,6 +236,23 @@ export class GameService {
     return false;
   }
 
+  subtractCurrentPlacementScores(scoreMap) {
+    for (const player of this.playerService.getPresentPlayers()) {
+      const score = player.placementScore - scoreMap.get(player.id);
+      player.placementScore = isNaN(score) ? player.placementScore : Math.floor(player.placementScore + score);
+    }
+    scoreMap.clear();
+  }
+
+  removePlayerPosition(tempPlayer: Player, currentPosition: Position) {
+    if (currentPosition.name === 'bench') {
+      // TODO pop would work if we were correctly backtracking. now we're not popping back to prev period or position.
+      tempPlayer.benchIds.splice(tempPlayer.benchIds.indexOf(currentPosition.id), 1);
+    } else {
+      tempPlayer.startingPositionIds.splice(tempPlayer.startingPositionIds.indexOf(currentPosition.id), 1);
+    }
+  }
+
   setPlayerFitScores(position: Position, players: Player[]) {
     for (const player of players) {
 
@@ -258,9 +260,8 @@ export class GameService {
       player.fitScore = 0;
 
       // increase fitness score by player's preference for the position
-      const rank = player.positionPreferenceRank.ranking.indexOf(
-        position.name.toLowerCase()
-      );
+      const rank = Math.floor(player.positionPreferenceRank.ranking.indexOf(
+        position.name.toLowerCase()));
       // player.fitScore += (this.startingPositionsPerPlayer - player.startingPositionIds.length);
       player.fitScore += player.positionPreferenceRank.ranking.length - rank;
 
@@ -313,8 +314,7 @@ export class GameService {
       return false;
     }
     const minBenchedPlayers = this.sort_desc_unique_players(placedPlayers
-      // +1 to account for the position we're evaluating - easier than adding it and removing it in mult places
-      .filter(player => (player.benchIds.length + 1) >= this.getMinBenchesPerPlayer()));
+      .filter(player => player.benchIds.length >= this.getMinBenchesPerPlayer()));
     if (!minBenchedPlayers || minBenchedPlayers.length === 0) {
       return false;
     }
@@ -322,13 +322,13 @@ export class GameService {
     if (!playerNotBeenMinBenchedCount || playerNotBeenMinBenchedCount === 0) {
       return false;
     }
-
+    // TODO I haven't seen it hit a breakpoint here.
     const benchPositions = this.flattenGamePositions().filter(position => position.name === 'bench');
     const playerGetsExtraBenchCount = (benchPositions.length -
       (Math.floor(benchPositions.length / this.availablePlayerCount) * this.availablePlayerCount));
 
     const maxBenchedPlayers = this.sort_desc_unique_players(placedPlayers
-      .filter(player => (player.benchIds.length + 1) >= (this.getMinBenchesPerPlayer() + 1)));
+      .filter(player => player.benchIds.length >= (this.getMinBenchesPerPlayer() + 1)));
 
     if (maxBenchedPlayers.length < playerGetsExtraBenchCount) {
       return maxBenchedPlayers.filter(player => player.id === currentPlayer.id).length > 0;
@@ -469,7 +469,7 @@ export class GameService {
 
   getMinBenchesPerPlayer(): number {
     return Math.floor(
-       ((this.availablePlayerCount - this.MAX_PLAYERS_ON_FIELD) * this.periodService.getPeriods().length) / this.availablePlayerCount
+      ((this.availablePlayerCount - this.MAX_PLAYERS_ON_FIELD) * this.periodService.getPeriods().length) / this.availablePlayerCount
     );
   }
 
