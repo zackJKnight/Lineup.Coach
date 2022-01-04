@@ -4,3 +4,6 @@ Lineup.Coach.Tests/obj/*
 **/bin/*
 **/obj/*
 .vs/*
+**/node_modules/*
+LineupCoach.db
+LineupCoach.App/LineupCoach.App.csproj.user
