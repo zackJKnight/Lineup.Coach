@@ -6,8 +6,10 @@ import { PlayerService } from '../players/player.service';
 import { Period } from '../periods/period';
 import { PeriodService } from '../periods/period.service';
 import * as cloneDeep from 'lodash/cloneDeep';
+import * as clone from 'lodash/clone';
 import * as _shuffle from 'lodash/shuffle';
 import { Observable, of, Subject } from 'rxjs';
+import { ThrowStmt } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +19,9 @@ export class GameService {
   availablePlayerCount: number;
   MAX_PLAYERS_ON_FIELD = 8;
   PLACEMENT_ROUND_DIVISOR = 4;
-  WHILE_LOOP_BREAKER_GAME = 500;
-  WHILE_LOOP_BREAKER_PERIOD = 1000;
-  fulfilledGame = new Array<Period>();
+  WHILE_LOOP_BREAKER_GAME = 16;
+  WHILE_LOOP_BREAKER_PERIOD = 48;
+  fulfilledGame: Array<Period>;
 
   constructor(
     private playerService: PlayerService,
@@ -37,6 +39,7 @@ export class GameService {
   optimizePlacement(): Observable<Period[]> {
     // "backtracking is not for optimization problems..."
     // hold my beer
+    this.fulfilledGame = new Array<Period>();
     const subject = new Subject<Period[]>();
     const roundedPositionsPerPlayer = Math.floor(
       this.startingPositionsPerPlayer
@@ -52,6 +55,7 @@ export class GameService {
         continue;
       }
       const currentPeriod = cloneDeep(this.periodService.getPeriods()[periodIndex]);
+      // TODO PERIOD 1 is on stack twice. See screenshot
       this.fulfilledGame.push(currentPeriod);
       if (!this.tryFillPeriod(currentPeriod) ||
         !this.periodService.allPeriodPositionsFull(currentPeriod)) {
@@ -87,7 +91,7 @@ export class GameService {
     return subject;
   }
 
-  tryFillPeriod(period: Period): boolean {
+  tryFillPeriod(period: Period, depth?: number): boolean {
     let result = false;
     const fulfilledPeriod = new Array<Position>();
     const currentPlayerIdtoPlacementScoreMap = new Map<number, number>();
@@ -96,28 +100,26 @@ export class GameService {
     let positionIndex = 0;
     // TODO counts here (might) need to take into consideration when all players
     // TODO have been tried in all positions and we need to rethink previous period
-    let acceptLessThanFavoritePlacement = 0;
-    let placeablePlayers = this.playerService.getPresentPlayers();
+    let placeablePlayers = clone(this.playerService.getPresentPlayers());
+    const placedPlayers = new Array<Player>();
     while (positionIndex !== period.positions.length && positionTries !== 0) {
       positionTries--;
       if (positionIndex === period.positions.length) {
         positionTries = 0;
         continue;
       }
-      if (positionTries < (this.WHILE_LOOP_BREAKER_PERIOD / 2)) {
-        acceptLessThanFavoritePlacement = 1;
-      }
+
       const currentPosition = cloneDeep(period.positions[positionIndex]);
       fulfilledPeriod.push(currentPosition);
 
-      const postitionFilled = this.tryFillPosition(currentPosition, period, placeablePlayers, acceptLessThanFavoritePlacement);
+      const postitionFilled = this.tryFillPosition(currentPosition, period, placeablePlayers, depth);
       if (!postitionFilled ||
         currentPosition.startingPlayer === undefined) {
         fulfilledPeriod.pop();
 
         if (placeablePlayers.length === 0 && positionIndex > 0) {
           positionIndex--;
-          placeablePlayers = this.playerService.getPresentPlayers();
+          placeablePlayers = cloneDeep(this.playerService.getPresentPlayers());
         } else {
           result = false;
           break;
@@ -131,7 +133,7 @@ export class GameService {
           period) ||
         (currentPosition.name === 'bench' && ((currentPosition.startingPlayer.benchIds.length) > this.getMinBenchesPerPlayer())) ||
         !this.placementScoreIsWithinRange(currentPosition.startingPlayer.fitScore, placeablePlayers) ||
-        //this.benchDistributionMet(currentPosition.startingPlayer) ||
+        // this.benchDistributionMet(currentPosition.startingPlayer) ||
         this.positionDistributionMet(currentPosition.startingPlayer)) {
         currentPosition.startingPlayer = undefined;
         fulfilledPeriod.pop();
@@ -140,7 +142,7 @@ export class GameService {
 
         if (placeablePlayers.length === 0 && positionIndex > 0) {
           positionIndex--;
-          placeablePlayers = this.playerService.getPresentPlayers();
+          placeablePlayers = clone(this.playerService.getPresentPlayers());
         } else {
           result = false;
           break;
@@ -149,7 +151,7 @@ export class GameService {
       } else {
         const nextPosition = cloneDeep(period.positions[positionIndex + 1]);
         if ((nextPosition === undefined ||
-          (this.tryFillPosition(nextPosition, period, placeablePlayers, acceptLessThanFavoritePlacement) &&
+          (this.tryFillPosition(nextPosition, period, placeablePlayers, depth) &&
             !(nextPosition.name === 'bench' && ((nextPosition.startingPlayer.benchIds.length) > this.getMinBenchesPerPlayer()))))) {
           // The next player will place, so we start again, or all the positions are filled.
 
@@ -164,6 +166,7 @@ export class GameService {
           } else {
             currentPosition.startingPlayer.startingPositionIds.push(currentPosition.id);
           }
+          placedPlayers.push(currentPosition.startingPlayer);
           placeablePlayers.splice(placeablePlayers.indexOf(currentPosition.startingPlayer), 1);
           positionIndex++;
           continue;
@@ -171,12 +174,12 @@ export class GameService {
           currentPosition.startingPlayer = undefined;
           nextPosition.startingPlayer = undefined;
           fulfilledPeriod.pop();
-if(placeablePlayers.length > 0) {
-  continue;
-}
+          if (placeablePlayers.length > 0) {
+            continue;
+          }
           if (placeablePlayers.length === 0 && positionIndex > 0) {
             positionIndex--;
-            placeablePlayers = this.playerService.getPresentPlayers();
+            placeablePlayers = clone(this.playerService.getPresentPlayers());
           } else {
             result = false;
             break;
@@ -185,40 +188,61 @@ if(placeablePlayers.length > 0) {
         }
       }
     }
+    // TODO merge the cloned players-that have been vetted and placed- with players that have been set previously.
+
     result = fulfilledPeriod.length === period.positions.length;
-    if (result) {
+    if (result && depth === undefined) {
       period.positions = fulfilledPeriod;
+      // if (period.periodNumber > 1) {
+      // flatten startingplayers
+      for (const player of this.playerService.getPresentPlayers()) {
+        const decisionRoundPlayer = placedPlayers.filter(roundPlayer => roundPlayer.id === player.id)[0];
+        player.placementScore += decisionRoundPlayer.placementScore;
+        if (decisionRoundPlayer.benchIds.length > 0 && !player.benchIds.includes(decisionRoundPlayer.benchIds[0])) {
+          player.benchIds.push(decisionRoundPlayer.benchIds[0]);
+        }
+        if (decisionRoundPlayer.startingPositionIds.length > 0 && !player.benchIds.includes(decisionRoundPlayer.startingPositionIds[0])) {
+          player.startingPositionIds.push(decisionRoundPlayer.startingPositionIds[0]);
+        }
+        // add placement score,
+        // push startPos id
+        // push bench id
+      }
+      this.playerService.savePlayers(period.positions.map(position => position.startingPlayer));
+
+      // }
     } else {
       // Remove added to a player this round.
-      for (const positionId of period.positions.map(position => position.id)) {
-        for (const player of this.playerService.getPresentPlayers()) {
-          let index = player.benchIds?.indexOf(positionId);
-          if (index > -1) {
-            player.benchIds.splice(index, 1);
-          }
-          index = player.startingPositionIds?.indexOf(positionId);
-          if (index > -1) {
-            player.startingPositionIds.splice(index, 1);
-          }
-        }
-      }
-      this.subtractCurrentPlacementScores(currentPlayerIdtoPlacementScoreMap);
+      // for (const positionId of period.positions.map(position => position.id)) {
+      //   for (const player of cloneDeep(this.playerService.getPresentPlayers())) {
+      //     let index = player.benchIds?.indexOf(positionId);
+      //     if (index > -1) {
+      //       player.benchIds.splice(index, 1);
+      //     }
+      //     index = player.startingPositionIds?.indexOf(positionId);
+      //     if (index > -1) {
+      //       player.startingPositionIds.splice(index, 1);
+      //     }
+      //   }
+      // }
+      // this.subtractCurrentPlacementScores(currentPlayerIdtoPlacementScoreMap);
     }
+
     return result;
   }
 
-  tryFillPosition(position: Position, period: Period, players: Player[], selectionRound?: number): boolean {
+  tryFillPosition(position: Position, period: Period, players: Player[], depth?: number): boolean {
+    const nextPeriodMatch = this.periodService.getPeriods().filter(initPeriod =>
+      initPeriod.id === period.id + 1)[0];
     this.setPlayerFitScores(position, players);
     const scores = this.sort_desc_unique([...position.candidates?.values()]);
-    // an attempt to be able to say we need to skip the best fit to allow other placements to work later in the game.
-    if (selectionRound > 0) {
-      scores.splice(0, selectionRound);
-    }
+
     for (const bestFitScore of scores) {
       const bestFitPlayerIds = [...position.candidates.entries()]
         .filter(({ 1: v }) => v === bestFitScore)
         .map(([k]) => k);
       let i = bestFitPlayerIds.length;
+
       while (i--) {
         const bestFitPlayerId = bestFitPlayerIds[Math.floor(Math.random() * bestFitPlayerIds.length)] || null;
         bestFitPlayerIds.splice(bestFitPlayerIds.indexOf(bestFitPlayerId), 1);
@@ -229,8 +253,18 @@ if(placeablePlayers.length > 0) {
           period)) {
           continue;
         }
-        position.startingPlayer = bestFitPlayer;
-        return true;
+
+        let nextPeriod = cloneDeep(nextPeriodMatch);
+        // nextPeriod.id === 7) { //
+        if (nextPeriodMatch !== undefined && depth === undefined && !this.tryFillPeriod(nextPeriod, 1)) {
+          nextPeriod = undefined;
+          depth = undefined;
+          continue;
+        } else {
+          nextPeriod = undefined;
+          position.startingPlayer = bestFitPlayer;
+          return true;
+        }
       }
     }
     return false;
