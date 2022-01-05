@@ -1,18 +1,16 @@
-# Console App to Aid the New Youth Coach
+# Fill a Game Lineup for the New Youth Coach
 
 ![CI Badge](https://img.shields.io/azure-devops/build/zacharyknight/ce6418bd-131f-4ad6-b014-b24d45714fde/5.svg?label=Azure%20Devops&style=flat) ![Test Badge](https://img.shields.io/azure-devops/tests/zacharyknight/Lineup.Coach/5.svg?style=flat)
-
-Code in progress to aid my thinking about filling a lineup for a game of 8 year olds.
 
 The problem: for a team of players, fill a lineup for a game. A game can have a number of periods. A period can have a number of positions; including a number of bench positions. The first of many possible filling decisions is player position preference. Players define a preference order for positions in the period.
 
 ## Terminology
 
-Placement Score - a number of points that represents the player's current starting positions in relation to placement decision factors, e.g., player's preference.
+Placement Score: a number of points that represents the player's current starting positions in relation to placement decision factors, e.g., player's preference.
 
-Fit score = Suitability score. The player's suitability for a given position. Composed of (values are spitball at this point):
+Fit score or Suitability score: The player's suitability for a given position. Composed of (values are spitball at this point):
 
-     - Placed this period? false = 1; true = -1 ***update - preventing placement of an already placed player is required. it must be done. You can never place a player that's alredy placed; if you find yourself in that situation, it's time to recurse back to a time when the player was not placed. maybe just pop that player off of the position's starters stack instead of the entire game placement... not sure.
+     - Placed this period? false = 1; true = -1 ***update - preventing placement of an already placed player is required. You can never place a player that's alredy placed; if you find yourself in that situation, it's time to recurse back to a time when the player was not placed. maybe just pop that player off of the position's starters stack instead of the entire game placement... not sure.
      - Player's preference rank of position: range 0-n (where n equals number of positions) (might bench be the lowest rank in each player's pref ranking, or should it have some negative value?)
      - Distance from ideal placement count. e.g. if each player gets 3 starts in the game and this position makes the player's 2nd start. Score accordingly.
      - Placement score in relation to all other placement scores (if a player gets his preference all game and another doesn't get a single preffered position, this point will balance)
@@ -27,7 +25,7 @@ After some failure and some research, I've attempted to solve the lineup with ba
 
 ### Minimax Algorithm
 
-Attempted minimax https://github.com/zackJKnight/Lineup-minimax-via-codingtrain/blob/969be805cf2e80701c676315151c38da04145e61/sketch.js with inspriation from Dan Shiffman (codingtrain on youtube). I think I shifted to another project before setting up the problem like a game with two players. This is probably a good approach, but I need to refine the rules of the game and try again. In it's current state, the benching conditions are not complete or implemented in a way that supports correctness.
+Attempted minimax https://github.com/zackJKnight/Lineup-minimax-via-codingtrain/blob/969be805cf2e80701c676315151c38da04145e61/sketch.js with inspriation from Dan Shiffman (codingtrain on youtube). I shifted to another project before setting up the problem like a game with two players. This is probably a good approach, but I need to refine the rules of the game and try again. In it's current state, the benching conditions are not complete or implemented in a way that supports correctness.
 
 ## TODO
 
