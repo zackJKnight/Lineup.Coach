@@ -6,24 +6,25 @@ import { Position } from '../positions/position';
 })
 export class TeamService {
 public teamPositions: Position[];
-  constructor() { }
+
+  constructor() {
+    this.teamPositions = [];
+    this.teamPositions.push(new Position('goalie'));
+this.teamPositions.push(new Position('forward'));
+this.teamPositions.push(new Position('forward'));
+this.teamPositions.push(new Position('defense'));
+this.teamPositions.push(new Position('defense'));
+this.teamPositions.push(new Position('mid'));
+this.teamPositions.push(new Position('mid'));
+this.teamPositions.push(new Position('mid'));
+this.teamPositions.push(new Position('bench'));
+this.teamPositions.push(new Position('bench'));
+this.teamPositions.push(new Position('bench'));
+this.teamPositions.push(new Position('bench'));
+   }
 
 getPositions(): Position[] {
-
-let positions = new Array<Position>();
-positions.push(new Position('goalie'));
-positions.push(new Position('forward'));
-positions.push(new Position('forward'));
-positions.push(new Position('defense'));
-positions.push(new Position('defense'));
-positions.push(new Position('mid'));
-positions.push(new Position('mid'));
-positions.push(new Position('mid'));
-// positions.push(new Position('bench'));
-// positions.push(new Position('bench'));
-// positions.push(new Position('bench'));
-// positions.push(new Position('bench'));
-this.teamPositions = positions;
 return this.teamPositions;
 }
+
 }
