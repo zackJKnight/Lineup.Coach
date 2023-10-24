@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Resolve } from '@angular/router';
+
 import { GameService } from '../games/game.service';
 import { map } from 'rxjs/operators';
 
 @Injectable()
-export class PeriodLineupResolver implements Resolve<any> {
+export class PeriodLineupResolver  {
   constructor(
     private gameService: GameService
       ) {}

@@ -8,17 +8,15 @@ import { TeamsClient } from './lineup-coach-api';
 import { GameService } from './games/game.service';
 import { PlayerService } from './players/player.service';
 import { FormsModule } from '@angular/forms';
-import {
-  MatDialogModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatButtonModule,
-  MatListModule,
-  MatExpansionModule,
-  MatCommonModule,
-  MatToolbarModule,
-  MatIconModule
-} from '@angular/material';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatCommonModule } from '@angular/material/core';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { PeriodsModule } from './periods/periods.module';
 import { TeamsModule } from './teams/teams.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
