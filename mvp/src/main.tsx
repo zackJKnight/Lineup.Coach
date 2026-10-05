@@ -1,0 +1,4 @@
+import React from 'react';import{createRoot}from'react-dom/client';import{ThemeProvider,createTheme,CssBaseline}from'@mui/material';import App from './App';import './style.css';
+const theme=createTheme({palette:{primary:{main:'#17634f'},secondary:{main:'#2357a2'},background:{default:'#f3f6f5',paper:'#ffffff'}},typography:{fontFamily:'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',button:{textTransform:'none',fontWeight:650}},shape:{borderRadius:10},components:{MuiButton:{defaultProps:{disableElevation:true}},MuiTextField:{defaultProps:{size:'small'}},MuiSelect:{defaultProps:{size:'small'}}}});
+createRoot(document.getElementById('root')!).render(<React.StrictMode><ThemeProvider theme={theme}><CssBaseline/><App/></ThemeProvider></React.StrictMode>);
+if('serviceWorker'in navigator&&import.meta.env.PROD)navigator.serviceWorker.register('/sw.js').catch(console.error);

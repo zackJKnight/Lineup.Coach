@@ -1,0 +1,56 @@
+{
+  "baseline": "Saved lineup-agent1-improved.zip engine, default settings",
+  "runtime": "v24.19.0",
+  "date": "2026-09-16T01:27:05.328Z",
+  "method": "Same synthetic inputs. One warmup; new median of 7 and saved GA median of 3. Node timings, not mobile/browser timings. Objectives differ; speed comparison does not establish optimality.",
+  "cases": [
+    {
+      "players": 9,
+      "fieldPositions": 6,
+      "periods": 4,
+      "newMedianMs": 2.75,
+      "savedEngineMedianMs": 280.81,
+      "speedup": 102.2,
+      "validationErrors": [],
+      "audit": {
+        "benchSpread": 1,
+        "benchSquares": 18,
+        "preference": 43,
+        "consecutive": 0,
+        "variety": 12
+      }
+    },
+    {
+      "players": 14,
+      "fieldPositions": 9,
+      "periods": 6,
+      "newMedianMs": 6.42,
+      "savedEngineMedianMs": 1629.99,
+      "speedup": 253.8,
+      "validationErrors": [],
+      "audit": {
+        "benchSpread": 1,
+        "benchSquares": 66,
+        "preference": 88,
+        "consecutive": 0,
+        "variety": 28
+      }
+    },
+    {
+      "players": 22,
+      "fieldPositions": 11,
+      "periods": 8,
+      "newMedianMs": 15.77,
+      "savedEngineMedianMs": 3920.56,
+      "speedup": 248.6,
+      "validationErrors": [],
+      "audit": {
+        "benchSpread": 0,
+        "benchSquares": 352,
+        "preference": 154,
+        "consecutive": 0,
+        "variety": 44
+      }
+    }
+  ]
+}
