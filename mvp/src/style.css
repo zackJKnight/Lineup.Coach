@@ -2,5 +2,30 @@
 @media(max-width:900px){.team-layout{grid-template-columns:1fr}.period-grid{grid-template-columns:1fr}.fairness-grid{grid-template-columns:1fr}.lineup-summary{gap:20px;flex-wrap:wrap}.summary-actions{margin-left:0}.game-card>.MuiButton-root{max-width:400px}.selector-row{grid-template-columns:1fr 1fr}.selector-row>.MuiButton-root{grid-column:1/-1;justify-self:start}.title-row{align-items:flex-start}.title-row>.MuiButton-root{white-space:nowrap}.preferences{font-size:13px}.game-facts{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}}
 @media(max-width:520px){.workspace{padding:22px 14px 0}.appbar{padding:0 18px!important;min-height:64px!important}h1{font-size:28px}.title-row{flex-direction:column;gap:14px;margin-bottom:22px}.selector-row{grid-template-columns:1fr;gap:14px}.section-head{padding:20px 16px}.player-row{padding:13px 10px;grid-template-columns:42px minmax(0,1fr) 42px}.roster-header{padding:10px 12px;grid-template-columns:42px 1fr 42px}.lineup-summary{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}.summary-actions{grid-column:1/-1}.assignment-row,.lineup-columns{grid-template-columns:95px minmax(0,1fr) 25px;gap:6px;padding-left:12px;padding-right:12px}.period-grid{gap:16px}.fairness-player{grid-template-columns:1fr auto;gap:6px}.fairness-player strong{grid-column:2}.fairness-player .period-dots{grid-column:1;grid-row:2}.fairness .section-head{flex-direction:column;align-items:flex-start}.name-fields{flex-direction:column}.game-facts{display:block}.exclusions{grid-template-columns:1fr}footer{gap:20px}.action-group{flex-wrap:wrap}.dialog-fields{padding-left:18px!important;padding-right:18px!important}}
 .lineup-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;margin:8px 0 16px}.lineup-summary{display:flex;flex-wrap:nowrap;align-items:center;gap:14px;margin:0;padding:8px 10px;border-radius:6px;max-width:100%;overflow-x:auto}.lineup-summary>div:not(.summary-actions){flex-direction:row;align-items:baseline;gap:4px;white-space:nowrap}.lineup-summary strong,.lineup-summary span{font-size:14px;line-height:20px;letter-spacing:normal}.lineup-toolbar .summary-actions{margin-left:auto;flex-shrink:0}.lineup-toolbar .summary-actions .MuiButton-root{padding:4px 10px;font-size:14px}
-.game-title-row{display:block;margin-bottom:12px}.game-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;width:100%}.game-title-row h1{font-size:24px;line-height:1.3;letter-spacing:-.4px;flex:1 1 260px}.game-heading .lineup-summary{flex:0 0 auto}.game-title-row .action-group{margin-top:12px;justify-content:flex-end;flex-wrap:wrap}
+/* The screen header keeps compact stats beside the matchup; print uses the full page width. */
+.game-title-row{display:block;margin-bottom:20px}
+.game-heading{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px 24px;width:100%}
+.game-heading-copy{flex:1 1 340px;min-width:0}
+.game-title-row h1{font-size:24px;line-height:1.3;letter-spacing:-.4px;overflow-wrap:break-word}
+.game-subtitle{margin-top:6px;color:#60746c;font-size:15px;line-height:1.5}
+.game-subtitle time{white-space:nowrap}
+.game-heading .lineup-summary{flex:0 0 auto}
+.game-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid #dce5e0}
+.game-actions .MuiButton-root{min-height:40px;white-space:nowrap;padding:8px 16px}
+.game-actions .MuiButton-contained{margin-left:auto}
+@media screen and (max-width:600px){
+ .game-heading-copy{flex-basis:100%}
+ .game-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .game-actions .MuiButton-root{width:100%;margin:0;padding:8px}
+}
 @media print{body{background:white!important}.MuiAppBar-root,.crumb,.no-print,button,.summary-actions,footer{display:none!important}.workspace{max-width:none;padding:0}.period-grid{grid-template-columns:1fr 1fr;gap:12px}.period-card{break-inside:avoid}.assignment-row,.lineup-columns{grid-template-columns:100px 1fr;padding:5px 10px}.assignment-row .MuiSelect-icon{display:none}.MuiOutlinedInput-notchedOutline{border:0!important}.lineup-summary{background:white;border:1px solid #ccc}.title-row{margin-top:15px}.fairness{break-inside:avoid}}
+
+@media print{
+ .game-title-row{margin:0 0 16px;break-inside:avoid}
+ .game-heading{display:block}
+ .game-heading-copy{width:100%}
+ .game-title-row h1{width:100%;font-size:20pt;line-height:1.2}
+ .game-subtitle{margin-top:5px;font-size:10pt;color:#333}
+ .game-heading .lineup-summary{display:flex;justify-content:flex-start;width:max-content;max-width:100%;margin-top:6px;padding:0;border:0;background:none;overflow:visible;gap:14px}
+ .game-heading .lineup-summary strong,.game-heading .lineup-summary span{font-size:10pt;color:#333}
+}
