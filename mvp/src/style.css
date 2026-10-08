@@ -43,3 +43,8 @@
 .setup-navigation{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;border-top:1px solid #dce5e0;padding-top:18px;margin-top:8px}
 .setup-navigation .MuiButton-root{min-height:44px}
 @media(max-width:520px){.team-setup{padding:20px 16px}.setup-position-grid,.setup-attendance{grid-template-columns:1fr}.setup-player{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.setup-player>button{grid-column:1/-1;justify-self:end}.setup-navigation{position:sticky;bottom:0;background:white;padding:12px 0;z-index:2}.setup-navigation .MuiButton-contained{flex:1}.setup-progress{gap:4px}}
+
+.setup-preferences{padding:0 14px 14px;border:1px solid #dce5e0;border-radius:8px}
+.setup-ranking{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.setup-ranking li{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:#f3f7f4;padding:8px;border-radius:6px}
+.setup-rank-actions{display:flex;gap:2px;flex-wrap:wrap}.setup-rank-actions .MuiButton-root{min-height:40px}
